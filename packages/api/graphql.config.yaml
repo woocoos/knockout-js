@@ -1,0 +1,13 @@
+projects:
+  ucenter:
+    schema: "script/__generated__/ucenter.graphql"
+    documents:
+      - 'src/services/ucenter/**/*.ts'
+      - 'script/__generated__/ucenter.graphql'
+    extensions:
+      endpoints:
+        default:
+          url: ${GQLGEN_UCENTER_ENDPOINT}
+          headers:
+            Authorization: bearer ${GQLGEN_TOKEN}
+            X-Tenant-ID: ${GQLGEN_TENANT_ID}

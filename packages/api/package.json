@@ -1,7 +1,7 @@
 {
-  "name": "@knockout-js/org",
+  "name": "@knockout-js/api",
   "version": "0.0.1",
-  "description": "Knockout组织相关组件",
+  "description": "Knockout API",
   "files": [
     "esm",
     "cjs",
@@ -33,26 +33,21 @@
   "scripts": {
     "start": "ice-pkg start",
     "build": "rimraf esm es2017 && ice-pkg build",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "gqlgen": "graphql-code-generator --config ./script/gqlgen.ts",
+    "gqlgen:watch": "pnpm gqlgen --watch"
   },
-  "keywords": [
-    "icepkg",
-    "react",
-    "component"
-  ],
   "dependencies": {
-    "@ice/jsx-runtime": "^0.2.0",
-    "@swc/helpers": "^0.5.1",
-    "antd": "^5.6.3",
-    "@ant-design/pro-table": "^3.8.2",
-    "@knockout-js/api": "0.0.1",
-    "i18next": "^22.5.0",
-    "react-i18next": "^12.3.1"
+    "graphql": "^16.6.0"
   },
   "devDependencies": {
     "@ice/pkg": "^1.5.10",
-    "@types/react": "^18.0.0",
-    "react": "^18.0.0",
+    "@graphql-codegen/cli": "^4.0.1",
+    "@graphql-codegen/client-preset": "^4.0.0",
+    "@graphql-codegen/schema-ast": "^4.0.0",
+    "@graphql-tools/mock": "^8.7.20",
+    "@graphql-tools/schema": "^10.0.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
