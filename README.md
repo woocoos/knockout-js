@@ -10,3 +10,9 @@ $ pnpm packages:build
 # Start watch service
 $ pnpm start
 ```
+
+## Packages
+
+```shell
+pnpm create @ice/pkg packages/new-lib --workspace
+```
