@@ -1,6 +1,6 @@
 import {gql} from '../gql/ucenter';
 
-const orgModalQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
+export const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
   organizations(first:$first,orderBy: $orderBy,where: $where){
     totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
     edges{
