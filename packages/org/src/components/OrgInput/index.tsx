@@ -1,10 +1,10 @@
 import { Input } from 'antd';
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from './modal';
 import { Org } from '@knockout-js/api';
-import { useTranslation } from 'react-i18next';
 import { CloseCircleFilled } from '@ant-design/icons';
+import { useLocale } from '../locale';
 
 export interface OrgInputProps {
   value: Org;
@@ -15,13 +15,13 @@ export interface OrgInputProps {
 }
 
 const OrgInput = (props: OrgInputProps) => {
-  const { t } = useTranslation(),
+  const locale = useLocale('OrgInput'),
     [open, setOpen] = useState(false);
 
   return (
     <>
       <Input.Search
-        placeholder={`${t('org.input.placeholder')}`}
+        placeholder={locale.placeholder}
         {...props.searchProps}
         value={props.value?.name}
         disabled={props.disabled}
@@ -37,7 +37,7 @@ const OrgInput = (props: OrgInputProps) => {
       <OrgModal
         open={open}
         orgId={props.orgId}
-        title={`${t('org.modal.title')}`}
+        title={locale.title}
         onClose={(data) => {
           props.onChange?.(data?.[0])
           setOpen(false);

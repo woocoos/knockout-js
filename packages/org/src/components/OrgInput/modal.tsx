@@ -1,9 +1,9 @@
 import { Modal, ModalProps } from 'antd';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
 import { Org, OrgWhereInput, orgListQuery } from "@knockout-js/api";
-import { useTranslation } from "react-i18next";
 import { useClient } from 'urql'
+import { useLocale } from '../locale';
 
 export interface OrgModalProps {
   open: boolean;
@@ -16,34 +16,35 @@ export interface OrgModalProps {
 }
 
 export default (props: OrgModalProps) => {
-  const { t } = useTranslation(),
+  const locale = useLocale('OrgModal'),
+    glocale = useLocale('global'),
     client = useClient(),
     [dataSource, setDataSource] = useState<Org[]>([]),
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]),
     columns: ProColumns<Org>[] = [
       {
-        title: t('org.modal.name'),
+        title: locale.name,
         dataIndex: 'name',
         search: {
           transform: (value) => ({ nameContains: value || undefined }),
         },
       },
       {
-        title: t('org.modal.domain'),
+        title: locale.domain,
         dataIndex: 'domain',
         search: {
           transform: (value) => ({ codeContains: value || undefined }),
         },
       },
       {
-        title: t('org.modal.owner'),
+        title: locale.owner,
         dataIndex: 'owner',
         search: false,
         render: (text, record) => {
           return <div>{record?.owner?.displayName || '-'}</div>;
         },
       },
-      { title: t('org.modal.desc'), dataIndex: 'profile', search: false },
+      { title: locale.desc, dataIndex: 'profile', search: false },
     ]
 
   return <Modal
@@ -64,8 +65,8 @@ export default (props: OrgModalProps) => {
       {...props.proTableProps}
       rowKey={'id'}
       search={{
-        searchText: `${t('query')}`,
-        resetText: `${t('reset')}`,
+        searchText: glocale.query,
+        resetText: glocale.reset,
         labelWidth: 'auto',
       }}
       options={false}
