@@ -25,7 +25,7 @@ const OrgInput = (props: OrgInputProps) => {
         {...props.searchProps}
         value={props.value?.name}
         disabled={props.disabled}
-        suffix={props.value && props.disabled != true ? <CloseCircleFilled
+        suffix={props.value && !props.disabled ? <CloseCircleFilled
           style={{ fontSize: '12px', cursor: 'pointer', color: 'rgba(0, 0, 0, 0.25)' }}
           onClick={() => {
             props.onChange?.();

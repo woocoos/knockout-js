@@ -34,6 +34,7 @@
     "start": "ice-pkg start",
     "build": "rimraf esm es2017 && ice-pkg build",
     "prepublishOnly": "npm run build",
+    "public:local": "yalc publish",
     "gqlgen": "graphql-code-generator --config ./script/gqlgen.ts",
     "gqlgen:watch": "pnpm gqlgen --watch"
   },
