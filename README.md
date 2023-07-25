@@ -16,3 +16,10 @@ $ pnpm start
 ```shell
 pnpm create @ice/pkg packages/new-lib --workspace
 ```
+
+## Usage
+
+local:
+```
+ yalc add @knockout-js/api
+```

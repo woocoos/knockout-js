@@ -5,9 +5,6 @@ import { OrgInput } from '@knockout-js/org';
 import { Provider, Client, cacheExchange, fetchExchange } from 'urql';
 import { useState } from "react";
 import { orgListQuery } from "@knockout-js/api";
-import { mockServer } from '../mock';
-
-mockServer()
 
 test('mocktest', async () => {
   const client = new Client({
@@ -30,7 +27,7 @@ test('render orgInput', async () => {
     exchanges: [cacheExchange, fetchExchange],
   });
 
-  const { result } = renderHook(() => useState({ id: '1', name: 'org1' }))
+  const {result} = renderHook(() => useState({id: '1', name: 'org1'}))
   const [org, setOrg] = result.current;
   const ele = render(<Provider value={client}>
     <OrgInput value={org} onChange={setOrg} orgId={org.id}
