@@ -39,6 +39,7 @@
     "gqlgen:watch": "pnpm gqlgen --watch"
   },
   "dependencies": {
+    "@types/crypto-js": "^4.1.1",
     "graphql": "^16.6.0"
   },
   "devDependencies": {
