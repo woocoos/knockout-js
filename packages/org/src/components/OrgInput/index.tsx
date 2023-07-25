@@ -7,11 +7,11 @@ import { CloseCircleFilled } from '@ant-design/icons';
 import { useLocale } from '../locale';
 
 export interface OrgInputProps {
-  value: Org;
-  disabled: boolean;
+  value?: Org;
+  disabled?: boolean;
   orgId: string;
-  searchProps: SearchProps;
-  onChange: (value?: Org) => void;
+  searchProps?: SearchProps;
+  onChange?: (value?: Org) => void;
 }
 
 const OrgInput = (props: OrgInputProps) => {

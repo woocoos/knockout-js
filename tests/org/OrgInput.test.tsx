@@ -1,25 +1,45 @@
-import {test, expect, vitest} from 'vitest';
+import { test, expect } from 'vitest';
 import * as React from 'react';
-import {render, renderHook, screen} from '@testing-library/react';
+import { fireEvent, render, renderHook, screen } from '@testing-library/react';
+import { OrgInput } from '@knockout-js/org';
+import { Provider, Client, cacheExchange, fetchExchange } from 'urql';
+import { useState } from "react";
+import { orgListQuery } from "@knockout-js/api";
+import { mockServer } from '../mock';
 
-import {OrgInput} from '@knockout-js/org';
-import {Client, Provider, cacheExchange, fetchExchange} from 'urql';
-import {useState} from "react";
+mockServer()
 
-test('render orgInput', () => {
+test('mocktest', async () => {
   const client = new Client({
     url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
     exchanges: [cacheExchange, fetchExchange],
   });
-  vitest.mock('http://127.0.0.1:3001/mock-api-adminx/graphql/query', () => {
-    return {data: {orgList: {data: [{id: '1', name: 'org1'}]}}};
+
+  const result = await client.query(orgListQuery, {
+    first: 10,
+  }).toPromise()
+
+  console.log('--result--', result)
+  expect(result.data).toBeDefined()
+
+});
+
+test('render orgInput', async () => {
+  const client = new Client({
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+    exchanges: [cacheExchange, fetchExchange],
   });
-  const {result} = renderHook(() => useState({id: '1', name: 'org1'}))
+
+  const { result } = renderHook(() => useState({ id: '1', name: 'org1' }))
   const [org, setOrg] = result.current;
-  render(<Provider value={client}>
-    <OrgInput value={org} onChange={setOrg} disabled={false} orgId={org.id}
-              searchProps={{loading: true}}
+  const ele = render(<Provider value={client}>
+    <OrgInput value={org} onChange={setOrg} orgId={org.id}
     />
   </Provider>);
-  expect(screen.getAllByText('org1')).toBeDefined();
+
+  // 模拟点击
+  // fireEvent.click(ele.container.querySelector('.anticon-search') as Element)
+
+  expect(ele.getByDisplayValue('org1')).toBeDefined();
+
 });

@@ -22,7 +22,7 @@ export interface Locale {
 
 export interface LocaleProviderProps {
   locale: Locale;
-  children?: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export type LocaleContextProps = Locale
