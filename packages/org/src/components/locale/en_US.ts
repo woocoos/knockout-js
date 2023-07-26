@@ -1,5 +1,5 @@
 import { Locale } from ".";
-
+import AppSelect from "../app-select/locale/en_US";
 
 const localeValues: Locale = {
   locale: 'en-us',
@@ -18,6 +18,7 @@ const localeValues: Locale = {
     owner: 'administrative account',
     desc: 'organizational description',
   },
+  AppSelect
 }
 
 export default localeValues

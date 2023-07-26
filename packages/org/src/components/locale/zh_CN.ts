@@ -1,5 +1,5 @@
 import { Locale } from ".";
-
+import AppSelect from "../app-select/locale/zh_CN";
 
 const localeValues: Locale = {
   locale: 'zh-cn',
@@ -18,6 +18,7 @@ const localeValues: Locale = {
     owner: '管理账号',
     desc: '组织描述',
   },
+  AppSelect
 }
 
 export default localeValues

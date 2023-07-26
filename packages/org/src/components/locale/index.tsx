@@ -1,5 +1,6 @@
 import { createContext, useContext } from "react";
 import zhCN from "./zh_CN";
+import { AppSelectLocale } from "../app-select/index";
 
 export interface Locale {
   locale: string;
@@ -17,7 +18,8 @@ export interface Locale {
     domain: string;
     owner: string;
     desc: string;
-  }
+  },
+  AppSelect: AppSelectLocale;
 }
 
 export interface LocaleProviderProps {
