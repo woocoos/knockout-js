@@ -1,0 +1,85 @@
+.ant-table-container table {
+  border-collapse: initial;
+  display: table;
+  box-sizing: border-box;
+  text-indent: initial;
+  margin-bottom: initial;
+  overflow: initial;
+}
+
+.ant-table-container table thead tr {
+  border-bottom: initial;
+}
+
+.ant-table-container table thead {
+  background-color: initial;
+}
+
+.ant-table-container table tr {
+  background-color: initial;
+  border-top: initial;
+}
+
+.ant-table-container table th,
+table td {
+  border: initial;
+  padding: initial;
+}
+
+.ant-table-container table th {
+  background-color: initial;
+  color: initial;
+  font-weight: initial;
+}
+
+.ant-table-container table td {
+  color: initial;
+}
+
+.ant-table-container table tr:nth-child(2n) {
+  background-color: initial;
+}
+
+
+.ant-picker-body table {
+  border-collapse: initial;
+  display: table;
+  box-sizing: border-box;
+  text-indent: initial;
+  margin-bottom: initial;
+  overflow: initial;
+}
+
+.ant-picker-body table thead tr {
+  border-bottom: initial;
+}
+
+.ant-picker-body table thead {
+  background-color: initial;
+}
+
+.ant-picker-body table tr {
+  background-color: initial;
+  border-top: initial;
+}
+
+.ant-picker-body table th,
+table td {
+  border: initial;
+  padding: initial;
+}
+
+.ant-picker-body table th {
+  background-color: initial;
+  color: initial;
+  font-weight: initial;
+}
+
+.ant-picker-body table td {
+  color: initial;
+}
+
+.ant-picker-body table tr:nth-child(2n) {
+  background-color: initial;
+}
+

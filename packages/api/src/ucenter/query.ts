@@ -5,7 +5,7 @@ export const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy
     totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
     edges{
       cursor,node{
-        id,ownerID,parentID,kind,
+        id,ownerID,parentID,kind,profile,
         domain,code,name,countryCode,timezone,
         owner { id,displayName }
       }
