@@ -21,7 +21,7 @@
 }
 
 .ant-table-container table th,
-table td {
+.ant-table-container table td {
   border: initial;
   padding: initial;
 }
@@ -64,7 +64,7 @@ table td {
 }
 
 .ant-picker-body table th,
-table td {
+.ant-picker-body table td {
   border: initial;
   padding: initial;
 }
@@ -82,4 +82,3 @@ table td {
 .ant-picker-body table tr:nth-child(2n) {
   background-color: initial;
 }
-
