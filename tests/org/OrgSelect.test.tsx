@@ -4,7 +4,7 @@ import { fireEvent, render, renderHook, screen } from '@testing-library/react';
 import { CClient, OrgSelect } from '@knockout-js/org';
 import { Provider, Client, cacheExchange, fetchExchange } from 'urql';
 import { useState } from "react";
-import { orgListQuery } from "@knockout-js/api";
+import { OrgKind, orgListQuery } from "@knockout-js/api";
 
 test('mocktest', async () => {
   const client = new Client({
@@ -33,8 +33,7 @@ test('render OrgSelect', async () => {
   const { result } = renderHook(() => useState({ id: '1', name: 'org1' }))
   const [org, setOrg] = result.current;
   const ele = render(<Provider value={client}>
-    <OrgSelect value={org} onChange={setOrg} orgId={org.id}
-    />
+    <OrgSelect value={org} onChange={setOrg} orgId={org.id} kind={OrgKind.Root}    />
   </Provider>);
 
   // 模拟点击

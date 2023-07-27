@@ -8,6 +8,7 @@ sidebar_label: OrgInput
 import { OrgSelect, CClient } from "@knockout-js/org";
 import { useState } from "react";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import { OrgKind } from "@knockout-js/api";
 
 export default () => {
   const [org, setOrg] = useState(),
@@ -22,7 +23,7 @@ export default () => {
 
   return (
     <Provider value={client}>
-      <OrgSelect value={org} onChange={setOrg} />
+      <OrgSelect value={org} onChange={setOrg} kind={OrgKind.Root} />
     </Provider>
   );
 };
@@ -34,9 +35,10 @@ export default () => {
 | ------------- | ------------------------------------------------------------- | ------------------ | ------ |
 | value         | 值                                                            | Org                | -      |
 | disabled      | 禁用                                                          | boolean            | -      |
-| orgId         | 通过orgId过滤                                                 | string             | -      |
+| orgId         | 根据orgId过滤pathHasPrefix                                    | string             | -      |
+| appId         | appId授权的组织列表                                           | string             | -      |
+| kind          | 必填此类型                                                    | OrgKind            | -      |
 | searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps        | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps         | -      |
 | proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps      | -      |
 | onChange      | value变更时回调                                               | (value?:Org)=>void | -      |
-

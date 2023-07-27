@@ -2,7 +2,7 @@ import { Input, ModalProps } from 'antd';
 import { useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from '../org-modal';
-import { Org } from '@knockout-js/api';
+import { Org, OrgKind } from '@knockout-js/api';
 import { CloseCircleFilled } from '@ant-design/icons';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
@@ -15,7 +15,9 @@ export interface OrgSelectLocale {
 export interface OrgSelectProps {
   value?: Org;
   disabled?: boolean;
-  orgId: string;
+  orgId?: string;
+  appId?: string;
+  kind: OrgKind;
   searchProps?: SearchProps;
   modalProps?: ModalProps;
   proTableProps?: ProTableProps<Org, Record<string, any>, 'text'>;
@@ -45,6 +47,8 @@ const OrgSelect = (props: OrgSelectProps) => {
       <OrgModal
         open={open}
         orgId={props.orgId}
+        appId={props.appId}
+        kind={props.kind}
         title={locale.title}
         modalProps={props.modalProps}
         proTableProps={props.proTableProps}

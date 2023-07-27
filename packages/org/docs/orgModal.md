@@ -9,6 +9,7 @@ import { OrgModal, CClient } from "@knockout-js/org";
 import { useState } from "react";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import { Button } from "antd";
+import { OrgKind } from "@knockout-js/api";
 
 export default () => {
   const [open, setOpen] = useState(false),
@@ -33,6 +34,7 @@ export default () => {
       <Provider value={client}>
         <OrgModal
           open={open}
+          kind={OrgKind.Root}
           onClose={(data) => {
             console.log(data);
             setOpen(false);
@@ -49,7 +51,9 @@ export default () => {
 | 参数          | 说明                                                          | 类型                | 默认值 |
 | ------------- | ------------------------------------------------------------- | ------------------- | ------ |
 | open          | 显示弹框                                                      | boolean             | -      |
-| orgId         | 根据orgId过滤                                                 | string              | -      |
+| orgId         | 根据orgId过滤pathHasPrefix                                    | string              | -      |
+| appId         | appId授权的组织列表                                           | string              | -      |
+| kind          | 必填此类型                                                    | OrgKind             | -      |
 | title         | 弹框标题                                                      | string              | -      |
 | isMultiple    | 多选                                                          | boolean             | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps          | -      |
