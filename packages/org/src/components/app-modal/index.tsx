@@ -2,8 +2,8 @@
 import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { App, AppWhereInput, appListQuery } from '@knockout-js/api';
-import { useClient } from 'urql'
+import { App, AppKind, AppWhereInput, appListQuery, gid } from '@knockout-js/api';
+import { gql, useClient } from 'urql'
 import { useLocale } from '../locale';
 import { CClient } from '../..';
 
@@ -30,6 +30,22 @@ export interface AppModalProps {
   onClose: (data?: App[]) => void;
 }
 
+const orgAppListQuery = gql(/* GraphQL */`query orgAppList($gid: GID!,$first: Int,$orderBy:AppOrder,$where:AppWhereInput){
+  node(id:$gid){
+    ... on Org{
+      id
+      apps(first:$first,orderBy: $orderBy,where: $where){
+        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+        edges{
+          cursor,node{
+            id,name,code,kind,comments,status
+          }
+        }
+      }
+    }
+  }
+}`);
+
 
 export default (props: AppModalProps) => {
   const locale = useLocale('AppModal'),
@@ -41,17 +57,11 @@ export default (props: AppModalProps) => {
         title: locale.name,
         dataIndex: 'name',
         width: 120,
-        search: {
-          transform: (value) => ({ nameContains: value || undefined }),
-        },
       },
       {
         title: locale.code,
         dataIndex: 'code',
         width: 120,
-        search: {
-          transform: (value) => ({ codeContains: value || undefined }),
-        },
       },
       {
         title: locale.type,
@@ -67,43 +77,68 @@ export default (props: AppModalProps) => {
     // 选中处理
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
-  const
-    handleOk = () => {
-      props?.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id)));
-    },
-    handleCancel = () => {
-      props?.onClose();
-    };
 
   return (
-    <Modal title={props.title} open={props.open} onOk={handleOk} onCancel={handleCancel} width={900}>
+    <Modal
+      width={900}
+      title={props.title}
+      {...props.modalProps}
+      open={props.open}
+      onOk={() => {
+        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id)));
+      }} onCancel={() => {
+        props.onClose();
+      }}
+    >
       <ProTable
-        rowKey={'id'}
         size="small"
+        scroll={{ x: 'max-content', y: 300 }}
+        {...props.proTableProps}
+        rowKey={'id'}
         search={{
           searchText: glocale.query,
           resetText: glocale.reset,
           labelWidth: 'auto',
         }}
         options={false}
-        scroll={{ x: 'max-content', y: 300 }}
         columns={columns}
-        request={async (params) => {
+        request={async (params, sort, filter) => {
           const table = { data: [] as App[], success: true, total: 0 },
             where: AppWhereInput = {};
-          const result = await client.query(appListQuery, {
-            first: params.pageSize,
-            where,
-          }, {
-            url: `${client.url}?p=${params.current}`
-          }).toPromise();
-          if (result.data?.apps.totalCount) {
-            result.data.apps.edges?.forEach(item => {
-              if (item?.node) {
-                table.data.push(item.node as App)
-              }
-            })
-            table.total = result.data.apps.totalCount
+          where.nameContains = params.name;
+          where.codeContains = params.code;
+          where.kindIn = filter.kind as AppKind[]
+          if (props.orgId) {
+            const result = await client.query(orgAppListQuery, {
+              gid: gid('org', props.orgId),
+              first: params.pageSize,
+              where,
+            }, {
+              url: `${client.url}?p=${params.current}`
+            }).toPromise();
+            if (result.data?.node?.apps) {
+              result.data.node.apps.edges?.forEach((item: { node: App; }) => {
+                if (item?.node) {
+                  table.data.push(item.node)
+                }
+              })
+              table.total = result.data.node.apps.totalCount
+            }
+          } else {
+            const result = await client.query(appListQuery, {
+              first: params.pageSize,
+              where,
+            }, {
+              url: `${client.url}?p=${params.current}`
+            }).toPromise();
+            if (result.data?.apps.totalCount) {
+              result.data.apps.edges?.forEach(item => {
+                if (item?.node) {
+                  table.data.push(item.node as App)
+                }
+              })
+              table.total = result.data.apps.totalCount
+            }
           }
           setDataSource(table.data)
           return table

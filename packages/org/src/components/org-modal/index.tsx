@@ -1,7 +1,7 @@
 import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgOrderField, OrgWhereInput, gid, orgListQuery } from "@knockout-js/api";
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput, gid } from "@knockout-js/api";
 import { gql, useClient } from 'urql'
 import { useLocale } from '../locale';
 import { CClient } from '../..';
@@ -26,7 +26,7 @@ export interface OrgModalProps {
   onClose: (data?: Org[]) => void;
 }
 
-const appOrgListQuery = gql<AppOrgListQuery, AppOrgListQueryVariables>(`query appOrgList($gid: GID!,$first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
+const appOrgListQuery = gql(/* GraphQL */`query appOrgList($gid: GID!,$first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
   node(id:$gid){
     ... on App{
       id,
@@ -34,11 +34,24 @@ const appOrgListQuery = gql<AppOrgListQuery, AppOrgListQueryVariables>(`query ap
         totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
         edges{
           cursor,node{
-            id,ownerID,parentID,kind,
-            domain,code,name,profile,displaySort,countryCode,timezone,
+            id,ownerID,parentID,kind,profile,
+            domain,code,name,countryCode,timezone,
             owner { id,displayName }
           }
         }
+      }
+    }
+  }
+}`);
+
+const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
+  organizations(first:$first,orderBy: $orderBy,where: $where){
+    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+    edges{
+      cursor,node{
+        id,ownerID,parentID,kind,profile,
+        domain,code,name,countryCode,timezone,
+        owner { id,displayName }
       }
     }
   }
@@ -106,7 +119,7 @@ export default (props: OrgModalProps) => {
         where.domain = params.domain;
         where.pathHasPrefix = props.orgId ? `${props.orgId}/` : undefined
         if (props.appId) {
-          const result = await client.query(appOrgListQuery, {
+          const result = await client.query<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
             gid: gid('app', props.appId),
             first: params.pageSize,
             where,
@@ -123,7 +136,7 @@ export default (props: OrgModalProps) => {
             table.total = result.data.node.orgs.totalCount
           }
         } else {
-          const result = await client.query(orgListQuery, {
+          const result = await client.query<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
             first: params.pageSize,
             where,
             orderBy,
