@@ -1,8 +1,8 @@
 import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { OrderDirection, Org, OrgKind, OrgOrder, OrgOrderField, OrgWhereInput, gid, orgListQuery } from "@knockout-js/api";
-import { gql,useClient } from 'urql'
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgOrderField, OrgWhereInput, gid, orgListQuery } from "@knockout-js/api";
+import { gql, useClient } from 'urql'
 import { useLocale } from '../locale';
 import { CClient } from '../..';
 
@@ -26,7 +26,7 @@ export interface OrgModalProps {
   onClose: (data?: Org[]) => void;
 }
 
-const appOrgListQuery = gql`query appOrgList($gid: GID!,$first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
+const appOrgListQuery = gql<AppOrgListQuery, AppOrgListQueryVariables>(`query appOrgList($gid: GID!,$first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
   node(id:$gid){
     ... on App{
       id,
@@ -42,7 +42,7 @@ const appOrgListQuery = gql`query appOrgList($gid: GID!,$first: Int,$orderBy:Org
       }
     }
   }
-}`;
+}`);
 
 export default (props: OrgModalProps) => {
   const locale = useLocale('OrgModal'),
