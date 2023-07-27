@@ -2,7 +2,7 @@
 sidebar_label: OrgInput
 ---
 
-本 Demo 演示一行文字的用法。
+本 Demo 演示用法
 
 ```tsx preview
 import { OrgSelect, CClient } from "@knockout-js/org";

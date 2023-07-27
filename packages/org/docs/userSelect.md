@@ -1,11 +1,11 @@
 ---
-sidebar_label: AppSelect
+sidebar_label: UserSelect
 ---
 
 本 Demo 演示用法
 
 ```tsx preview
-import { AppSelect, CClient } from "@knockout-js/org";
+import { UserSelect, CClient } from "@knockout-js/org";
 import { useState } from "react";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 
@@ -22,7 +22,7 @@ export default () => {
 
   return (
     <Provider value={client}>
-      <AppSelect value={app} onChange={setApp} />
+      <UserSelect value={app} onChange={setApp} />
     </Provider>
   );
 };
@@ -34,7 +34,9 @@ export default () => {
 | ------------- | ------------------------------------------------------------- | ------------------ | ------ |
 | value         | 值                                                            | App                | -      |
 | disabled      | 禁用                                                          | boolean            | -      |
-| orgId         | orgId授权的应用                                               | string             | -      |
+| orgId         | orgId的用户                                                   | string             | -      |
+| orgRoleId     | orgRoleId的用户                                               | string             | -      |
+| userType      | 过滤出用户类型                                                | UserUserType       | -      |
 | searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps        | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps         | -      |
 | proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps      | -      |

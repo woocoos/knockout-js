@@ -2,7 +2,7 @@
 sidebar_label: OrgModal
 ---
 
-本 Demo 演示一行文字的用法。
+本 Demo 演示用法
 
 ```tsx preview
 import { OrgModal, CClient } from "@knockout-js/org";

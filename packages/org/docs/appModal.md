@@ -2,7 +2,7 @@
 sidebar_label: AppModal
 ---
 
-本 Demo 演示一行文字的用法。
+本 Demo 演示用法
 
 ```tsx preview
 import { AppModal, CClient } from "@knockout-js/org";
@@ -49,7 +49,7 @@ export default () => {
 | 参数          | 说明                                                          | 类型                | 默认值 |
 | ------------- | ------------------------------------------------------------- | ------------------- | ------ |
 | open          | 显示弹框                                                      | boolean             | -      |
-| orgId         | 根据orgId过滤                                                 | string              | -      |
+| orgId         | orgId授权的应用                                               | string              | -      |
 | title         | 弹框标题                                                      | string              | -      |
 | isMultiple    | 多选                                                          | boolean             | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps          | -      |

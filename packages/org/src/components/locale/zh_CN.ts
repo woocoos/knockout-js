@@ -3,6 +3,8 @@ import AppSelect from "../app-select/locale/zh_CN";
 import AppModal from "../app-modal/locale/zh_CN";
 import OrgSelect from "../org-select/locale/zh_CN";
 import OrgModal from "../org-modal/locale/zh_CN";
+import UserSelect from "../user-select/locale/zh_CN";
+import UserModal from "../user-modal/locale/zh_CN";
 
 const localeValues: Locale = {
   locale: 'zh-cn',
@@ -14,6 +16,8 @@ const localeValues: Locale = {
   OrgModal,
   AppSelect,
   AppModal,
+  UserSelect,
+  UserModal,
 }
 
 export default localeValues

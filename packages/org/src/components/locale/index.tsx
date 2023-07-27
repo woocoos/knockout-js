@@ -4,6 +4,8 @@ import { AppSelectLocale } from "../app-select/index";
 import { OrgModalLocale } from "../org-modal";
 import { OrgSelectLocale } from "../org-select";
 import { AppModalLocale } from "../app-modal";
+import { UserModalLocale } from "../user-modal";
+import { UserSelectLocale } from "../user-select";
 
 export interface Locale {
   locale: string;
@@ -15,6 +17,8 @@ export interface Locale {
   OrgModal: OrgModalLocale;
   AppSelect: AppSelectLocale;
   AppModal: AppModalLocale;
+  UserSelect: UserSelectLocale;
+  UserModal: UserModalLocale;
 }
 
 export interface LocaleProviderProps {

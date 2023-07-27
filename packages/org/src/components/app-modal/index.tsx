@@ -2,7 +2,7 @@
 import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { App, AppKind, AppWhereInput, appListQuery, gid } from '@knockout-js/api';
+import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, gid } from '@knockout-js/api';
 import { gql, useClient } from 'urql'
 import { useLocale } from '../locale';
 import { CClient } from '../..';
@@ -41,6 +41,18 @@ const orgAppListQuery = gql(/* GraphQL */`query orgAppList($gid: GID!,$first: In
             id,name,code,kind,comments,status
           }
         }
+      }
+    }
+  }
+}`);
+
+const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrder,$where:AppWhereInput){
+  apps(first:$first,orderBy: $orderBy,where: $where){
+    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+    edges{
+      cursor,node{
+        id,name,code,kind,redirectURI,appKey,appSecret,scopes,tokenValidity,
+        refreshTokenValidity,logo,comments,status,createdAt
       }
     }
   }
@@ -86,7 +98,8 @@ export default (props: AppModalProps) => {
       open={props.open}
       onOk={() => {
         props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id)));
-      }} onCancel={() => {
+      }}
+      onCancel={() => {
         props.onClose();
       }}
     >
@@ -109,23 +122,23 @@ export default (props: AppModalProps) => {
           where.codeContains = params.code;
           where.kindIn = filter.kind as AppKind[]
           if (props.orgId) {
-            const result = await client.query(orgAppListQuery, {
+            const result = await client.query<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
               gid: gid('org', props.orgId),
               first: params.pageSize,
               where,
             }, {
               url: `${client.url}?p=${params.current}`
             }).toPromise();
-            if (result.data?.node?.apps) {
-              result.data.node.apps.edges?.forEach((item: { node: App; }) => {
+            if (result.data?.node?.__typename === 'Org') {
+              result.data.node.apps.edges?.forEach((item) => {
                 if (item?.node) {
-                  table.data.push(item.node)
+                  table.data.push(item.node as App)
                 }
               })
               table.total = result.data.node.apps.totalCount
             }
           } else {
-            const result = await client.query(appListQuery, {
+            const result = await client.query<AppListQuery, AppListQueryVariables>(appListQuery, {
               first: params.pageSize,
               where,
             }, {
