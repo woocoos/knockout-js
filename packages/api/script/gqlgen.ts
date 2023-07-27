@@ -8,7 +8,10 @@ const config: CodegenConfig = {
         gqlTagName: 'gql',
       },
       schema: "script/__generated__/ucenter.graphql",
-      documents: "src/ucenter/**/*.ts",
+      documents: [
+        "src/ucenter/**/*.ts",
+        "../org/src/**/*.tsx"
+      ],
     }
   },
   ignoreNoDocuments: true,
