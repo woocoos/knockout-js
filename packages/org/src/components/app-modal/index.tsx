@@ -1,11 +1,18 @@
 
-import { Modal } from 'antd';
+import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
-import { ProColumns, ProTable } from '@ant-design/pro-table';
-// import defaultApp from '@/assets/images/default-app.png';
-import { App, AppKind, AppWhereInput, appListQuery } from '@knockout-js/api';
+import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
+import { App, AppWhereInput, appListQuery } from '@knockout-js/api';
 import { useClient } from 'urql'
 import { useLocale } from '../locale';
+import { CClient } from '../..';
+
+export interface AppModalLocale {
+  name: string;
+  code: string;
+  type: string;
+  desc: string;
+}
 
 export const EnumAppKind = {
   web: { text: 'web' },
@@ -13,16 +20,21 @@ export const EnumAppKind = {
   server: { text: 'server' },
 };
 
-export default (props: {
+export interface AppModalProps {
   open: boolean;
+  orgId?: string;
+  title?: string;
   isMultiple?: boolean;
-  title: string;
-  tableTitle?: string;
-  onClose: (selectData?: App[]) => void;
-}) => {
-  const locale = useLocale('AppSelect'),
+  modalProps?: ModalProps;
+  proTableProps?: ProTableProps<App, Record<string, any>, 'text'>;
+  onClose: (data?: App[]) => void;
+}
+
+
+export default (props: AppModalProps) => {
+  const locale = useLocale('AppModal'),
     glocale = useLocale('global'),
-    client = useClient(),
+    client = useClient() as CClient,
     columns: ProColumns<App>[] = [
       // 有需要排序配置  sorter: true
       {
@@ -56,27 +68,6 @@ export default (props: {
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
 
   const
-    // getRequest = async (params: TableParams, sort: TableSort, filter: TableFilter) => {
-    //   const table = { data: [] as App[], success: true, total: 0 },
-    //     where: AppWhereInput = {};
-    //   where.nameContains = params.nameContains;
-    //   where.codeContains = params.codeContains;
-    //   where.kindIn = filter.kind as AppKind[];
-
-    //   const result = await getAppList({
-    //     current: params.current,
-    //     pageSize: params.pageSize,
-    //     where,
-    //   });
-    //   if (result?.totalCount) {
-    //     table.data = result.edges?.map(item => item?.node) as App[];
-    //     table.data = await formatArrayFilesRaw(table.data, "logo", defaultApp)
-    //     table.total = result.totalCount;
-    //   }
-    //   setSelectedRowKeys([]);
-    //   setDataSource(table.data);
-    //   return table;
-    // },
     handleOk = () => {
       props?.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id)));
     },
@@ -103,6 +94,8 @@ export default (props: {
           const result = await client.query(appListQuery, {
             first: params.pageSize,
             where,
+          }, {
+            url: `${client.url}?p=${params.current}`
           }).toPromise();
           if (result.data?.apps.totalCount) {
             result.data.apps.edges?.forEach(item => {

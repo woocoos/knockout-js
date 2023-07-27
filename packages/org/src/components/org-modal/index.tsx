@@ -4,10 +4,19 @@ import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
 import { Org, OrgWhereInput, orgListQuery } from "@knockout-js/api";
 import { useClient } from 'urql'
 import { useLocale } from '../locale';
+import { CClient } from '../..';
+
+export interface OrgModalLocale {
+  name:string;
+  code:string;
+  domain:string;
+  owner:string;
+  desc:string;
+}
 
 export interface OrgModalProps {
   open: boolean;
-  orgId: string;
+  orgId?: string;
   title?: string;
   isMultiple?: boolean;
   modalProps?: ModalProps;
@@ -18,7 +27,7 @@ export interface OrgModalProps {
 export default (props: OrgModalProps) => {
   const locale = useLocale('OrgModal'),
     glocale = useLocale('global'),
-    client = useClient(),
+    client = useClient() as CClient,
     [dataSource, setDataSource] = useState<Org[]>([]),
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]),
     columns: ProColumns<Org>[] = [
@@ -77,6 +86,8 @@ export default (props: OrgModalProps) => {
         const result = await client.query(orgListQuery, {
           first: params.pageSize,
           where,
+        }, {
+          url: `${client.url}?p=${params.current}`
         }).toPromise();
         if (result.data?.organizations.totalCount) {
           result.data.organizations.edges?.forEach(item => {

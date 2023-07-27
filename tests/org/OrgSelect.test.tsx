@@ -1,7 +1,7 @@
 import { test, expect } from 'vitest';
 import * as React from 'react';
 import { fireEvent, render, renderHook, screen } from '@testing-library/react';
-import { OrgInput } from '@knockout-js/org';
+import { CClient, OrgSelect } from '@knockout-js/org';
 import { Provider, Client, cacheExchange, fetchExchange } from 'urql';
 import { useState } from "react";
 import { orgListQuery } from "@knockout-js/api";
@@ -21,16 +21,19 @@ test('mocktest', async () => {
 
 });
 
-test('render orgInput', async () => {
-  const client = new Client({
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
-    exchanges: [cacheExchange, fetchExchange],
-  });
+test('render OrgSelect', async () => {
+  const url = 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+    client = new Client({
+      url,
+      exchanges: [cacheExchange, fetchExchange],
+    }) as CClient;
 
-  const {result} = renderHook(() => useState({id: '1', name: 'org1'}))
+  client.url = url
+
+  const { result } = renderHook(() => useState({ id: '1', name: 'org1' }))
   const [org, setOrg] = result.current;
   const ele = render(<Provider value={client}>
-    <OrgInput value={org} onChange={setOrg} orgId={org.id}
+    <OrgSelect value={org} onChange={setOrg} orgId={org.id}
     />
   </Provider>);
 

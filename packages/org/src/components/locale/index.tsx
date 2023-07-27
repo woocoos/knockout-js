@@ -1,6 +1,9 @@
 import { createContext, useContext } from "react";
 import zhCN from "./zh_CN";
 import { AppSelectLocale } from "../app-select/index";
+import { OrgModalLocale } from "../org-modal";
+import { OrgSelectLocale } from "../org-select";
+import { AppModalLocale } from "../app-modal";
 
 export interface Locale {
   locale: string;
@@ -8,18 +11,10 @@ export interface Locale {
     query: string;
     reset: string;
   },
-  OrgInput: {
-    placeholder: string;
-    title: string;
-  },
-  OrgModal: {
-    name: string;
-    code: string;
-    domain: string;
-    owner: string;
-    desc: string;
-  },
+  OrgSelect: OrgSelectLocale;
+  OrgModal: OrgModalLocale;
   AppSelect: AppSelectLocale;
+  AppModal: AppModalLocale;
 }
 
 export interface LocaleProviderProps {

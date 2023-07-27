@@ -1,22 +1,24 @@
-import { Input } from 'antd';
-import ModalApp from './modal';
+import { Input, ModalProps } from 'antd';
+import ModalApp from '../app-modal';
 import { useState } from 'react';
 import { CloseCircleFilled } from '@ant-design/icons';
 import { App } from '@knockout-js/api';
 import { useLocale } from '../locale';
+import { SearchProps } from 'antd/es/input';
+import { ProTableProps } from '@ant-design/pro-table';
 
 export interface AppSelectLocale {
   placeholder: string;
   title: string;
-  name: string;
-  code: string;
-  type: string;
-  desc: string;
 }
 
 export default (props: {
   value?: App;
   disabled?: boolean;
+  orgId?: string;
+  searchProps?: SearchProps;
+  modalProps?: ModalProps;
+  proTableProps?: ProTableProps<App, Record<string, any>, 'text'>;
   onChange?: (value?: App) => void;
 }) => {
   const locale = useLocale('AppSelect'),
@@ -29,9 +31,10 @@ export default (props: {
   return (
     <>
       <Input.Search
+        placeholder={locale.placeholder}
+        {...props.searchProps}
         value={props.value?.name || ''}
         disabled={props.disabled}
-        placeholder={locale.placeholder}
         suffix={props.value && props.disabled != true ? <CloseCircleFilled
           style={{ fontSize: '12px', cursor: 'pointer', color: 'rgba(0, 0, 0, 0.25)' }}
           onClick={() => {
@@ -47,6 +50,9 @@ export default (props: {
       <ModalApp
         open={modal.open}
         title={locale.title}
+        modalProps={props.modalProps}
+        proTableProps={props.proTableProps}
+        orgId={props.orgId}
         onClose={(selectData) => {
           if (selectData?.length) {
             props.onChange?.(selectData[0]);
