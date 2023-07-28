@@ -18,10 +18,12 @@
     "stylelint:fix": "pnpm stylelint --fix",
     "lint": "pnpm eslint && pnpm stylelint",
     "lint:fix": "pnpm eslint:fix && pnpm stylelint:fix",
-    "test": "vitest"
+    "test": "vitest",
+    "ci:publish": "pnpm publish -r"
   },
   "devDependencies": {
     "@applint/spec": "^1.0.0",
+    "@changesets/cli": "^2.26.2",
     "@docusaurus/module-type-aliases": "^2.3.1",
     "@docusaurus/theme-classic": "^2.3.1",
     "@ice/pkg": "^1.5.10",
