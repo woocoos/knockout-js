@@ -6,9 +6,9 @@ sidebar_label: 多语言
 
 ```tsx preview
 import { useState } from "react";
-import { OrgInput, LocaleProvider, CClient } from "@knockout-js/org";
+import { OrgSelect, CClient } from "@knockout-js/org";
+import { BasicProvider, LocaleType } from "@knockout-js/basic";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
-import enUS from "@knockout-js/org/src/components/locale/en_US";
 
 export default () => {
   const [org, setOrg] = useState(),
@@ -25,13 +25,13 @@ export default () => {
     <Provider value={client}>
       <div>
         中文
-        <OrgInput value={org} onChange={setOrg} />
+        <OrgSelect value={org} onChange={setOrg} />
       </div>
       <div>
         英文
-        <LocaleProvider locale={enUS}>
-          <OrgInput value={org} onChange={setOrg} />
-        </LocaleProvider>
+        <BasicProvider locale={LocaleType.enUS}>
+          <OrgSelect value={org} onChange={setOrg} />
+        </BasicProvider>
       </div>
     </Provider>
   );

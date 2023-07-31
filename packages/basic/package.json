@@ -1,11 +1,11 @@
 {
-  "name": "@knockout-js/org",
+  "name": "@knockout-js/basic",
   "version": "0.0.1",
-  "description": "Knockout组织相关组件",
+  "description": "组件功能描述",
   "files": [
     "esm",
-    "cjs",
     "es2017",
+    "cjs",
     "dist"
   ],
   "main": "esm/index.js",
@@ -32,35 +32,36 @@
   ],
   "scripts": {
     "start": "ice-pkg start",
-    "build": "rimraf esm es2017 && ice-pkg build",
+    "build": "ice-pkg build",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
-    "icepkg",
+    "ice",
     "react",
     "component"
   ],
   "dependencies": {
+    "@swc/helpers": "^0.5.1",
+    "@ice/jsx-runtime": "^0.2.0",
+    "@ice/runtime": "^1.2.4",
     "@ant-design/icons": "^5.1.4",
     "@ant-design/pro-table": "^3.8.2",
-    "@ice/jsx-runtime": "^0.2.0",
-    "@knockout-js/api": "0.0.1",
-    "@knockout-js/basic": "0.0.1",
-    "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
     "urql": "^4.0.4"
   },
   "devDependencies": {
-    "@ice/pkg": "^1.5.10",
-    "@types/react": "^18.0.0",
+    "@ice/pkg": "^1.0.0",
     "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
     "typescript": "^4.9.4"
   },
   "peerDependencies": {
     "react": "^17 || ^18"
   },
   "publishConfig": {
-    "registry": "https://registry.npmjs.org/"
+    "access": "public"
   },
   "license": "MIT"
 }

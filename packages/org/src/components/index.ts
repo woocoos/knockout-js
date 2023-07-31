@@ -4,4 +4,4 @@ export { default as AppSelect } from './app-select';
 export { default as AppModal } from './app-modal';
 export { default as UserSelect } from './user-select';
 export { default as UserModal } from './user-modal';
-export { default as LocaleProvider } from './locale';
+export * from './locale';
