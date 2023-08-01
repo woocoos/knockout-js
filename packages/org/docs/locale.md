@@ -7,7 +7,7 @@ sidebar_label: 多语言
 ```tsx preview
 import { useState } from "react";
 import { OrgSelect, CClient } from "@knockout-js/org";
-import { BasicProvider, LocaleType } from "@knockout-js/basic";
+import { BasicProvider, LocaleType } from "@knockout-js/layout";
 import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 
 export default () => {

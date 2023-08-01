@@ -5,6 +5,7 @@ export default defineConfig({
     [
       '@ice/pkg-plugin-docusaurus',
       {
+        title:'@knockout-js',
         path: 'packages',
         sidebarItemsGenerator: (args: any) => {
           // The index.md doc should not be the category, so we rewrite the default isCategoryIndex function.

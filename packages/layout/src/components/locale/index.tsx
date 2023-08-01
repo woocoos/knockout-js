@@ -1,15 +1,17 @@
 import { createContext, useContext } from "react";
 import zhCN from "./zh_CN";
 import enUS from "./en_US";
-import { ThemeModelLocale } from '../theme-model';
+import { TenantDropdownLocale } from '../tenant-dropdown';
+import { ThemeSwitchLocale } from '../theme-switch';
 import { LeavePromptLocale } from '../leave-prompt';
 import { AvatarDropdownLocale } from '../avatar-dropdown';
 
 export interface Locale {
   locale: string;
-  ThemeModel: ThemeModelLocale;
+  ThemeSwitch: ThemeSwitchLocale;
   LeavePrompt: LeavePromptLocale;
-  AvatarDropdown: AvatarDropdownLocale
+  AvatarDropdown: AvatarDropdownLocale;
+  TenantDropdown: TenantDropdownLocale;
 }
 
 export enum LocaleType {

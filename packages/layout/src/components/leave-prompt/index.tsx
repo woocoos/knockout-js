@@ -2,6 +2,11 @@ import { history, useLocation } from '@ice/runtime';
 import { ReactNode, useEffect } from 'react';
 import { useLocale } from '../locale';
 
+
+/**
+ * TODO：这个组件会有调整先不开方出来使用
+ */
+
 export interface LeavePromptLocale {
   leavePromptTip: string;
 }
@@ -15,11 +20,11 @@ const pathName = {
  * @param callback 确认离开
  */
 export const checkLave = (callback: () => void) => {
-  const leave = useLocale('LeavePrompt')
+  const locale = useLocale('LeavePrompt')
   if (pathName.when) {
     callback();
   } else {
-    if (confirm(leave.leavePromptTip)) {
+    if (confirm(locale.leavePromptTip)) {
       pathName.when = true;
       callback();
     }

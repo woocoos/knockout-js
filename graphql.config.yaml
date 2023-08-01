@@ -2,9 +2,10 @@ projects:
   ucenter:
     schema: "packages/api/script/__generated__/ucenter.graphql"
     documents:
-      - 'src/services/ucenter/**/*.ts'
-      - 'packages/org/src/**/*.ts'
-      - 'packages/api/script/__generated__/ucenter.graphql'
+      - "src/services/ucenter/**/*.ts"
+      - "packages/org/src/**/*.ts"
+      - "packages/layout/src/**/*.ts"
+      - "packages/api/script/__generated__/ucenter.graphql"
     extensions:
       endpoints:
         default:

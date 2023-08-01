@@ -1,4 +1,4 @@
-# 用户中心
+# @knockout-js/org
 
 组件功能描述
 

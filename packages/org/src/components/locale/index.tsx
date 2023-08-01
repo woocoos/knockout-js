@@ -1,7 +1,7 @@
 import { createContext, useContext } from "react";
 import zhCN from "./zh_CN";
 import enUS from "./en_US";
-import { BasicContext, LocaleType, BasicProviderProps } from "@knockout-js/basic"
+import { BasicContext, LocaleType, BasicProviderProps } from "@knockout-js/layout"
 import { AppSelectLocale } from "../app-select/index";
 import { OrgModalLocale } from "../org-modal";
 import { OrgSelectLocale } from "../org-select";

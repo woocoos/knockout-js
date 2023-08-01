@@ -10,7 +10,8 @@ const config: CodegenConfig = {
       schema: "script/__generated__/ucenter.graphql",
       documents: [
         "src/ucenter/**/*.ts",
-        "../org/src/**/*.tsx"
+        "../org/src/**/*.tsx",
+        "../layout/src/**/*.tsx",
       ],
     }
   },
