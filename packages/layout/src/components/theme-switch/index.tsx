@@ -8,10 +8,20 @@ export interface ThemeSwitchLocale {
 }
 
 export interface ThemeSwitchProps {
+  /**
+   * 值
+   */
   value: boolean;
+  /**
+   * switch的设置
+   */
   switchProps: SwitchProps;
+  /**
+   * 值变更事件 (value: boolean) => void;
+   */
   onChange: (value: boolean) => void;
 }
+
 const ThemeSwitch: React.FC<ThemeSwitchProps> = (props: ThemeSwitchProps) => {
   const locale = useLocale('ThemeSwitch')
   return (

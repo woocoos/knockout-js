@@ -1,0 +1,24 @@
+.layout {
+  :global(.ant-menu-item-active) {
+    .menuIconPopup {
+      display: block;
+    }
+  }
+
+  :global(.ant-pro-sider-collapsed .ant-menu-item-active) {
+    .menuIconPopup {
+      display: none;
+    }
+  }
+}
+
+.menuIconPopup {
+  display: none;
+  position: absolute;
+  top: 12px;
+  right: 16px;
+
+  :global(&.anticon) {
+    display: none;
+  }
+}

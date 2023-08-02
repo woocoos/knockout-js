@@ -9,9 +9,21 @@ export interface AvatarDropdownLocale {
 }
 
 export interface AvatarDropdownProps {
+  /**
+   * 用户名
+   */
   name?: string;
+  /**
+   * 头像
+   */
   avatar?: string;
-  menu?: MenuProps;
+  /**
+   * ant的
+   */
+  menuProps?: MenuProps;
+  /**
+   * 单击退出事件 () => void;
+   */
   onLogoutClick?: () => void;
 }
 
@@ -32,7 +44,7 @@ const AvatarDropdown = (props: AvatarDropdownProps) => {
     };
 
   return (
-    <Dropdown menu={props.menu || menu}>
+    <Dropdown menu={props.menuProps || menu}>
       <span className={`${styles.action} ${styles.account}`}>
         <Avatar
           size="small"

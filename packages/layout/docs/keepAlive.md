@@ -46,8 +46,4 @@ export default () => {
 
 ## props
 
-| 参数       | 说明         | 类型            | 默认值 |
-| ---------- | ------------ | --------------- | ------ |
-| id         | id           | string          | -      |
-| clearAlive | 是否清理缓存 | boolean         | -      |
-| children   | 包裹的内容   | react.ReactNode | -      |
+<ReactDocgenProps path="../src/components/keep-alive/index.tsx"></ReactDocgenProps>

@@ -1,0 +1,26 @@
+.demoLayout {
+  position: relative;
+  height: 400px;
+
+
+  :global(.ant-pro-layout>div) {
+    position: absolute;
+
+  }
+
+  :global(.ant-pro-layout .ant-layout-header.ant-pro-layout-header) {
+    position: absolute;
+  }
+
+  :global(.ant-pro-layout .ant-pro-sider.ant-pro-sider-fixed) {
+    position: absolute;
+  }
+
+  :global(.ant-pro-layout .ant-pro-layout-container) {
+    position: unset !important;
+  }
+
+  :global(.ant-pro-global-header-header-actions-item .ant-switch) {
+    padding-block: 0;
+  }
+}

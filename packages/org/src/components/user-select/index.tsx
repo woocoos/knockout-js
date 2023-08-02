@@ -13,14 +13,41 @@ export interface UserSelectLocale {
 }
 
 export interface UserSelectProps {
+  /**
+   * 值
+   */
   value?: User;
+  /**
+   * 禁用
+   */
   disabled?: boolean;
+  /**
+   * orgId的用户
+   */
   orgId?: string;
+  /**
+   * orgRoleId的用户
+   */
   orgRoleId?: string;
+  /**
+   * 过滤用户类型
+   */
   userType?: UserUserType;
+  /**
+   * ant SearchProps api
+   */
   searchProps?: SearchProps;
+  /**
+   * ant ModalProps api
+   */
   modalProps?: ModalProps;
+  /**
+   * ProTable api
+   */
   proTableProps?: ProTableProps<User, Record<string, any>, 'text'>;
+  /**
+   * 值变更事件  (value?: User) => void;
+   */
   onChange?: (value?: User) => void;
 }
 

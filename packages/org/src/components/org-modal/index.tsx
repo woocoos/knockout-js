@@ -15,14 +15,41 @@ export interface OrgModalLocale {
 }
 
 export interface OrgModalProps {
+  /**
+  * 弹框开关
+  */
   open: boolean;
+  /**
+  * 弹框标题
+  */
   title?: string;
+  /**
+  * 根据orgId过滤pathHasPrefix
+  */
   orgId?: string;
+  /**
+   * appId授权的组织列表
+   */
   appId?: string;
+  /**
+   * 类型
+   */
   kind: OrgKind;
+  /**
+   * 多选
+   */
   isMultiple?: boolean;
+  /**
+   * ant ModalProps api
+   */
   modalProps?: ModalProps;
+  /**
+   * ProTable api
+   */
   proTableProps?: ProTableProps<Org, Record<string, any>, 'text'>;
+  /**
+   * 关闭弹框 (data?: Org[]) => void;
+   */
   onClose: (data?: Org[]) => void;
 }
 

@@ -12,7 +12,13 @@ export interface TenantDropdownLocale {
 }
 
 export interface TenantDropdownProps {
+  /**
+   * 当前 tenantId
+   */
   value: string;
+  /**
+   * value变更事件 (value: string) => void;
+   */
   onChange: (value: string) => void;
 }
 
@@ -25,9 +31,9 @@ const userRootOrgListQuery = gql(/* GraphQL */`query userRootOrgs{
 export default (props: TenantDropdownProps) => {
   const locale = useLocale('TenantDropdown'),
     client = useClient(),
-    [list, setList] = useState<Org[]>([]),
-    [info, setInfo] = useState<Org>(),
-    [menu, setMenu] = useState<MenuProps>();
+    [list, setList] = useState<Array<Org>>([]),
+    [info, setInfo] = useState<Org | undefined>(undefined),
+    [menu, setMenu] = useState<MenuProps | undefined>(undefined);
 
   const
     getRequest = async () => {

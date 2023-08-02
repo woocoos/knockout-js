@@ -5,7 +5,7 @@ export default defineConfig({
     [
       '@ice/pkg-plugin-docusaurus',
       {
-        title:'@knockout-js',
+        title: '@knockout-js',
         path: 'packages',
         sidebarItemsGenerator: (args: any) => {
           // The index.md doc should not be the category, so we rewrite the default isCategoryIndex function.
@@ -32,6 +32,9 @@ export default defineConfig({
         exclude: ['**/node_modules/**'],
         onBrokenLinks: 'warn',
         pageRouteBasePath: '/',
+        remarkPlugins: [
+          "require('@ice/remark-react-docgen-docusaurus')"
+        ]
       },
     ],
   ],

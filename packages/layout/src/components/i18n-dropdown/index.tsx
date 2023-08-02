@@ -2,19 +2,29 @@ import { useState, useEffect, useCallback } from 'react';
 import { Dropdown, MenuProps } from 'antd';
 import styles from './index.module.css';
 
-export interface I18nDropdownProps<T extends React.Key> {
-  value: T;
-  menuItems: { key: T, label: string }[];
-  onChange: (value: T) => void;
+export interface I18nDropdownProps {
+  /**
+   * 多语言key
+   */
+  value: React.Key;
+  /**
+   * 切换列表
+   */
+  menuItems: { key: React.Key, label: string }[];
+  /**
+   * value变更事件 (value: React.Key) => void;
+   * @
+   */
+  onChange: (value: React.Key) => void;
 }
 
-function I18nDropdown<T extends React.Key>(props: I18nDropdownProps<T>) {
+function I18nDropdown(props: I18nDropdownProps) {
 
   const [locale, setLocale] = useState(''),
     [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
 
   const menuItemsClick = useCallback(({ key }: { key: React.Key }) => {
-    props.onChange(key as T)
+    props.onChange(key)
   }, [props.menuItems])
 
   useEffect(() => {

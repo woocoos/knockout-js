@@ -16,14 +16,41 @@ export interface UserModalLocale {
 }
 
 export interface UserModalProps {
+  /**
+   * 显示弹框
+   */
   open: boolean;
+  /**
+   * 弹框标题
+   */
   title: string;
+  /**
+   * 类型过滤
+   */
   userType?: UserUserType;
+  /**
+   * 多选
+   */
   isMultiple?: boolean;
+  /**
+   * orgId下的用户
+   */
   orgId?: string;
+  /**
+   * orgRoleId下的用户
+   */
   orgRoleId?: string;
+  /**
+   * ant ModalProps api
+   */
   modalProps?: ModalProps;
+  /**
+   * ProTable api
+   */
   proTableProps?: ProTableProps<User, Record<string, any>, 'text'>;
+  /**
+   * 关闭弹框事件 (selectData?: User[]) => void;
+   */
   onClose: (selectData?: User[]) => void;
 }
 

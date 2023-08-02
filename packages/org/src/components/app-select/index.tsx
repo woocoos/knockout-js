@@ -12,15 +12,38 @@ export interface AppSelectLocale {
   title: string;
 }
 
-export default (props: {
+export interface AppSelectProps {
+  /**
+   * 值
+   */
   value?: App;
+  /**
+   * 禁用
+   */
   disabled?: boolean;
+  /**
+   * orgId授权的应用
+   */
   orgId?: string;
+  /**
+   * ant SearchProps api
+   */
   searchProps?: SearchProps;
+  /**
+   * ant ModalProps api
+   */
   modalProps?: ModalProps;
+  /**
+   * ProTable api
+   */
   proTableProps?: ProTableProps<App, Record<string, any>, 'text'>;
+  /**
+   * 值变更事件 (value?: App) => void;
+   */
   onChange?: (value?: App) => void;
-}) => {
+}
+
+export default (props: AppSelectProps) => {
   const locale = useLocale('AppSelect'),
     [modal, setModal] = useState<{
       open: boolean;

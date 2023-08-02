@@ -21,12 +21,33 @@ export const EnumAppKind = {
 };
 
 export interface AppModalProps {
+  /**
+   * 弹框开关
+   */
   open: boolean;
+  /**
+   * orgId授权的应用
+   */
   orgId?: string;
+  /**
+   * 弹框标题
+   */
   title?: string;
+  /**
+   * 多选
+   */
   isMultiple?: boolean;
+  /**
+   * ant modal api
+   */
   modalProps?: ModalProps;
+  /**
+   * ProTable api
+   */
   proTableProps?: ProTableProps<App, Record<string, any>, 'text'>;
+  /**
+   * 关闭弹框 (data?:App[])=>void
+   */
   onClose: (data?: App[]) => void;
 }
 
