@@ -25,9 +25,9 @@ export default () => {
 
 ## props
 
-| 参数          | 说明                                              | 类型      | 默认值 |
-| ------------- | ------------------------------------------------- | --------- | ------ |
-| avatar        | 头像                                              | boolean   | -      |
-| name          | 名称                                              | string    | -      |
-| menu          | [参考](https://ant.design/components/menu-cn#api) | MenuProps | -      |
-| onLogoutClick | 退出登陆                                          | ()=>void  | -      |
+| 参数            | 说明                                              | 类型        | 默认值 |
+|---------------|-------------------------------------------------|-----------|-----|
+| avatar        | 头像                                              | boolean   | -   |
+| name          | 名称                                              | string    | -   |
+| menu          | [参考](https://ant.design/components/menu-cn#api) | MenuProps | -   |
+| onLogoutClick | 退出登陆                                            | ()=>void  | -   |

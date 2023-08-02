@@ -28,7 +28,7 @@ export default () => {
 
 ## props
 
-| 参数     | 说明   | 类型                 | 默认值 |
-| -------- | ------ | -------------------- | ------ |
-| value    | 值     | string               | -      |
-| onChange | 更新值 | (value:string)=>void | -      |
+| 参数       | 说明  | 类型                   | 默认值 |
+|----------|-----|----------------------|-----|
+| value    | 值   | string               | -   |
+| onChange | 更新值 | (value:string)=>void | -   |

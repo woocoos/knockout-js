@@ -24,8 +24,8 @@ export default () => {
 
 ## props
 
-| 参数      | 说明     | 类型                        | 默认值 |
-| --------- | -------- | --------------------------- | ------ |
-| value     | 值       | T                           | -      |
-| menuItems | 下拉列表 | { key: T, label: string }[] | -      |
-| onChange  | 更新值   | (value:T)=>void             | -      |
+| 参数        | 说明   | 类型                          | 默认值 |
+|-----------|------|-----------------------------|-----|
+| value     | 值    | T                           | -   |
+| menuItems | 下拉列表 | { key: T, label: string }[] | -   |
+| onChange  | 更新值  | (value:T)=>void             | -   |

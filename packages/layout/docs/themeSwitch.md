@@ -31,8 +31,8 @@ export default () => {
 
 ## props
 
-| 参数        | 说明                                                | 类型                   | 默认值 |
-| ----------- | --------------------------------------------------- | ---------------------- | ------ |
-| value       | 值                                                  | boolean                | -      |
-| switchProps | [参考](https://ant.design/components/switch-cn#api) | SwitchProps            | -      |
-| onChange    | 更新值                                              | (value?:boolean)=>void | -      |
+| 参数          | 说明                                                | 类型                     | 默认值 |
+|-------------|---------------------------------------------------|------------------------|-----|
+| value       | 值                                                 | boolean                | -   |
+| switchProps | [参考](https://ant.design/components/switch-cn#api) | SwitchProps            | -   |
+| onChange    | 更新值                                               | (value?:boolean)=>void | -   |
