@@ -7,7 +7,7 @@ const config: CodegenConfig = {
       presetConfig: {
         gqlTagName: 'gql',
       },
-      schema: "script/__generated__/ucenter.graphql",
+      schema: "script/generated/ucenter.graphql",
       documents: [
         "src/ucenter/**/*.ts",
         "../org/src/**/*.tsx",
