@@ -50,7 +50,7 @@ export default () => {
 
 <ReactDocgenProps path="../src/components/leave-prompt/index.tsx"></ReactDocgenProps>
 
-## Event
+## useLeavePrompt
 
 | 名称               | 参数                   | 描述                                           |
 | ------------------ | ---------------------- | ---------------------------------------------- |
