@@ -5,6 +5,7 @@ node_modules/
 
 # production
 .docusaurus/
+.ice/
 build/
 dist/
 tmp/

@@ -1,0 +1,21 @@
+{
+  "name": "@examples/with-urql",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "start": "ice start",
+    "build": "ice build"
+  },
+  "dependencies": {
+    "@knockout-js/ice-urql": "workspace:*",
+    "@ice/runtime": "^1.2.4",
+    "@ice/plugin-request": "^1.0.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "tslib": "^2.4.0"
+  },
+  "devDependencies": {
+    "@ice/app": "^3.2.6",
+    "@types/react": "^18.0.0"
+  }
+}
