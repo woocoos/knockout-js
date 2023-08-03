@@ -1,12 +1,14 @@
 import { ClientOptions } from 'urql';
+import { AuthHandler } from "./request";
 
-interface CustomRequest extends ClientOptions {
+export interface CustomClientOptions extends ClientOptions {
   instanceName?: string;
   withFullResponse?: boolean;
+
+  authHandler?: AuthHandler;
 }
 
-export type Request = CustomRequest | CustomRequest[];
-export type RequestConfig = Request | object;
+export type RequestConfig = CustomClientOptions | CustomClientOptions[];
 
 export function defineUrqlConfig(configOrDefineConfig: RequestConfig | (() => RequestConfig)): RequestConfig {
   if (typeof configOrDefineConfig === 'function') {

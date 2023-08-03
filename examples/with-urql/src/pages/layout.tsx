@@ -1,6 +1,4 @@
-import { Outlet, defineDataLoader } from '@ice/runtime';
-import {defineUrqlConfig} from '@knockout-js/ice-urql/types';
-import { debugExchange, fetchExchange } from 'urql';
+import { Outlet } from '@ice/runtime';
 export default () => {
   return (
     <div>
@@ -21,14 +19,3 @@ export function pageConfig() {
     ],
   };
 }
-
-export const dataLoader = defineDataLoader(async () => {
-});
-
-export const urqlConfig = defineUrqlConfig({
-  url: 'https://trygql.formidable.dev/graphql/apq-weather',
-  exchanges: [
-    fetchExchange,
-    debugExchange,
-  ],
-})
