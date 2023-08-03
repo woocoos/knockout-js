@@ -29,6 +29,7 @@ export default () => {
     <div className={styles.demoLayout}>
       <Provider value={client}>
         <Layout
+          appCode="adminx"
           onClickMenuItem={(item, isOpen) => {
             console.log(item, isOpen);
           }}
@@ -61,6 +62,17 @@ export default () => {
                     path: "/",
                     icon: <ControlOutlined />,
                   },
+                  {
+                    name: "菜单1",
+                    path: "/",
+                    icon: <ControlOutlined />,
+                    children: [
+                      {
+                        name: "菜单1-1",
+                        path: "/",
+                      },
+                    ],
+                  },
                 ];
               },
             },
@@ -76,4 +88,15 @@ export default () => {
 
 ## props
 
-<ReactDocgenProps path="../src/components/layout/index.tsx"></ReactDocgenProps>
+<!-- <ReactDocgenProps path="../src/components/layout/index.tsx"></ReactDocgenProps> -->
+
+| 属性             | 描述                         | 类型                                           | 必填 | 默认值 |
+| ---------------- | ---------------------------- | ---------------------------------------------- | ---- | ------ |
+| appCode          | 应用code                     | string                                         | ✅   | -      |
+| i18nProps        | I18nDropdown组件对应的参数   | I18nDropdownProps                              | ✅   | -      |
+| tenantProps      | TenantDropdown组件对应的参数 | TenantDropdownProps                            | ✅   | -      |
+| avatarProps      | AvatarDropdown组件对应的参数 | AvatarDropdownProps                            | ✅   | -      |
+| themeSwitchProps | ThemeSwitch组件对应的参数    | ThemeSwitchProps                               | ✅   | -      |
+| proLayoutProps   | ProLayout组件对应的参数      | ProLayoutProps                                 | ❌   | -      |
+| onClickMenuItem  | 菜单点击返回                 | (item: MenuDataItem,isOpen?: boolean) => void; | ❌   | -      |
+| children         | 默认插槽                     | ReactNode                                      | ✅   | -      |

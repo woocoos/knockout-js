@@ -5,12 +5,18 @@ import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import { ProConfigProvider } from '@ant-design/pro-provider';
 import styles from './layout.module.css';
-import { ReactNode } from 'react';
+import { ReactNode, useCallback } from 'react';
 import { AliveScope } from "react-activation";
 import { NodeExpandOutlined } from '@ant-design/icons';
+import { gql, useClient } from 'urql';
+import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 
 
 export interface LayoutProps {
+  /**
+   * 应用code
+   */
+  appCode: string;
   /**
    * I18nDropdown组件对应的参数
    */
@@ -45,11 +51,30 @@ export interface LayoutProps {
   children: ReactNode;
 }
 
-function Layout(props: LayoutProps) {
-
-  const loadMenu = async () => {
-    return [];
+const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
+  userMenus(appCode: $appCode){
+    id,parentID,kind,name,comments,displaySort,icon,route
   }
+}`);
+
+const Layout = (props: LayoutProps) => {
+  const client = useClient();
+
+  // 根据列表格式化成菜单树结构
+  const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
+    if (!parentList) {
+      parentList = list.filter(item => item.parentId == '0');
+    }
+    parentList.forEach((pItem) => {
+      let children = list.filter(
+        (allItem) => allItem.parentId == pItem.key,
+      );
+      if (children && children.length) {
+        pItem.children = listFormatTree(list, children);
+      }
+    });
+    return parentList;
+  }, [])
 
   return <ProConfigProvider dark={props.themeSwitchProps.value}>
     <ProLayout
@@ -58,7 +83,26 @@ function Layout(props: LayoutProps) {
       fixSiderbar
       menu={{
         locale: true,
-        request: loadMenu,
+        request: async () => {
+          const result = await client.query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
+            appCode: props.appCode
+          }).toPromise();
+          if (result.data?.userMenus.length) {
+            const meunList = result.data.userMenus.map(item => {
+              return {
+                key: item.id,
+                name: item.name,
+                // todo: icon的处理方案还没确认先按旧的方式处理
+                icon: item.icon ? <i className={item.icon} /> : undefined,
+                parentId: item.parentID,
+                path: item.route,
+              } as MenuDataItem
+            })
+
+            return listFormatTree(meunList);
+          }
+          return [];
+        },
       }}
       actionsRender={() => [
         <I18nDropdown {...props.i18nProps} />,
