@@ -48,6 +48,7 @@
     "@ice/jsx-runtime": "^0.2.0",
     "@ice/runtime": "^1.2.4",
     "@knockout-js/api": "workspace:^",
+    "@knockout-js/org": "workspace:^",
     "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
     "react-activation": "^0.12.4",

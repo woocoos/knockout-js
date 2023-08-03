@@ -19,11 +19,6 @@ export default () => {
   });
   const [tenantId, setTenantId] = useState("1");
   const [theme, setTheme] = useState(false);
-  const [locale, setLocale] = useState("zh-cn"),
-    menuItems = [
-      { key: "zh-cn", label: "中文" },
-      { key: "en-us", label: "En" },
-    ];
 
   return (
     <div className={styles.demoLayout}>
@@ -32,11 +27,6 @@ export default () => {
           appCode="adminx"
           onClickMenuItem={(item, isOpen) => {
             console.log(item, isOpen);
-          }}
-          i18nProps={{
-            value: locale,
-            menuItems: menuItems,
-            onChange: setLocale,
           }}
           tenantProps={{
             value: tenantId,
@@ -93,7 +83,7 @@ export default () => {
 | 属性             | 描述                         | 类型                                           | 必填 | 默认值 |
 | ---------------- | ---------------------------- | ---------------------------------------------- | ---- | ------ |
 | appCode          | 应用code                     | string                                         | ✅   | -      |
-| i18nProps        | I18nDropdown组件对应的参数   | I18nDropdownProps                              | ✅   | -      |
+| i18nProps        | I18nDropdown组件对应的参数   | I18nDropdownProps                              | ❌   | -      |
 | tenantProps      | TenantDropdown组件对应的参数 | TenantDropdownProps                            | ✅   | -      |
 | avatarProps      | AvatarDropdown组件对应的参数 | AvatarDropdownProps                            | ✅   | -      |
 | themeSwitchProps | ThemeSwitch组件对应的参数    | ThemeSwitchProps                               | ✅   | -      |

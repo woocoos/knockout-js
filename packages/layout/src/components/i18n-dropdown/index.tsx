@@ -1,55 +1,45 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
 import { Dropdown, MenuProps } from 'antd';
 import styles from './index.module.css';
+import { BasicContext, BasicProviderProps, LocaleType } from '../locale';
 
 export interface I18nDropdownProps {
   /**
-   * 多语言key
+   * 值变更事件 (value: LocaleType) => void;
    */
-  value: React.Key;
-  /**
-   * 切换列表
-   */
-  menuItems: { key: React.Key, label: string }[];
-  /**
-   * value变更事件 (value: React.Key) => void;
-   * @
-   */
-  onChange: (value: React.Key) => void;
+  onChange?: (value: LocaleType) => void;
 }
 
 function I18nDropdown(props: I18nDropdownProps) {
-
-  const [locale, setLocale] = useState(''),
-    [menuItems, setMenuItems] = useState<MenuProps['items']>([]);
-
-  const menuItemsClick = useCallback(({ key }: { key: React.Key }) => {
-    props.onChange(key)
-  }, [props.menuItems])
+  const ctx = useContext<BasicProviderProps>(BasicContext),
+    [localeName, setLocaleName] = useState(''),
+    menuItemOnClick = useCallback(({ key }: { key: React.Key }) => {
+      props.onChange?.(key as LocaleType)
+    }, []),
+    menuItems = [
+      {
+        key: LocaleType.zhCN,
+        label: '简体',
+        onClick: menuItemOnClick,
+      },
+      {
+        key: LocaleType.enUS,
+        label: 'En',
+        onClick: menuItemOnClick,
+      }
+    ];
 
   useEffect(() => {
-    const v = props.menuItems?.find(item => item?.key == props.value);
-    setLocale(v?.label || '')
-  }, [props.value]);
-
-  useEffect(() => {
-    setMenuItems(
-      props.menuItems.map(item => {
-        return {
-          key: item.key,
-          label: item.label,
-          onClick: menuItemsClick,
-        }
-      })
-    )
-  }, [props.menuItems])
+    const item = menuItems?.find(item => item?.key == ctx.locale);
+    setLocaleName(item?.label || '')
+  }, [ctx.locale]);
 
   return (
     <Dropdown menu={{
       items: menuItems,
     }}>
       <span className={styles.action}>
-        <span>{locale}</span>
+        <span>{localeName}</span>
       </span>
     </Dropdown>
   );

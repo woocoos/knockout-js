@@ -5,12 +5,17 @@ import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import { ProConfigProvider } from '@ant-design/pro-provider';
 import styles from './layout.module.css';
-import { ReactNode, useCallback } from 'react';
+import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { AliveScope } from "react-activation";
 import { NodeExpandOutlined } from '@ant-design/icons';
 import { gql, useClient } from 'urql';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
-
+import { LocaleType } from '../locale';
+import { BasicProvider } from '..';
+import { ConfigProvider } from 'antd';
+import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
+import { Locale } from 'antd/es/locale';
 
 export interface LayoutProps {
   /**
@@ -20,7 +25,7 @@ export interface LayoutProps {
   /**
    * I18nDropdown组件对应的参数
    */
-  i18nProps: I18nDropdownProps;
+  i18nProps?: I18nDropdownProps;
   /**
    * TenantDropdown组件对应的参数
    */
@@ -60,6 +65,10 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 const Layout = (props: LayoutProps) => {
   const client = useClient();
 
+  const [locale, setLocale] = useState(LocaleType.zhCN);
+
+  const [antLocale, setAntLocale] = useState<Locale>();
+
   // 根据列表格式化成菜单树结构
   const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
     if (!parentList) {
@@ -76,60 +85,75 @@ const Layout = (props: LayoutProps) => {
     return parentList;
   }, [])
 
-  return <ProConfigProvider dark={props.themeSwitchProps.value}>
-    <ProLayout
-      className={styles.layout}
-      layout="mix"
-      fixSiderbar
-      menu={{
-        locale: true,
-        request: async () => {
-          const result = await client.query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
-            appCode: props.appCode
-          }).toPromise();
-          if (result.data?.userMenus.length) {
-            const meunList = result.data.userMenus.map(item => {
-              return {
-                key: item.id,
-                name: item.name,
-                // todo: icon的处理方案还没确认先按旧的方式处理
-                icon: item.icon ? <i className={item.icon} /> : undefined,
-                parentId: item.parentID,
-                path: item.route,
-              } as MenuDataItem
-            })
+  useEffect(() => {
+    if (locale === LocaleType.zhCN) {
+      setAntLocale(zhCN)
+    } else if (locale === LocaleType.enUS) {
+      setAntLocale(enUS)
+    }
+  }, [locale])
 
-            return listFormatTree(meunList);
-          }
-          return [];
-        },
-      }}
-      actionsRender={() => [
-        <I18nDropdown {...props.i18nProps} />,
-        <TenantDropdown {...props.tenantProps} />,
-        <AvatarDropdown {...props.avatarProps} />,
-        <ThemeSwitch {...props.themeSwitchProps} />,
-      ]}
-      menuItemRender={(item, defaultDom) => (item.path ? <>
-        <a
-          onClick={() => {
-            props.onClickMenuItem?.(item, false)
+  return <ProConfigProvider dark={props.themeSwitchProps.value}>
+    <BasicProvider locale={locale}>
+      <ConfigProvider locale={antLocale}>
+        <ProLayout
+          className={styles.layout}
+          layout="mix"
+          fixSiderbar
+          menu={{
+            locale: true,
+            request: async () => {
+              const result = await client.query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
+                appCode: props.appCode
+              }).toPromise();
+              if (result.data?.userMenus.length) {
+                const meunList = result.data.userMenus.map(item => {
+                  return {
+                    key: item.id,
+                    name: item.name,
+                    // todo: icon的处理方案还没确认先按旧的方式处理
+                    icon: item.icon ? <i className={item.icon} /> : undefined,
+                    parentId: item.parentID,
+                    path: item.route,
+                  } as MenuDataItem
+                })
+
+                return listFormatTree(meunList);
+              }
+              return [];
+            },
           }}
-        >{defaultDom}</a>
-        <NodeExpandOutlined
-          className={styles.menuIconPopup}
-          onClick={() => {
-            props.onClickMenuItem?.(item, true)
-          }}
-          rev={undefined} />
-      </>
-        : defaultDom)}
-      {...props.proLayoutProps}
-    >
-      <AliveScope>
-        {props.children}
-      </AliveScope>
-    </ProLayout>
+          actionsRender={() => [
+            <I18nDropdown onChange={(value) => {
+              setLocale(value);
+              props.i18nProps?.onChange?.(value)
+            }} />,
+            <TenantDropdown {...props.tenantProps} />,
+            <AvatarDropdown {...props.avatarProps} />,
+            <ThemeSwitch {...props.themeSwitchProps} />,
+          ]}
+          menuItemRender={(item, defaultDom) => (item.path ? <>
+            <a
+              onClick={() => {
+                props.onClickMenuItem?.(item, false)
+              }}
+            >{defaultDom}</a>
+            <NodeExpandOutlined
+              className={styles.menuIconPopup}
+              onClick={() => {
+                props.onClickMenuItem?.(item, true)
+              }}
+              rev={undefined} />
+          </>
+            : defaultDom)}
+          {...props.proLayoutProps}
+        >
+          <AliveScope>
+            {props.children}
+          </AliveScope>
+        </ProLayout>
+      </ConfigProvider>
+    </BasicProvider>
   </ProConfigProvider>
 }
 
