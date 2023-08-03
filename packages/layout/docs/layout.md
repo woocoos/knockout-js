@@ -11,12 +11,15 @@ import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import defaultAvatar from "./assets/default-avatar.png";
 import styles from "./layout/index.module.css";
 import { ControlOutlined } from "@ant-design/icons";
+import { useLocation } from "@docusaurus/router";
 
 export default () => {
   const client = new Client({
     url: "http://127.0.0.1:3001/mock-api-adminx/graphql/query",
     exchanges: [cacheExchange, fetchExchange],
   });
+  const location = useLocation();
+
   const [tenantId, setTenantId] = useState("1");
   const [theme, setTheme] = useState(false);
 
@@ -25,6 +28,7 @@ export default () => {
       <Provider value={client}>
         <Layout
           appCode="adminx"
+          pathname={location.pathname}
           onClickMenuItem={(item, isOpen) => {
             console.log(item, isOpen);
           }}
@@ -83,6 +87,7 @@ export default () => {
 | 属性             | 描述                         | 类型                                           | 必填 | 默认值 |
 | ---------------- | ---------------------------- | ---------------------------------------------- | ---- | ------ |
 | appCode          | 应用code                     | string                                         | ✅   | -      |
+| pathname         | 传递动态的 location.pathname | string                                         | ✅   | -      |
 | i18nProps        | I18nDropdown组件对应的参数   | I18nDropdownProps                              | ❌   | -      |
 | tenantProps      | TenantDropdown组件对应的参数 | TenantDropdownProps                            | ✅   | -      |
 | avatarProps      | AvatarDropdown组件对应的参数 | AvatarDropdownProps                            | ✅   | -      |

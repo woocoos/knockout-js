@@ -1,86 +1,85 @@
-import { history, useLocation } from '@ice/runtime';
 import { ReactNode, useEffect } from 'react';
 import { useLocale } from '../locale';
-
-
-/**
- * TODO：这个组件会有调整先不开方出来使用
- */
 
 export interface LeavePromptLocale {
   leavePromptTip: string;
 }
 
-const pathName = {
-  when: true,
-};
+export interface LeavePromptProps {
+  /**
+   * 站点路径
+   */
+  pathname: string;
+  /**
+   * 插槽
+   */
+  children: ReactNode;
+}
 
-/**
- * 拦截离开检查确认离开后回调
- * @param callback 确认离开
- */
-export const checkLave = (callback: () => void) => {
-  const locale = useLocale('LeavePrompt')
-  if (pathName.when) {
-    callback();
-  } else {
-    if (confirm(locale.leavePromptTip)) {
-      pathName.when = true;
-      callback();
-    }
-  }
-};
 
-/**
- * 设置是否拦截离开
- * @param when true:不拦截，false:拦截
- */
-export const setLeavePromptWhen = (when: boolean) => {
-  pathName.when = when;
-};
+const eventName = 'updateLeavePromptContext'
+let when = true;
+
 
 /**
  * 一般在layout引入，主要检测浏览器刷新
  * TODO：浏览器的前进和回退无法拦截
  */
-export default () => {
-  const location = useLocation();
+export default (props: LeavePromptProps) => {
+  const leave = useLocale('LeavePrompt')
 
   useEffect(() => {
-    setLeavePromptWhen(true);
-  }, [location.pathname]);
+    when = true;
+  }, [props.pathname]);
 
   useEffect(() => {
-    const leave = useLocale('LeavePrompt')
-    window.addEventListener('beforeunload', (event) => {
-      if (pathName.when === true) {
+    window.addEventListener('beforeunload', (event: BeforeUnloadEvent) => {
+      if (when === true) {
         return;
       }
       event.preventDefault();
       event.returnValue = leave.leavePromptTip;
       return leave.leavePromptTip;
     });
+
+    window.addEventListener(eventName, (event: CustomEventInit<boolean>) => {
+      when = event.detail || false;
+    });
   }, []);
 
-  return <></>;
+  return <>
+    {props.children}
+  </>;
 };
 
-/**
- * 使用在Link 标签上的处理
- * @param props
- * @returns
- */
-export const Link = (props: {
-  to: string;
-  children: ReactNode;
-}) => {
-  return (<a onClick={() => {
-    checkLave(() => {
-      pathName.when = true;
-      history?.push(props.to);
-    });
-  }}
-  >
-    {props.children}
-  </a>);
-};
+
+export const useLeavePrompt = () => {
+  const locale = useLocale('LeavePrompt');
+
+  /**
+   * 拦截离开检查确认离开后回调
+   * @param callback 确认离开
+   */
+  const checkLeave = () => {
+    if (when) {
+      return true;
+    } else {
+      if (confirm(locale.leavePromptTip)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
+   * 设置是否拦截离开
+   * @param when true:不拦截，false:拦截
+   */
+  const setLeavePromptWhen = (when: boolean) => {
+    window.dispatchEvent(new CustomEvent(eventName, {
+      detail: when,
+    }))
+  };
+
+  return [checkLeave, setLeavePromptWhen]
+}
