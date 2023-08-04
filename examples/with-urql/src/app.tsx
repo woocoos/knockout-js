@@ -1,7 +1,7 @@
 import { defineDataLoader } from '@ice/runtime';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
-import { authExchange } from "@knockout-js/ice-urql/esm/exchange";
+// import { authExchange } from "@knockout-js/ice-urql/esm/exchange";
 import { debugExchange, fetchExchange } from "urql";
 
 export const dataLader = defineDataLoader(async () => {

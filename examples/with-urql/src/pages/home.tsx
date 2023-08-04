@@ -1,6 +1,7 @@
 
 import { useEffect } from 'react';
-import { useQuery } from '@knockout-js/ice-urql/request';
+import { queryRequest } from '@knockout-js/ice-urql/request';
+import { useQuery } from '@knockout-js/ice-urql/runtime';
 import { gql } from 'urql';
 
 const LOCATIONS_QUERY = gql`query schemaTypes{
@@ -11,7 +12,6 @@ const LOCATIONS_QUERY = gql`query schemaTypes{
   }
 }`;
 
-
 export default function Home() {
   const [result] = useQuery({
     query: LOCATIONS_QUERY,
@@ -19,9 +19,9 @@ export default function Home() {
   const { data, fetching, error } = result;
 
   useEffect(() => {
-    // queryRequest('instance2', LOCATIONS_QUERY, {}).then(result => {
-    //   console.log(result)
-    // })
+    queryRequest('instance2', LOCATIONS_QUERY, {}).then(result => {
+      console.log(result)
+    })
   }, [])
 
 

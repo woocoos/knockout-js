@@ -7,19 +7,22 @@ import {
   OperationContext,
   OperationResult,
   OperationResultSource,
-  UseQueryArgs,
-  useQuery as useUrqlQuery,
-  useMutation as useUrqlMutation,
-  useSubscription as useUrqlSubscription,
-  UseSubscriptionArgs,
-  SubscriptionHandler,
   createClient,
 } from 'urql';
 import { CustomClientOptions } from "./types";
 
+const defaultClient = createClient({
+  url: '/graphql/query',
+  requestPolicy: 'cache-and-network',
+  exchanges: [
+    cacheExchange,
+    fetchExchange,
+  ],
+})
+
 export const urqlInstances: Record<string, {
   client: Client;
-  config: CustomClientOptions[];
+  config: CustomClientOptions;
 }> = {};
 
 /**
@@ -34,76 +37,23 @@ export function createUrqlInstance(config: CustomClientOptions) {
         requestPolicy: 'cache-and-network',
         exchanges: config.exchanges,
       }),
-      config: [config],
+      config,
     }
   } else {
-    if (!urqlInstances['default']) {
-      urqlInstances['default'] = {
-        client: createClient({
-          url: '/graphql/query',
-          requestPolicy: 'cache-and-network',
-          exchanges: [
-            cacheExchange,
-            fetchExchange,
-          ],
-        }),
-        config: [],
-      }
+    urqlInstances[config.instanceName] = {
+      client: defaultClient,
+      config,
     }
-    urqlInstances['default'].config.push(config)
   }
 }
 
-function getInstanceNameInstances(instanceName: string) {
-  const urqlInstance = urqlInstances[instanceName] || urqlInstances['default'];
-  return {
-    client: urqlInstance.client,
-    config: urqlInstance.config.find(item => item.instanceName === instanceName)
-  };
-}
-
-export function defaultClient() {
-  return urqlInstances['default'].client;
-}
-
 /**
- * hook query
- * @param args
+ * 获取default client
  * @returns
  */
-export function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: UseQueryArgs<Variables, Data>
-) {
-  return useUrqlQuery(args);
+export function getDefaultClient() {
+  return defaultClient;
 }
-
-/**
- * hook mutation
- * @param args
- * @returns
- */
-export function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: DocumentInput<Data, Variables>
-) {
-  return useUrqlMutation(args);
-}
-
-/**
- * hook subscription
- * @param args
- * @param handler
- * @returns
- */
-export function useSubscription<Data = any, Result = Data, Variables extends AnyVariables = AnyVariables>(
-  instanceName: string,
-  args: UseSubscriptionArgs<Variables, Data>,
-  handler?: SubscriptionHandler<Data, Result>
-) {
-  const urqlInstance = getInstanceNameInstances(instanceName);
-  args.context = {url: urqlInstance.config?.url, ...args.context}
-  return useUrqlSubscription(args, handler);
-}
-
 
 /**
  * query请求
@@ -120,7 +70,7 @@ export async function queryRequest<Data = any, Variables extends AnyVariables = 
   context?: Partial<OperationContext>
 ): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
 
-  const urqlInstance = getInstanceNameInstances(instanceName)
+  const urqlInstance = urqlInstances[instanceName];
 
   return await urqlInstance.client.query(query, variables, {
     url: urqlInstance.config?.url,
@@ -145,7 +95,7 @@ export async function pagingRequest<Data = any, Variables extends AnyVariables =
   current: number,
   context?: Partial<OperationContext>
 ): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
-  const urqlInstance = getInstanceNameInstances(instanceName)
+  const urqlInstance = urqlInstances[instanceName];
 
   return await urqlInstance.client.query(query, variables, {
     url: `${urqlInstance.config?.url}?p=${current}`,
@@ -167,7 +117,7 @@ export async function mutationRequest<Data = any, Variables extends AnyVariables
   variables: Variables,
   context?: Partial<OperationContext>
 ): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
-  const urqlInstance = getInstanceNameInstances(instanceName)
+  const urqlInstance = urqlInstances[instanceName];
 
   return await urqlInstance.client.mutation(query, variables, {
     url: urqlInstance.config?.url,
@@ -189,7 +139,7 @@ export async function subscriptionRequest<Data = any, Variables extends AnyVaria
   variables: Variables,
   context?: Partial<OperationContext>
 ): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
-  const urqlInstance = getInstanceNameInstances(instanceName)
+  const urqlInstance = urqlInstances[instanceName];
 
   return await urqlInstance.client.subscription(query, variables, {
     url: urqlInstance.config?.url,
