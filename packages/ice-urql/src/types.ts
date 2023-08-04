@@ -1,11 +1,9 @@
-import { ClientOptions } from 'urql';
-import { AuthHandler } from "./request";
+import { Exchange } from 'urql';
 
-export interface CustomClientOptions extends ClientOptions {
-  instanceName?: string;
-  withFullResponse?: boolean;
-
-  authHandler?: AuthHandler;
+export interface CustomClientOptions {
+  url: string;
+  instanceName: string;
+  exchanges?: Exchange[];
 }
 
 export type RequestConfig = CustomClientOptions | CustomClientOptions[];

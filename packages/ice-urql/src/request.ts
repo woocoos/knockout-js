@@ -2,121 +2,194 @@ import {
   AnyVariables,
   cacheExchange,
   Client,
+  DocumentInput,
   fetchExchange,
-  RequestPolicy,
-  useQuery,
+  OperationContext,
+  OperationResult,
+  OperationResultSource,
   UseQueryArgs,
-  UseQueryResponse
+  useQuery as useUrqlQuery,
+  useMutation as useUrqlMutation,
+  useSubscription as useUrqlSubscription,
+  UseSubscriptionArgs,
+  SubscriptionHandler,
+  createClient,
 } from 'urql';
-import { CustomClientOptions, RequestConfig } from "./types";
-import { authExchange } from "@urql/exchange-auth";
+import { CustomClientOptions } from "./types";
 
-const TOKEN_KEY = 'token';
-const REFRESH_TOKEN_KEY = 'refresh_token';
-const TENANT_ID_KEY = 'X-Tenant-ID';
+export const urqlInstances: Record<string, {
+  client: Client;
+  config: CustomClientOptions[];
+}> = {};
 
-export interface AuthHandler {
-  getToken: () => Promise<string | undefined>;
-  getRefreshToken: () => Promise<string | undefined>;
-  getTenantId: () => Promise<string | undefined>;
-  refresh: (refreshToken: string) => Promise<{ token: string, refreshToken: string } | undefined>;
-  saveAuthData: (data: { token: string; refreshToken: string }) => void;
-  // This is where auth has gone wrong and we need to clean up and redirect to a login page
-  clearStorage: () => void;
-}
-
-function initAuthExchange(authHandler: AuthHandler) {
-  const {getToken, getRefreshToken, getTenantId, refresh, saveAuthData, clearStorage} = authHandler
-
-  return authExchange(async utilities => {
-    let token = await getToken();
-    let refreshToken = await getRefreshToken();
-    let tenant = await getTenantId();
-    return {
-      addAuthToOperation(operation) {
-        return token
-          ? utilities.appendHeaders(operation, {
-            Authorization: `Bearer ${token}`,
-            TENANT_ID_KEY: `${tenant}`,
-          })
-          : operation;
-      },
-      didAuthError(error) {
-        return error.response.status === 401;
-      },
-      willAuthError(operation) {
-        getToken().then((t) => {
-          token = t;
-        });
-        getRefreshToken().then((t) => {
-          refreshToken = t;
-        });
-        // jwt check
-        if (token) {
-          const tokenData = JSON.parse(atob(token.split('.')[1]));
-          if (tokenData.exp * 1000 < Date.now()) {
-            return true;
-          }
-        }
-        return !token;
-
-      },
-      async refreshAuth() {
-        if (refreshToken) {
-          const result = await refresh(refreshToken);
-
-          if (result) {
-            token = result.token;
-            refreshToken = result.refreshToken;
-            saveAuthData({token, refreshToken});
-            return;
-          }
-        }
-
-        clearStorage();
-        window.location.reload();
-      },
-    };
-  });
-}
-
-
-const defaultClientOptions = {
-  url: '/graphql/query',
-  requestPolicy: 'cache-and-network' as RequestPolicy,
-  exchanges: [
-    cacheExchange,
-    fetchExchange,
-  ],
-}
-
-interface UrqlInstances {
-  default: Client;
-  configs: { [key: string]: CustomClientOptions };
-}
-
-const urqlInstances = {} as UrqlInstances;
-
-export function createUrqlInstance(config: RequestConfig, instanceName?: string) {
-  if (instanceName) {
-    if (urqlInstances.configs[instanceName]) {
-      return urqlInstances
+/**
+ * 根据配置处理实例的创建
+ * @param config
+ */
+export function createUrqlInstance(config: CustomClientOptions) {
+  if (config.exchanges) {
+    urqlInstances[config.instanceName] = {
+      client: createClient({
+        url: config.url,
+        requestPolicy: 'cache-and-network',
+        exchanges: config.exchanges,
+      }),
+      config: [config],
     }
-    if (instanceName === 'default') {
-      let opts = defaultClientOptions && config as CustomClientOptions;
-      urqlInstances.default = new Client(opts);
+  } else {
+    if (!urqlInstances['default']) {
+      urqlInstances['default'] = {
+        client: createClient({
+          url: '/graphql/query',
+          requestPolicy: 'cache-and-network',
+          exchanges: [
+            cacheExchange,
+            fetchExchange,
+          ],
+        }),
+        config: [],
+      }
     }
-    urqlInstances.configs[instanceName] = config as CustomClientOptions;
+    urqlInstances['default'].config.push(config)
   }
-  return urqlInstances;
 }
 
-export type useClient = typeof useQuery;
-
-export function useRequest<
-  Data = any,
-  Variables extends AnyVariables = AnyVariables
->(instanceName: string, args: UseQueryArgs<Variables, Data>): UseQueryResponse<Data, Variables> {
-  args.context = {url: urqlInstances.configs[instanceName].url, ...args.context};
-  return useQuery(args);
+function getInstanceNameInstances(instanceName: string) {
+  const urqlInstance = urqlInstances[instanceName] || urqlInstances['default'];
+  return {
+    client: urqlInstance.client,
+    config: urqlInstance.config.find(item => item.instanceName === instanceName)
+  };
 }
+
+/**
+ * hook query
+ * @param args
+ * @returns
+ */
+export function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
+  args: UseQueryArgs<Variables, Data>
+) {
+  return useUrqlQuery(args);
+}
+
+/**
+ * hook mutation
+ * @param args
+ * @returns
+ */
+export function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
+  args: DocumentInput<Data, Variables>
+) {
+  return useUrqlMutation(args);
+}
+
+/**
+ * hook subscription
+ * @param args
+ * @param handler
+ * @returns
+ */
+export function useSubscription<Data = any, Result = Data, Variables extends AnyVariables = AnyVariables>(
+  instanceName: string,
+  args: UseSubscriptionArgs<Variables, Data>,
+  handler?: SubscriptionHandler<Data, Result>
+) {
+  const urqlInstance = getInstanceNameInstances(instanceName);
+  args.context = { url: urqlInstance.config?.url, ...args.context }
+  return useUrqlSubscription(args, handler);
+}
+
+
+/**
+ * query请求
+ * @param instanceName
+ * @param query
+ * @param variables
+ * @param context
+ * @returns
+ */
+export async function queryRequest<Data = any, Variables extends AnyVariables = AnyVariables>(
+  instanceName: string,
+  query: DocumentInput<Data, Variables>,
+  variables: Variables,
+  context?: Partial<OperationContext>
+): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
+
+  const urqlInstance = getInstanceNameInstances(instanceName)
+
+  return await urqlInstance.client.query(query, variables, {
+    url: urqlInstance.config?.url,
+    ...context
+  }).toPromise();
+}
+
+
+/**
+ * paging请求
+ * @param instanceName
+ * @param query
+ * @param variables
+ * @param current
+ * @param context
+ * @returns
+ */
+export async function pagingRequest<Data = any, Variables extends AnyVariables = AnyVariables>(
+  instanceName: string,
+  query: DocumentInput<Data, Variables>,
+  variables: Variables,
+  current: number,
+  context?: Partial<OperationContext>
+): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
+  const urqlInstance = getInstanceNameInstances(instanceName)
+
+  return await urqlInstance.client.query(query, variables, {
+    url: `${urqlInstance.config?.url}?p=${current}`,
+    ...context
+  }).toPromise();
+}
+
+/**
+ * mutation请求
+ * @param instanceName
+ * @param query
+ * @param variables
+ * @param context
+ * @returns
+ */
+export async function mutationRequest<Data = any, Variables extends AnyVariables = AnyVariables>(
+  instanceName: string,
+  query: DocumentInput<Data, Variables>,
+  variables: Variables,
+  context?: Partial<OperationContext>
+): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
+  const urqlInstance = getInstanceNameInstances(instanceName)
+
+  return await urqlInstance.client.mutation(query, variables, {
+    url: urqlInstance.config?.url,
+    ...context
+  }).toPromise();
+}
+
+/**
+ * subscription请求
+ * @param instanceName
+ * @param query
+ * @param variables
+ * @param context
+ * @returns
+ */
+export async function subscriptionRequest<Data = any, Variables extends AnyVariables = AnyVariables>(
+  instanceName: string,
+  query: DocumentInput<Data, Variables>,
+  variables: Variables,
+  context?: Partial<OperationContext>
+): Promise<OperationResultSource<OperationResult<Data, Variables>>> {
+  const urqlInstance = getInstanceNameInstances(instanceName)
+
+  return await urqlInstance.client.subscription(query, variables, {
+    url: urqlInstance.config?.url,
+    ...context
+  }).toPromise();
+}
+
