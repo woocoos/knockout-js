@@ -43,7 +43,7 @@
     "graphql": "^16.6.0"
   },
   "devDependencies": {
-    "@ice/pkg": "^1.5.10",
+    "@ice/pkg": "^1.5.11",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/client-preset": "^4.0.0",
     "@graphql-codegen/schema-ast": "^4.0.0",

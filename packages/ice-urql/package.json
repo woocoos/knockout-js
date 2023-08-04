@@ -27,6 +27,11 @@
       "import": "./esm/types.js",
       "default": "./esm/types.js"
     },
+    "./esm/request": {
+      "types": "./esm/request.d.ts",
+      "import": "./esm/request.js",
+      "default": "./esm/request.js"
+    },
     "./esm/types": {
       "types": "./esm/types.d.ts",
       "import": "./esm/types.js",

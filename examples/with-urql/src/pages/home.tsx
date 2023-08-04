@@ -1,6 +1,6 @@
-import { queryRequest, useQuery } from 'ice';
 
 import { useEffect } from 'react';
+import { useQuery } from '@knockout-js/ice-urql/request';
 import { gql } from 'urql';
 
 const LOCATIONS_QUERY = gql`query schemaTypes{
@@ -13,36 +13,33 @@ const LOCATIONS_QUERY = gql`query schemaTypes{
 
 
 export default function Home() {
-
-  // const [result] = useQuery({
-  //   query: LOCATIONS_QUERY,
-  // });
-  // const { data, fetching, error } = result;
+  const [result] = useQuery({
+    query: LOCATIONS_QUERY,
+  });
+  const { data, fetching, error } = result;
 
   useEffect(() => {
-    queryRequest('instance2', LOCATIONS_QUERY, {}).then(result => {
-      console.log(result)
-    })
+    // queryRequest('instance2', LOCATIONS_QUERY, {}).then(result => {
+    //   console.log(result)
+    // })
   }, [])
 
 
-  // return (
-  //   <div>
-  //     {fetching && <p>Loading...</p>}
+  return (
+    <div>
+      {fetching && <p>Loading...</p>}
 
-  //     {error && <p>Oh no... {error.message}</p>}
+      {error && <p>Oh no... {error.message}</p>}
 
-  //     {data && (
-  //       <ul>
-  //         {data.locations.map(location => (
-  //           <li key={location.id}>{location.name}</li>
-  //         ))}
-  //       </ul>
-  //     )}
-  //   </div>
-  // );
-
-  return <>123</>
+      {data && (
+        <ul>
+          {data.locations.map(location => (
+            <li key={location.id}>{location.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }
 
 export function pageConfig() {

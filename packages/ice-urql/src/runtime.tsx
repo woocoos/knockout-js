@@ -19,9 +19,9 @@ const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
     createUrqlInstance(requestConfig);
   }
 
-  addProvider(({ children }) => (
-    <Provider value={urqlInstances.default.client}>{children}</Provider>
-  ))
+  // addProvider(({ children }) => (
+  //   <Provider value={urqlInstances.default.client}>{children}</Provider>
+  // ))
 };
 
 export default runtime;

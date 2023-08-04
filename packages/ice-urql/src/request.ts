@@ -62,6 +62,10 @@ function getInstanceNameInstances(instanceName: string) {
   };
 }
 
+export function defaultClient() {
+  return urqlInstances['default'].client;
+}
+
 /**
  * hook query
  * @param args
@@ -96,7 +100,7 @@ export function useSubscription<Data = any, Result = Data, Variables extends Any
   handler?: SubscriptionHandler<Data, Result>
 ) {
   const urqlInstance = getInstanceNameInstances(instanceName);
-  args.context = { url: urqlInstance.config?.url, ...args.context }
+  args.context = {url: urqlInstance.config?.url, ...args.context}
   return useUrqlSubscription(args, handler);
 }
 
