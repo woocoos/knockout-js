@@ -2,27 +2,31 @@
 import { authExchange as urqlAuthExchange } from "@urql/exchange-auth";
 import { CombinedError, Exchange } from "urql";
 import jwtDcode, { JwtPayload } from 'jwt-decode';
+import { message } from 'antd';
+import { request } from "@ice/plugin-request/request";
 
 export interface AuthExchangeOpts {
+  /**
+   * import { createStore } from 'ice'; 的store
+   */
+  store: any;
   /**
    * 提前多久刷新token默认0
    */
   beforeRefreshTime?: number;
   /**
-   * 初始化token,tenantId,refreshToken
-   * @returns
+   * token刷新api
    */
-  storage: () => Promise<{
-    token: string;
-    tenantId: string;
-    refreshToken: string;
-  }>;
+  refreshApi: string;
   /**
-   * token刷新
-   * @param refreshToken
-   * @returns
+   * 登陆地址
    */
-  refresh: (refreshToken: string) => Promise<{ token: string } | undefined>;
+  login?: string;
+  /**
+   * 登陆地址记录当前路由key
+   * 默认值：redirect
+   */
+  loginRedirectKey?: string;
   /**
    * 异常处理
    * @param error
@@ -33,15 +37,12 @@ export interface AuthExchangeOpts {
 
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { storage, refresh, beforeRefreshTime, error } = handler
+  const { store, refreshApi, beforeRefreshTime, error, login, loginRedirectKey } = handler
 
   return urqlAuthExchange(async utilities => {
-    const store = await storage();
-    let token = store.token;
-    let tenantId = store.tenantId;
-    let refreshToken = store.refreshToken;
     return {
       addAuthToOperation(operation) {
+        const { token, tenantId } = store.getModelState('user');
         return token
           ? utilities.appendHeaders(operation, {
             'Authorization': `Bearer ${token}`,
@@ -50,15 +51,27 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
           : operation;
       },
       didAuthError(err) {
-        return error?.(err) || false;
+        if (err.response.status === 401) {
+          if (login) {
+            location.href = `${login}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+            return false;
+          }
+        }
+        message.error(err.toString())
+        return error?.(err) ?? false;
       },
       async refreshAuth() {
-        const result = await refresh(refreshToken);
-        if (result?.token) {
-          token = result.token;
+        const { refreshToken } = store.getModelState('user');
+        const result = await request.post(refreshApi, {
+          refreshToken,
+        });
+        if (result?.accessToken) {
+          store?.dispatch?.user?.updateToken?.(result.accessToken);
         }
+
       },
       willAuthError() {
+        const { token } = store.getModelState('user');
         if (token) {
           const jwt = jwtDcode<JwtPayload>(token);
           if (((jwt.exp || 0) * 1000 - (beforeRefreshTime || 0)) < Date.now()) {

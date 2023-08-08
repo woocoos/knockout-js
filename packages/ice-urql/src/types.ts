@@ -25,9 +25,6 @@ export interface CustomClientOptions {
 
 export type RequestConfig = CustomClientOptions | CustomClientOptions[];
 
-export function defineUrqlConfig(configOrDefineConfig: RequestConfig | (() => RequestConfig)): RequestConfig {
-  if (typeof configOrDefineConfig === 'function') {
-    return configOrDefineConfig();
-  }
+export function defineUrqlConfig(configOrDefineConfig: RequestConfig | ((data?: any) => Promise<RequestConfig>)) {
   return configOrDefineConfig;
 }

@@ -17,9 +17,9 @@ import {
 const EXPORT_NAME = 'urqlConfig';
 
 const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
-  const { appExport } = appContext;
+  const { appExport, appData } = appContext;
   const exported = appExport?.[EXPORT_NAME];
-  const requestConfig: RequestConfig = (typeof exported === 'function' ? exported() : exported) || {};
+  const requestConfig: RequestConfig = (typeof exported === 'function' ? await exported(appData) : exported) || {};
 
   createUrqlInstance(requestConfig);
 
