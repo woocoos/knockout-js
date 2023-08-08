@@ -7,17 +7,23 @@ sidebar_label: Layout
 ```tsx preview
 import { useState } from "react";
 import { Layout } from "@knockout-js/layout";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import defaultAvatar from "./assets/default-avatar.png";
 import styles from "./layout/index.module.css";
 import { ControlOutlined } from "@ant-design/icons";
 import { useLocation } from "@docusaurus/router";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
-  const client = new Client({
-    url: "http://127.0.0.1:3001/mock-api-adminx/graphql/query",
-    exchanges: [cacheExchange, fetchExchange],
-  });
   const location = useLocation();
 
   const [tenantId, setTenantId] = useState("1");
@@ -25,7 +31,6 @@ export default () => {
 
   return (
     <div className={styles.demoLayout}>
-      <Provider value={client}>
         <Layout
           appCode="adminx"
           pathname={location.pathname}
@@ -74,7 +79,6 @@ export default () => {
         >
           <div>context</div>
         </Layout>
-      </Provider>
     </div>
   );
 };

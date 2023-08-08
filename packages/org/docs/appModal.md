@@ -5,21 +5,23 @@ sidebar_label: AppModal
 本 Demo 演示用法
 
 ```tsx preview
-import { AppModal, CClient } from "@knockout-js/org";
+import { AppModal } from "@knockout-js/org";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import { Button } from "antd";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
-  const [open, setOpen] = useState(false),
-    url = "http://127.0.0.1:3001/mock-api-adminx/graphql/query";
-
-  const client = new Client({
-    url,
-    exchanges: [cacheExchange, fetchExchange],
-  }) as CClient;
-
-  client.url = url;
+  const [open, setOpen] = useState(false);
 
   return (
     <>
@@ -30,15 +32,13 @@ export default () => {
       >
         按钮
       </Button>
-      <Provider value={client}>
-        <AppModal
+      <AppModal
           open={open}
           onClose={(data) => {
             console.log(data);
             setOpen(false);
           }}
         />
-      </Provider>
     </>
   );
 };

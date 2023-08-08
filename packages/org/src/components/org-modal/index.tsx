@@ -13,9 +13,10 @@ import {
   OrgWhereInput,
   gid
 } from "@knockout-js/api";
-import { gql, useClient } from 'urql'
+import { gql } from 'urql'
 import { useLocale } from '../locale';
-import { CClient } from '../..';
+import { paging } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '../';
 
 export interface OrgModalLocale {
   name: string;
@@ -98,7 +99,6 @@ const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrd
 export default (props: OrgModalProps) => {
   const locale = useLocale('OrgModal'),
     glocale = useLocale('global'),
-    client = useClient() as CClient,
     [dataSource, setDataSource] = useState<Org[]>([]),
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]),
     columns: ProColumns<Org>[] = [
@@ -157,14 +157,12 @@ export default (props: OrgModalProps) => {
         where.domain = params.domain;
         where.pathHasPrefix = props.orgId ? `${props.orgId}/` : undefined
         if (props.appId) {
-          const result = await client.query<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
+          const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
             gid: gid('app', props.appId),
             first: params.pageSize,
             where,
             orderBy,
-          }, {
-            url: `${client.url}?p=${params.current}`,
-          }).toPromise();
+          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
           if (result.data?.node?.__typename === 'App') {
             result.data.node.orgs.edges?.forEach(item => {
               if (item?.node) {
@@ -174,13 +172,11 @@ export default (props: OrgModalProps) => {
             table.total = result.data.node.orgs.totalCount
           }
         } else {
-          const result = await client.query<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
+          const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
             first: params.pageSize,
             where,
             orderBy,
-          }, {
-            url: `${client.url}?p=${params.current}`,
-          }).toPromise();
+          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
           if (result.data?.organizations.totalCount) {
             result.data.organizations.edges?.forEach(item => {
               if (item?.node) {

@@ -7,20 +7,24 @@ sidebar_label: TenantDropdown
 ```tsx preview
 import { TenantDropdown } from "@knockout-js/layout";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
   const [tenantId, setTenantId] = useState("1");
-  const client = new Client({
-    url: "http://127.0.0.1:3001/mock-api-adminx/graphql/query",
-    exchanges: [cacheExchange, fetchExchange],
-  });
 
   return (
-    <div style={{ width: "100px" }}>
-      <Provider value={client}>
-        <TenantDropdown value={tenantId} onChange={setTenantId} />
-      </Provider>
+    <div style={{ width: "100px" }}>      
+      <TenantDropdown value={tenantId} onChange={setTenantId} />
     </div>
   );
 };

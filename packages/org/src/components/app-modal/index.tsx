@@ -3,9 +3,10 @@ import { Modal, ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
 import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, gid } from '@knockout-js/api';
-import { gql, useClient } from 'urql'
+import { gql } from 'urql'
 import { useLocale } from '../locale';
-import { CClient } from '../..';
+import { paging } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '../';
 
 export interface AppModalLocale {
   name: string;
@@ -83,7 +84,6 @@ const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrd
 export default (props: AppModalProps) => {
   const locale = useLocale('AppModal'),
     glocale = useLocale('global'),
-    client = useClient() as CClient,
     columns: ProColumns<App>[] = [
       // 有需要排序配置  sorter: true
       {
@@ -143,13 +143,11 @@ export default (props: AppModalProps) => {
           where.codeContains = params.code;
           where.kindIn = filter.kind as AppKind[]
           if (props.orgId) {
-            const result = await client.query<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+            const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
               gid: gid('org', props.orgId),
               first: params.pageSize,
               where,
-            }, {
-              url: `${client.url}?p=${params.current}`
-            }).toPromise();
+            }, params.current || 1, undefined, iceUrqlInstance.ucenter);
             if (result.data?.node?.__typename === 'Org') {
               result.data.node.apps.edges?.forEach((item) => {
                 if (item?.node) {
@@ -159,12 +157,10 @@ export default (props: AppModalProps) => {
               table.total = result.data.node.apps.totalCount
             }
           } else {
-            const result = await client.query<AppListQuery, AppListQueryVariables>(appListQuery, {
+            const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
               first: params.pageSize,
               where,
-            }, {
-              url: `${client.url}?p=${params.current}`
-            }).toPromise();
+            }, params.current || 1, undefined, iceUrqlInstance.ucenter);
             if (result.data?.apps.totalCount) {
               result.data.apps.edges?.forEach(item => {
                 if (item?.node) {

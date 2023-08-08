@@ -6,13 +6,14 @@ import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
 import { ReactNode, useCallback, useEffect, useState } from 'react';
 import { NodeExpandOutlined } from '@ant-design/icons';
-import { gql, useClient } from 'urql';
+import { gql } from 'urql';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 import { LocaleType } from '../locale';
 import { CollectProviders } from '..';
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import { Locale } from 'antd/es/locale';
+import { query } from '@knockout-js/ice-urql/request';
 
 export interface LayoutProps {
   /**
@@ -64,7 +65,6 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 }`);
 
 const Layout = (props: LayoutProps) => {
-  const client = useClient();
 
   const [locale, setLocale] = useState(LocaleType.zhCN);
 
@@ -105,9 +105,9 @@ const Layout = (props: LayoutProps) => {
       menu={{
         locale: true,
         request: async () => {
-          const result = await client.query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
+          const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
             appCode: props.appCode
-          }).toPromise();
+          });
           if (result.data?.userMenus.length) {
             const meunList = result.data.userMenus.map(item => {
               return {

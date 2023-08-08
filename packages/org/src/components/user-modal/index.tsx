@@ -1,10 +1,11 @@
 import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput, gid } from "@knockout-js/api";
-import { gql, useClient } from "urql";
+import { gql } from "urql";
 import { useLocale } from "../locale";
-import { CClient } from "../..";
 import { useState } from "react";
 import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";
 import { Modal, ModalProps } from "antd";
+import { paging } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '../';
 
 export interface UserModalLocale {
   principal_name: string;
@@ -106,7 +107,6 @@ const orgRoleUserListQuery = gql(/* GraphQL */`query orgRoleUserList($roleId: ID
 export default (props: UserModalProps) => {
   const locale = useLocale('UserModal'),
     glocale = useLocale('global'),
-    client = useClient() as CClient,
     [dataSource, setDataSource] = useState<User[]>([]),
     [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]),
     columns: ProColumns<User>[] = [
@@ -175,13 +175,11 @@ export default (props: UserModalProps) => {
         where.mobileContains = params.mobile;
         where.statusIn = filter.status as UserSimpleStatus[] | null;
         if (props.orgRoleId) {
-          const result = await client.query<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
+          const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
             roleId: props.orgRoleId,
             first: params.pageSize,
             where,
-          }, {
-            url: `${client.url}?p=${params.current}`,
-          }).toPromise();
+          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
           if (result.data?.orgRoleUsers.totalCount) {
             result.data.orgRoleUsers.edges?.forEach(item => {
               if (item?.node) {
@@ -191,13 +189,11 @@ export default (props: UserModalProps) => {
             table.total = result.data.orgRoleUsers.totalCount
           }
         } else if (props.orgId) {
-          const result = await client.query<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
+          const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
             gid: gid('org', props.orgId),
             first: params.pageSize,
             where,
-          }, {
-            url: `${client.url}?p=${params.current}`,
-          }).toPromise();
+          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
           if (result.data?.node?.__typename === 'Org') {
             result.data.node.users.edges?.forEach(item => {
               if (item?.node) {
@@ -207,12 +203,10 @@ export default (props: UserModalProps) => {
             table.total = result.data.node.users.totalCount
           }
         } else {
-          const result = await client.query<UserListQuery, UserListQueryVariables>(userListQuery, {
+          const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
             first: params.pageSize,
             where,
-          }, {
-            url: `${client.url}?p=${params.current}`,
-          }).toPromise();
+          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
           if (result.data?.users.totalCount) {
             result.data.users.edges?.forEach(item => {
               if (item?.node) {

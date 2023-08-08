@@ -6,23 +6,13 @@ sidebar_label: 多语言
 
 ```tsx preview
 import { useState } from "react";
-import { OrgSelect, CClient } from "@knockout-js/org";
+import { OrgSelect } from "@knockout-js/org";
 import { BasicProvider, LocaleType } from "@knockout-js/layout";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 
 export default () => {
-  const [org, setOrg] = useState(),
-    url = "http://127.0.0.1:3001/mock-api-adminx/graphql/query";
-
-  const client = new Client({
-    url,
-    exchanges: [cacheExchange, fetchExchange],
-  }) as CClient;
-
-  client.url = url;
-
+  const [org, setOrg] = useState();
   return (
-    <Provider value={client}>
+    <>
       <div>
         中文
         <OrgSelect value={org} onChange={setOrg} />
@@ -33,7 +23,7 @@ export default () => {
           <OrgSelect value={org} onChange={setOrg} />
         </BasicProvider>
       </div>
-    </Provider>
+    </>
   );
 };
 ```

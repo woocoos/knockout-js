@@ -2,8 +2,9 @@ import { Dropdown, MenuProps, Modal } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import { useLocale } from '../locale';
-import { gql, useClient } from 'urql'
+import { gql } from 'urql'
 import { Org, UserRootOrgsQuery, UserRootOrgsQueryVariables } from '@knockout-js/api';
+import { query } from '@knockout-js/ice-urql/request';
 
 export interface TenantDropdownLocale {
   switchTipTitle: string;
@@ -30,14 +31,13 @@ const userRootOrgListQuery = gql(/* GraphQL */`query userRootOrgs{
 
 export default (props: TenantDropdownProps) => {
   const locale = useLocale('TenantDropdown'),
-    client = useClient(),
     [list, setList] = useState<Array<Org>>([]),
     [info, setInfo] = useState<Org | undefined>(undefined),
     [menu, setMenu] = useState<MenuProps | undefined>(undefined);
 
   const
     getRequest = async () => {
-      const result = await client.query<UserRootOrgsQuery, UserRootOrgsQueryVariables>(userRootOrgListQuery, {}).toPromise();
+      const result = await query<UserRootOrgsQuery, UserRootOrgsQueryVariables>(userRootOrgListQuery, {});
       if (result.data?.userRootOrgs.length) {
         const orgList = result.data.userRootOrgs as Org[]
         setList(orgList)

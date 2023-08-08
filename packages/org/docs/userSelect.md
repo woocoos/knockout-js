@@ -5,25 +5,24 @@ sidebar_label: UserSelect
 本 Demo 演示用法
 
 ```tsx preview
-import { UserSelect, CClient } from "@knockout-js/org";
+import { UserSelect } from "@knockout-js/org";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
-  const [app, setApp] = useState(),
-    url = "http://127.0.0.1:3001/mock-api-adminx/graphql/query";
-
-  const client = new Client({
-    url,
-    exchanges: [cacheExchange, fetchExchange],
-  }) as CClient;
-
-  client.url = url;
-
+  const [app, setApp] = useState();
   return (
-    <Provider value={client}>
-      <UserSelect value={app} onChange={setApp} />
-    </Provider>
+    <UserSelect value={app} onChange={setApp} />
   );
 };
 ```

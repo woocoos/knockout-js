@@ -5,23 +5,24 @@ sidebar_label: OrgModal
 本 Demo 演示用法
 
 ```tsx preview
-import { OrgModal, CClient } from "@knockout-js/org";
+import { OrgModal } from "@knockout-js/org";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import { Button } from "antd";
 import { OrgKind } from "@knockout-js/api";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
-  const [open, setOpen] = useState(false),
-    url = "http://127.0.0.1:3001/mock-api-adminx/graphql/query";
-
-  const client = new Client({
-    url,
-    exchanges: [cacheExchange, fetchExchange],
-  }) as CClient;
-
-  client.url = url;
-
+  const [open, setOpen] = useState(false);
   return (
     <>
       <Button
@@ -31,8 +32,7 @@ export default () => {
       >
         按钮
       </Button>
-      <Provider value={client}>
-        <OrgModal
+      <OrgModal
           open={open}
           kind={OrgKind.Root}
           onClose={(data) => {
@@ -40,7 +40,6 @@ export default () => {
             setOpen(false);
           }}
         />
-      </Provider>
     </>
   );
 };

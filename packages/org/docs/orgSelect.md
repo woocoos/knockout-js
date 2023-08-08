@@ -1,30 +1,29 @@
 ---
-sidebar_label: OrgInput
+sidebar_label: OrgSelect
 ---
 
 本 Demo 演示用法
 
 ```tsx preview
-import { OrgSelect, CClient } from "@knockout-js/org";
+import { OrgSelect } from "@knockout-js/org";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 import { OrgKind } from "@knockout-js/api";
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  },
+  {
+    instanceName: 'ucenter',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
 
 export default () => {
-  const [org, setOrg] = useState(),
-    url = "http://127.0.0.1:3001/mock-api-adminx/graphql/query";
-
-  const client = new Client({
-    url,
-    exchanges: [cacheExchange, fetchExchange],
-  }) as CClient;
-
-  client.url = url;
-
+  const [org, setOrg] = useState();
   return (
-    <Provider value={client}>
-      <OrgSelect value={org} onChange={setOrg} kind={OrgKind.Root} />
-    </Provider>
+    <OrgSelect value={org} onChange={setOrg} kind={OrgKind.Root} />
   );
 };
 ```

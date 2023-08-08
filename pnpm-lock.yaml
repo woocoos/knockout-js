@@ -218,6 +218,9 @@ importers:
       '@knockout-js/api':
         specifier: workspace:^
         version: link:../api
+      '@knockout-js/ice-urql':
+        specifier: workspace:^
+        version: link:../ice-urql
       '@swc/helpers':
         specifier: ^0.5.1
         version: 0.5.1
@@ -262,10 +265,13 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0(react@18.2.0)
       '@knockout-js/api':
-        specifier: 0.0.1
+        specifier: workspace:^
         version: link:../api
+      '@knockout-js/ice-urql':
+        specifier: workspace:^
+        version: link:../ice-urql
       '@knockout-js/layout':
-        specifier: 0.0.1
+        specifier: workspace:^
         version: link:../layout
       '@swc/helpers':
         specifier: ^0.5.1

@@ -44,8 +44,9 @@
     "@ant-design/icons": "^5.1.4",
     "@ant-design/pro-table": "^3.8.2",
     "@ice/jsx-runtime": "^0.2.0",
-    "@knockout-js/api": "0.0.1",
-    "@knockout-js/layout": "0.0.1",
+    "@knockout-js/api": "workspace:^",
+    "@knockout-js/layout": "workspace:^",
+    "@knockout-js/ice-urql": "workspace:^",
     "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
     "urql": "^4.0.4"

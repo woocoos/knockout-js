@@ -7,7 +7,6 @@ sidebar_label: I18nDropdown
 ```tsx preview
 import { I18nDropdown, BasicProvider, LocaleType } from "@knockout-js/layout";
 import { useState } from "react";
-import { Client, Provider, cacheExchange, fetchExchange } from "urql";
 
 export default () => {
   const [locale, setLocale] = useState(LocaleType.zhCN);
