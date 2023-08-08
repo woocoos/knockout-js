@@ -10,11 +10,11 @@ sidebar_label: 配置
 
 在配置的是数组参数时必须设置一个`instanceName="default"`默认的client的配置基于default来实现
 
-| 属性         | 描述                                                                                                                                                                               | 类型                                                                                                        | 必填 | 默认值 |
-| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---- | ------ |
-| instanceName | 用来寻找client的key                                                                                                                                                                | string                                                                                                      | ✅   | ---    |
-| url          | 请求地址                                                                                                                                                                           | string                                                                                                      | ✅   | ---    |
-| exchanges    | 自定义exchanges                                                                                                                                                                    | Exchange[]                                                                                                  | ❌   | ---    |
+| 属性         | 描述                                                                                                                                                                               | 类型                                                                                                          | 必填 | 默认值 |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---- | ------ |
+| instanceName | 用来寻找client的key                                                                                                                                                                | string                                                                                                        | ✅   | ---    |
+| url          | 请求地址                                                                                                                                                                           | string                                                                                                        | ✅   | ---    |
+| exchanges    | 自定义exchanges                                                                                                                                                                    | Exchange[]                                                                                                    | ❌   | ---    |
 | exchangeOpt  | 可以启用[Authentication](https://formidable.com/open-source/urql/docs/advanced/authentication/)或[mapExchange](https://formidable.com/open-source/urql/docs/api/core/#mapexchange) | {<br/>authOpts?:[AuthExchangeOpts](#authexchangeopts),<br/>mapOpts?:[MapExchangeOpts](#mapexchangeopts)<br/>} | ❌   | ---    |
 
 ### MapExchangeOpts
@@ -23,20 +23,33 @@ sidebar_label: 配置
 
 ### AuthExchangeOpts
 
-| 属性              | 描述                              | 类型                                                                                         | 必填 | 默认值 |
-| ----------------- | --------------------------------- | -------------------------------------------------------------------------------------------- | ---- | ------ |
-| beforeRefreshTime | 提前多久刷新token                 | number                                                                                       | ❌   | 0      |
-| storage           | 初始化token,tenantId,refreshToken | () => Promise<{<br/>token: string;<br/> tenantId: string;<br/> refreshToken: string;<br/> }> | ✅   | -      |
-| refresh           | token刷新                         | (refreshToken:string) => Promise<{<br/>token: string;<br/> }>                                | ✅   | -      |
-| error             | 异常处理                          | (error: CombinedError) => boolean                                                            | ❌   | -      |
+| 属性              | 描述                          | 类型                                            | 必填 | 默认值   |
+| ----------------- | ----------------------------- | ----------------------------------------------- | ---- | -------- |
+| store             | 提供获取数据和设置token的方法 | [AuthExchangeOptsStore](#authexchangeoptsstore) | ✅   | -        |
+| refreshApi        | token刷新api                  | string                                          | ✅   | -        |
+| login             | 登陆地址                      | string                                          | ❌   | -        |
+| loginRedirectKey  | 登陆地址记录当前路由key       | string                                          | ❌   | redirect |
+| beforeRefreshTime | 提前多久刷新token             | number                                          | ❌   | 0        |
+| error             | 异常处理                      | (error: CombinedError) => boolean               | ❌   | -        |
+
+#### AuthExchangeOptsStore
+
+```ts
+{
+  getState: () => { token: string; tenantId: string; refreshToken: string; },
+  setStateToken: (token: string) => void;
+}
+
+```
 
 ## 配置参考
 
-单对象配置
+### 单对象配置
 
 ```ts
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
 import { debugExchange, fetchExchange } from "urql";
+import store from "@/store";
 
 // 正常集成
 export const urqlConfig = defineUrqlConfig(() => ({
@@ -44,24 +57,21 @@ export const urqlConfig = defineUrqlConfig(() => ({
   url: "https://trygql.formidable.dev/graphql/basic-pokedex",
   exchangeOpt: {
     authOpts: {
-      storage: async () => {
-        // 集成身份验证后需传入的参数
-        return {
-          token: "",
-          tenantId: "",
-          refreshToken: "",
-        };
+      store: {
+        getState: () => {
+          const { token, tenantId, refreshToken } = store.getModelState("user");
+          return {
+            token,
+            tenantId,
+            refreshToken,
+          };
+        },
+        setStateToken: (newToken) => {
+          store.dispatch.user.updateToken(newToken);
+        },
       },
-      refresh: async (refreshToken: string) => {
-        // 刷新token
-        return {
-          token: "",
-        };
-      },
-      error: (err) => {
-        // 异常处理
-        return false;
-      },
+      login: "/login",
+      refreshApi: "/api-auth/login/refresh-token",
     },
   },
 }));
@@ -74,11 +84,12 @@ export const urqlConfig = defineUrqlConfig(() => ({
 }));
 ```
 
-数组配置
+### 数组配置
 
 ```ts
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
 import { debugExchange, fetchExchange } from "urql";
+import store from "@/store";
 
 export const urqlConfig = defineUrqlConfig(() => [
   {
@@ -86,24 +97,22 @@ export const urqlConfig = defineUrqlConfig(() => [
     url: "https://trygql.formidable.dev/graphql/basic-pokedex",
     exchangeOpt: {
       authOpts: {
-        storage: async () => {
-          // 集成身份验证后需传入的参数
-          return {
-            token: "",
-            tenantId: "",
-            refreshToken: "",
-          };
+        store: {
+          getState: () => {
+            const { token, tenantId, refreshToken } =
+              store.getModelState("user");
+            return {
+              token,
+              tenantId,
+              refreshToken,
+            };
+          },
+          setStateToken: (newToken) => {
+            store.dispatch.user.updateToken(newToken);
+          },
         },
-        refresh: async (refreshToken: string) => {
-          // 刷新token
-          return {
-            token: "",
-          };
-        },
-        error: (err) => {
-          // 异常处理
-          return false;
-        },
+        login: "/login",
+        refreshApi: "/api-auth/login/refresh-token",
       },
     },
   },

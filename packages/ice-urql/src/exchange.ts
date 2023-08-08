@@ -6,10 +6,23 @@ import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
 
 export interface AuthExchangeOpts {
-  /**
-   * import { createStore } from 'ice'; 的store
-   */
-  store: any;
+  store: {
+    /**
+     * 获取需要的数据
+     * @returns
+     */
+    getState: () => {
+      token: string;
+      tenantId: string;
+      refreshToken: string;
+    },
+    /**
+     * 更新token后外部可获取处理
+     * @param token
+     * @returns
+     */
+    setStateToken: (token: string) => void;
+  };
   /**
    * 提前多久刷新token默认0
    */
@@ -35,14 +48,14 @@ export interface AuthExchangeOpts {
   error?: (error: CombinedError) => boolean;
 }
 
-export function authExchange(handler: AuthExchangeOpts): Exchange {
+export function authExchange(handler: AuthExchangeOpts) {
 
-  const { store, refreshApi, beforeRefreshTime, error, login, loginRedirectKey } = handler
+  const { store, beforeRefreshTime, refreshApi, login, loginRedirectKey, error } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
       addAuthToOperation(operation) {
-        const { token, tenantId } = store.getModelState('user');
+        const { token, tenantId } = store.getState();
         return token
           ? utilities.appendHeaders(operation, {
             'Authorization': `Bearer ${token}`,
@@ -61,17 +74,16 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
         return error?.(err) ?? false;
       },
       async refreshAuth() {
-        const { refreshToken } = store.getModelState('user');
+        const { refreshToken } = store.getState();
         const result = await request.post(refreshApi, {
           refreshToken,
         });
         if (result?.accessToken) {
-          store?.dispatch?.user?.updateToken?.(result.accessToken);
+          store.setStateToken(result.accessToken);
         }
-
       },
       willAuthError() {
-        const { token } = store.getModelState('user');
+        const { token } = store.getState();
         if (token) {
           const jwt = jwtDcode<JwtPayload>(token);
           if (((jwt.exp || 0) * 1000 - (beforeRefreshTime || 0)) < Date.now()) {
@@ -80,7 +92,6 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
         }
         return false;
       },
-
     };
   });
 }

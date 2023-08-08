@@ -43,7 +43,17 @@ export const urqlConfig = defineUrqlConfig(async () => {
       url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
       exchangeOpt: {
         authOpts: {
-          store: store,
+          store: {
+            getState: () => {
+              const { token, tenantId, refreshToken } = store.getModelState('user')
+              return {
+                token, tenantId, refreshToken
+              }
+            },
+            setStateToken: (newToken) => {
+              store.dispatch.user.updateToken(newToken)
+            }
+          },
           login: '/login',
           refreshApi: "/api-auth/login/refresh-token"
         }

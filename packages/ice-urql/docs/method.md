@@ -19,7 +19,7 @@ function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
 ): UseQueryResponse<Data, Variables>;
 ```
 
-## useQuery
+## usePaging
 
 提供query的`hook`方法与urql使用一致
 
