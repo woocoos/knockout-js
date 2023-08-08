@@ -15,6 +15,21 @@ import { useQuery } from "@knockout-js/ice-urql/runtime";
 
 function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
   args: UseQueryArgs<Variables, Data>,
+  instanceName?: string,
+): UseQueryResponse<Data, Variables>;
+```
+
+## useQuery
+
+提供query的`hook`方法与urql使用一致
+
+```ts
+import { usePaging } from "@knockout-js/ice-urql/runtime";
+
+function usePaging<Data = any, Variables extends AnyVariables = AnyVariables>(
+  args: UseQueryArgs<Variables, Data>,
+  current: number,
+  instanceName?: string,
 ): UseQueryResponse<Data, Variables>;
 ```
 

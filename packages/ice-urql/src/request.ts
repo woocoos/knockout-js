@@ -109,10 +109,10 @@ export function getInstance(instanceName?: string) {
 
 /**
  * query请求
- * @param instanceName
  * @param query
  * @param variables
  * @param context
+ * @param instanceName
  * @returns
  */
 export async function query<Data = any, Variables extends AnyVariables = AnyVariables>(
@@ -132,11 +132,11 @@ export async function query<Data = any, Variables extends AnyVariables = AnyVari
 
 /**
  * paging请求
- * @param instanceName
  * @param query
  * @param variables
  * @param current
  * @param context
+ * @param instanceName
  * @returns
  */
 export async function paging<Data = any, Variables extends AnyVariables = AnyVariables>(
@@ -156,10 +156,10 @@ export async function paging<Data = any, Variables extends AnyVariables = AnyVar
 
 /**
  * mutation请求
- * @param instanceName
  * @param query
  * @param variables
  * @param context
+ * @param instanceName
  * @returns
  */
 export async function mutation<Data = any, Variables extends AnyVariables = AnyVariables>(
@@ -178,10 +178,10 @@ export async function mutation<Data = any, Variables extends AnyVariables = AnyV
 
 /**
  * subscription请求
- * @param instanceName
  * @param query
  * @param variables
  * @param context
+ * @param instanceName
  * @returns
  */
 export async function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(

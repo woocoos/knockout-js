@@ -32,11 +32,32 @@ const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
 /**
  * hook query
  * @param args
+ * @param instanceName
  * @returns
  */
 export function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: UseQueryArgs<Variables, Data>
+  args: UseQueryArgs<Variables, Data>,
+  instanceName?: string,
 ) {
+  const urqlInstance = getInstance(instanceName);
+  args.context = { url: urqlInstance.config.url, ...args.context }
+  return useUrqlQuery(args);
+}
+
+/**
+ * hook paging
+ * @param args
+ * @param current
+ * @param instanceName
+ * @returns
+ */
+export function usePaging<Data = any, Variables extends AnyVariables = AnyVariables>(
+  args: UseQueryArgs<Variables, Data>,
+  current: number,
+  instanceName?: string,
+) {
+  const urqlInstance = getInstance(instanceName);
+  args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
   return useUrqlQuery(args);
 }
 
@@ -48,7 +69,7 @@ export function useQuery<Data = any, Variables extends AnyVariables = AnyVariabl
  * @returns
  */
 export function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: DocumentInput<Data, Variables>
+  args: DocumentInput<Data, Variables>,
 ) {
   return useUrqlMutation(args);
 }
@@ -61,7 +82,7 @@ export function useMutation<Data = any, Variables extends AnyVariables = AnyVari
  */
 export function useSubscription<Data = any, Result = Data, Variables extends AnyVariables = AnyVariables>(
   args: UseSubscriptionArgs<Variables, Data>,
-  handler?: SubscriptionHandler<Data, Result>
+  handler?: SubscriptionHandler<Data, Result>,
 ) {
   return useUrqlSubscription(args, handler);
 }
