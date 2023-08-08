@@ -4,7 +4,7 @@ const PLUGIN_NAME = '@knockout-js/ice-urql';
 
 const plugin: Plugin = () => ({
   name: PLUGIN_NAME,
-  setup: ({ generator }) => {
+  setup: () => {
   },
   runtime: `${PLUGIN_NAME}/runtime`,
 });

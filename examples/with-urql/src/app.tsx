@@ -1,7 +1,6 @@
 import { defineDataLoader } from '@ice/runtime';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
-// import { authExchange } from "@knockout-js/ice-urql/esm/exchange";
 import { debugExchange, fetchExchange } from "urql";
 
 export const dataLader = defineDataLoader(async () => {
@@ -19,31 +18,37 @@ export const dataLoader = defineDataLoader(async () => {
 
 export const urqlConfig = defineUrqlConfig(() => [
   {
-    instanceName: 'instance1',
-    url: '/graphql/apq-weather1',
+    instanceName: 'default',
+    url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
+    exchangeOpt: {
+      authOpts: {
+        storage: async () => {
+          return {
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE2OTEzOTcwMDB9.OxViESAOpW8J1pqMVCE0ObOg7nu2-um9SCXn7gR2bdY',
+            tenantId: '1',
+            refreshToken: 'refreshToken',
+          }
+        },
+        refresh: async (refreshToken) => {
+          return {
+            token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE2OTEzOTQzMDB9.NSE6Vkgt-2BTe5iJWgsnRzQKO_aMx0W38qCddHSgO5o',
+          }
+        },
+        error: (err) => {
+          alert(err.toString())
+          return err.response.status === 401
+        }
+      }
+    }
   },
   {
     instanceName: 'instance2',
-    url: '/graphql/apq-weather2',
+    url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
     exchanges: [
       fetchExchange,
       debugExchange,
-      // authExchange({
-      //   getStorage: async () => {
-      //     return {
-      //       token: '123456',
-      //       tenantId: '1',
-      //       refreshToken: 'refreshToken',
-      //     }
-      //   },
-      //   refresh: async (refreshToken: string) => {
-      //     return {
-      //       token: '456789',
-      //     }
-      //   }
-      // }),
     ],
-  }
+  },
 ])
 
 export const requestConfig = defineRequestConfig(() => ({

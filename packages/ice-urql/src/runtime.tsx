@@ -1,7 +1,7 @@
 import type { RuntimePlugin } from '@ice/runtime/types';
 import React from 'react';
 import { RequestConfig } from "./types";
-import { createUrqlInstance, getDefaultClient } from "./request.js";
+import { createUrqlInstance, getInstance } from "./request.js";
 import {
   AnyVariables,
   DocumentInput,
@@ -21,16 +21,10 @@ const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
   const exported = appExport?.[EXPORT_NAME];
   const requestConfig: RequestConfig = (typeof exported === 'function' ? exported() : exported) || {};
 
-  if (Array.isArray(requestConfig)) {
-    requestConfig.forEach((config) => {
-      createUrqlInstance(config);
-    });
-  } else {
-    createUrqlInstance(requestConfig);
-  }
+  createUrqlInstance(requestConfig);
 
   addProvider(({ children }) => (
-    <Provider value={getDefaultClient()}>{children}</Provider>
+    <Provider value={getInstance().client}>{children}</Provider>
   ))
 };
 
