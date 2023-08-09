@@ -14,6 +14,7 @@ import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 import { Locale } from 'antd/es/locale';
 import { query } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '..';
 
 export interface LayoutProps {
   /**
@@ -107,7 +108,7 @@ const Layout = (props: LayoutProps) => {
         request: async () => {
           const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
             appCode: props.appCode
-          });
+          }, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.userMenus.length) {
             const meunList = result.data.userMenus.map(item => {
               return {

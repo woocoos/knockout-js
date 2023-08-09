@@ -179,7 +179,7 @@ export default (props: UserModalProps) => {
             roleId: props.orgRoleId,
             first: params.pageSize,
             where,
-          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.orgRoleUsers.totalCount) {
             result.data.orgRoleUsers.edges?.forEach(item => {
               if (item?.node) {
@@ -193,7 +193,7 @@ export default (props: UserModalProps) => {
             gid: gid('org', props.orgId),
             first: params.pageSize,
             where,
-          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.node?.__typename === 'Org') {
             result.data.node.users.edges?.forEach(item => {
               if (item?.node) {
@@ -206,7 +206,7 @@ export default (props: UserModalProps) => {
           const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
             first: params.pageSize,
             where,
-          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.users.totalCount) {
             result.data.users.edges?.forEach(item => {
               if (item?.node) {

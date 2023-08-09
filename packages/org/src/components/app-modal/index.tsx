@@ -147,7 +147,7 @@ export default (props: AppModalProps) => {
               gid: gid('org', props.orgId),
               first: params.pageSize,
               where,
-            }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+            }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
             if (result.data?.node?.__typename === 'Org') {
               result.data.node.apps.edges?.forEach((item) => {
                 if (item?.node) {
@@ -160,7 +160,7 @@ export default (props: AppModalProps) => {
             const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
               first: params.pageSize,
               where,
-            }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+            }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
             if (result.data?.apps.totalCount) {
               result.data.apps.edges?.forEach(item => {
                 if (item?.node) {

@@ -118,7 +118,7 @@ export default (props: OrgModalProps) => {
           return <div>{record?.owner?.displayName || '-'}</div>;
         },
       },
-      {title: locale.desc, dataIndex: 'profile', search: false},
+      { title: locale.desc, dataIndex: 'profile', search: false },
     ]
 
   return <Modal
@@ -135,7 +135,7 @@ export default (props: OrgModalProps) => {
   >
     <ProTable
       size="small"
-      scroll={{x: 'max-content', y: 300}}
+      scroll={{ x: 'max-content', y: 300 }}
       {...props.proTableProps}
       rowKey={'id'}
       search={{
@@ -146,7 +146,7 @@ export default (props: OrgModalProps) => {
       options={false}
       columns={columns}
       request={async (params) => {
-        const table = {data: [] as Org[], success: true, total: 0},
+        const table = { data: [] as Org[], success: true, total: 0 },
           where: OrgWhereInput = {},
           orderBy = {
             direction: OrderDirection.Asc,
@@ -162,7 +162,7 @@ export default (props: OrgModalProps) => {
             first: params.pageSize,
             where,
             orderBy,
-          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.node?.__typename === 'App') {
             result.data.node.orgs.edges?.forEach(item => {
               if (item?.node) {
@@ -176,7 +176,7 @@ export default (props: OrgModalProps) => {
             first: params.pageSize,
             where,
             orderBy,
-          }, params.current || 1, undefined, iceUrqlInstance.ucenter);
+          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
           if (result.data?.organizations.totalCount) {
             result.data.organizations.edges?.forEach(item => {
               if (item?.node) {
@@ -190,7 +190,7 @@ export default (props: OrgModalProps) => {
         setDataSource(table.data)
         return table
       }}
-      pagination={{showSizeChanger: true}}
+      pagination={{ showSizeChanger: true }}
       rowSelection={{
         selectedRowKeys: selectedRowKeys,
         onChange: (selectedRowKeys) => {

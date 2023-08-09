@@ -5,6 +5,7 @@ import { useLocale } from '../locale';
 import { gql } from 'urql'
 import { Org, UserRootOrgsQuery, UserRootOrgsQueryVariables } from '@knockout-js/api';
 import { query } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '..';
 
 export interface TenantDropdownLocale {
   switchTipTitle: string;
@@ -37,7 +38,7 @@ export default (props: TenantDropdownProps) => {
 
   const
     getRequest = async () => {
-      const result = await query<UserRootOrgsQuery, UserRootOrgsQueryVariables>(userRootOrgListQuery, {});
+      const result = await query<UserRootOrgsQuery, UserRootOrgsQueryVariables>(userRootOrgListQuery, {}, { instanceName: iceUrqlInstance.ucenter });
       if (result.data?.userRootOrgs.length) {
         const orgList = result.data.userRootOrgs as Org[]
         setList(orgList)
