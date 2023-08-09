@@ -52,7 +52,7 @@ export function useQuery<Data = any, Variables extends AnyVariables = AnyVariabl
   const instanceName = args.context?.instanceName;
   const urqlInstance = getInstance(instanceName);
   args.context = { url: urqlInstance.config.url, ...args.context }
-  return useUrqlQuery(Object.assign(args, { context: useMemo(() => (args.context), []) }));
+  return useUrqlQuery({ ...args, context: useMemo(() => (args.context), []) });
 }
 
 /**
@@ -68,7 +68,7 @@ export function usePaging<Data = any, Variables extends AnyVariables = AnyVariab
   const instanceName = args.context?.instanceName;
   const urqlInstance = getInstance(instanceName);
   args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
-  return useUrqlQuery(Object.assign(args, { context: useMemo(() => (args.context), []) }));
+  return useUrqlQuery({ ...args, context: useMemo(() => (args.context), []) });
 }
 
 /**
@@ -102,7 +102,7 @@ export function useSubscription<Data = any, Result = Data, Variables extends Any
   const instanceName = args.context?.instanceName;
   const urqlInstance = getInstance(instanceName);
   args.context = { url: urqlInstance.config.url, ...args.context }
-  return useUrqlSubscription(Object.assign(args, { context: useMemo(() => (args.context), []) }), handler);
+  return useUrqlSubscription({ ...args, context: useMemo(() => (args.context), []) }, handler);
 }
 
 export default runtime;

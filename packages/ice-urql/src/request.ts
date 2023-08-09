@@ -104,7 +104,11 @@ export function createUrqlInstance(reqConf: RequestConfig) {
  * @returns
  */
 export function getInstance(instanceName?: string) {
-  return urqlInstances[instanceName ?? 'default']
+  let ins = urqlInstances[instanceName ?? 'default']
+  if (!ins) {
+    ins = urqlInstances['default']
+  }
+  return ins;
 }
 
 /**

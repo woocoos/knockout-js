@@ -12,10 +12,6 @@ createUrqlInstance([
   {
     instanceName: 'default',
     url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
-  },
-  {
-    instanceName: 'ucenter',
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
   }
 ])
 

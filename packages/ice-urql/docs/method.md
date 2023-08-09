@@ -8,20 +8,52 @@ sidebar_label: 方法
 
 ## useQuery
 
-提供query的`hook`方法与urql使用一致
+提供query的`hook`方法与urql使用一致，instanceName通过context传值
 
 ```ts
 import { useQuery } from "@knockout-js/ice-urql/runtime";
 
 function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
   args: UseQueryArgs<Variables, Data>,
-  instanceName?: string,
 ): UseQueryResponse<Data, Variables>;
+```
+
+示例：
+
+```ts
+import { useQuery } from "@knockout-js/ice-urql/runtime";
+
+const TodosQuery = gql`
+  query {
+    todos {
+      id
+    }
+  }
+`;
+
+const Todos = () => {
+  const [result, reexecuteQuery] = useQuery({
+    query: TodosQuery,
+    context: {
+      instanceName: 'default'
+    }
+  });
+  const { data, fetching, error } = result;
+  if (fetching) return <p>Loading...</p>;
+  if (error) return <p>Oh no... {error.message}</p>;
+  return (
+    <ul>
+      {data.todos.map(todo => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  );
+};
 ```
 
 ## usePaging
 
-提供query的`hook`方法与urql使用一致
+提供query的`hook`方法与urql使用一致，instanceName通过context传值
 
 ```ts
 import { usePaging } from "@knockout-js/ice-urql/runtime";
@@ -29,13 +61,46 @@ import { usePaging } from "@knockout-js/ice-urql/runtime";
 function usePaging<Data = any, Variables extends AnyVariables = AnyVariables>(
   args: UseQueryArgs<Variables, Data>,
   current: number,
-  instanceName?: string,
 ): UseQueryResponse<Data, Variables>;
+```
+
+示例：
+
+```ts
+import { usePaging } from "@knockout-js/ice-urql/runtime";
+
+const TodosQuery = gql`
+  query {
+    todos {
+      id
+    }
+  }
+`;
+
+const Todos = () => {
+  const [result, reexecuteQuery] = usePaging({
+    query: TodosQuery,
+    current: 1,
+    context: {
+      instanceName: 'default'
+    }
+  });
+  const { data, fetching, error } = result;
+  if (fetching) return <p>Loading...</p>;
+  if (error) return <p>Oh no... {error.message}</p>;
+  return (
+    <ul>
+      {data.todos.map(todo => (
+        <li key={todo.id}>{todo.title}</li>
+      ))}
+    </ul>
+  );
+};
 ```
 
 ## useMutation
 
-提供mutation的`hook`方法与urql使用一致
+提供mutation的`hook`方法与urql使用一致，instanceName通过context传值
 
 ```ts
 import { useMutation } from "@knockout-js/ice-urql/runtime";
@@ -45,9 +110,38 @@ function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
 ): UseMutationResponse<Data, Variables>;
 ```
 
+示例：
+
+```ts
+import { useMutation } from "@knockout-js/ice-urql/runtime";
+
+const UpdateTodo = `
+  mutation ($id: ID!, $title: String!) {
+    updateTodo (id: $id, title: $title) {
+      id
+      title
+    }
+  }
+`;
+
+const Todo = () => {
+  const [updateTodoResult, updateTodo] = useMutation(UpdateTodo);
+
+  const submit = newTitle => {
+    const variables = { id: 1, title: newTitle || '' };
+    const context = { context: { instanceName: 'default' } }
+    updateTodo(variables,context).then(result => {
+      // The result is almost identical to `updateTodoResult` with the exception
+      // of `result.fetching` not being set.
+      // It is an OperationResult.
+    });
+  };
+};
+```
+
 ## useSubscription
 
-提供subscription的`hook`方法与urql使用一致
+提供subscription的`hook`方法与urql使用一致，instanceName通过context传值
 
 ```ts
 import { useSubscription } from "@knockout-js/ice-urql/runtime";
@@ -60,6 +154,44 @@ function useSubscription<
   args: UseSubscriptionArgs<Variables, Data>,
   handler?: SubscriptionHandler<Data, Result>,
 ): UseSubscriptionResponse<Result, Variables>;
+```
+
+示例：
+
+```ts
+import { useSubscription } from "@knockout-js/ice-urql/runtime";
+
+const newMessages = `
+  subscription MessageSub {
+    newMessages {
+      id
+      from
+      text
+    }
+  }
+`;
+
+const handleSubscription = (messages = [], response) => {
+  return [response.newMessages, ...messages];
+};
+
+const Messages = () => {
+  const [res] = useSubscription({ query: newMessages, context: { instanceName: 'default'} }, handleSubscription);
+
+  if (!res.data) {
+    return <p>No new messages</p>;
+  }
+
+  return (
+    <ul>
+      {res.data.map(message => (
+        <p key={message.id}>
+          {message.from}: "{message.text}"
+        </p>
+      ))}
+    </ul>
+  );
+};
 ```
 
 ## getInstance

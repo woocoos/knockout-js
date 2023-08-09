@@ -41,23 +41,6 @@ export const urqlConfig = defineUrqlConfig(async () => {
     {
       instanceName: 'default',
       url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
-      exchangeOpt: {
-        authOpts: {
-          store: {
-            getState: () => {
-              const { token, tenantId, refreshToken } = store.getModelState('user')
-              return {
-                token, tenantId, refreshToken
-              }
-            },
-            setStateToken: (newToken) => {
-              store.dispatch.user.updateToken(newToken)
-            }
-          },
-          login: '/login',
-          refreshApi: "/api-auth/login/refresh-token"
-        }
-      }
     },
     {
       instanceName: 'instance2',
@@ -66,6 +49,10 @@ export const urqlConfig = defineUrqlConfig(async () => {
         fetchExchange,
         debugExchange,
       ],
+    },
+    {
+      instanceName: 'ucenter',
+      url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
     },
   ]
 })
