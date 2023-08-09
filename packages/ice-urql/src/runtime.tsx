@@ -7,7 +7,6 @@ import {
   DocumentInput,
   Provider,
   RequestPolicy,
-  UseMutationExecute,
   OperationResult,
   OperationContext,
   GraphQLRequestParams,
@@ -45,7 +44,6 @@ type UseSubscriptionArgs<Variables extends AnyVariables = AnyVariables, Data = a
 /**
  * hook query
  * @param args
- * @param instanceName
  * @returns
  */
 export function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
