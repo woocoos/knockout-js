@@ -8,6 +8,7 @@ import {
   Provider,
   RequestPolicy,
   UseMutationExecute,
+  OperationResult,
   OperationContext,
   GraphQLRequestParams,
   SubscriptionHandler,
@@ -81,11 +82,11 @@ export function useMutation<Data = any, Variables extends AnyVariables = AnyVari
   query: DocumentInput<Data, Variables>,
 ) {
   const [result, execute] = useUrqlMutation(query);
-  const executeInstance = (variables: Variables, context?: Partial<OperationContext> & { instanceName?: string }) => {
+  const executeInstance = (variables: Variables, context?: Partial<OperationContext> & { instanceName?: string }): Promise<OperationResult<Data, Variables>> => {
     const instanceName = context?.instanceName;
     const urqlInstance = getInstance(instanceName);
     context = { url: urqlInstance.config.url, ...context }
-    execute(variables, context)
+    return execute(variables, context)
   }
   return [result, executeInstance];
 }
