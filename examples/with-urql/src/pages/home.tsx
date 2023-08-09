@@ -39,7 +39,9 @@ export default function Home() {
       </div>
       <div>
         <h2>instanceName 2：<button onClick={async () => {
-          const result = await query(pokemonsQuery, {}, undefined, 'instance2');
+          const result = await query(pokemonsQuery, {}, {
+            instanceName: 'instance2'
+          });
           console.log(result)
         }}>请求</button> </h2>
       </div>

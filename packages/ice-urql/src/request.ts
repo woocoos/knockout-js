@@ -118,11 +118,12 @@ export function getInstance(instanceName?: string) {
 export async function query<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string,
+  }
 ) {
 
-  const urqlInstance = getInstance(instanceName);
+  const urqlInstance = getInstance(context?.instanceName);
 
   return await urqlInstance.client.query(query, variables, {
     url: urqlInstance.config?.url,
@@ -165,10 +166,11 @@ export async function paging<Data = any, Variables extends AnyVariables = AnyVar
 export async function mutation<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string
+  },
 ) {
-  const urqlInstance = getInstance(instanceName);
+  const urqlInstance = getInstance(context?.instanceName);
 
   return await urqlInstance.client.mutation(query, variables, {
     url: urqlInstance.config.url,
@@ -187,10 +189,12 @@ export async function mutation<Data = any, Variables extends AnyVariables = AnyV
 export async function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string
+  },
+
 ) {
-  const urqlInstance = getInstance(instanceName);
+  const urqlInstance = getInstance(context?.instanceName);
 
   return await urqlInstance.client.subscription(query, variables, {
     url: urqlInstance.config.url,
