@@ -1,5 +1,5 @@
 import type { RuntimePlugin } from '@ice/runtime/types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RequestConfig } from "./types";
 import { createUrqlInstance, getInstance } from "./request.js";
 import {
@@ -39,8 +39,10 @@ export function useQuery<Data = any, Variables extends AnyVariables = AnyVariabl
   args: UseQueryArgs<Variables, Data>,
   instanceName?: string,
 ) {
-  const urqlInstance = getInstance(instanceName);
-  args.context = { url: urqlInstance.config.url, ...args.context }
+  useEffect(() => {
+    const urqlInstance = getInstance(instanceName);
+    args.context = { url: urqlInstance.config.url, ...args.context }
+  }, [instanceName])
   return useUrqlQuery(args);
 }
 
@@ -56,8 +58,10 @@ export function usePaging<Data = any, Variables extends AnyVariables = AnyVariab
   current: number,
   instanceName?: string,
 ) {
-  const urqlInstance = getInstance(instanceName);
-  args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
+  useEffect(() => {
+    const urqlInstance = getInstance(instanceName);
+    args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
+  }, [instanceName])
   return useUrqlQuery(args);
 }
 
