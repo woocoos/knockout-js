@@ -18,6 +18,9 @@ const errorQuery = gql`query pokemonsErr{
 export default function Home() {
   const [result] = useQuery({
     query: pokemonsQuery,
+    context: {
+      instanceName: 'instance2'
+    }
   });
   const { data, fetching, error } = result;
   return (
@@ -39,9 +42,7 @@ export default function Home() {
       </div>
       <div>
         <h2>instanceName 2：<button onClick={async () => {
-          const result = await query(pokemonsQuery, {}, {
-            instanceName: 'instance2'
-          });
+          const result = await query(pokemonsQuery, {}, { instanceName: 'instance2' },);
           console.log(result)
         }}>请求</button> </h2>
       </div>

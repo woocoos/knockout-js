@@ -1,13 +1,15 @@
 import type { RuntimePlugin } from '@ice/runtime/types';
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { RequestConfig } from "./types";
 import { createUrqlInstance, getInstance } from "./request.js";
 import {
   AnyVariables,
   DocumentInput,
   Provider,
-  UseQueryArgs,
-  UseSubscriptionArgs,
+  RequestPolicy,
+  UseMutationExecute,
+  OperationContext,
+  GraphQLRequestParams,
   SubscriptionHandler,
   useQuery as useUrqlQuery,
   useMutation as useUrqlMutation,
@@ -28,6 +30,16 @@ const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
   ))
 };
 
+type UseQueryArgs<Variables extends AnyVariables = AnyVariables, Data = any> = {
+  requestPolicy?: RequestPolicy;
+  context?: Partial<OperationContext> & { instanceName?: string };
+  pause?: boolean;
+} & GraphQLRequestParams<Data, Variables>;
+
+type UseSubscriptionArgs<Variables extends AnyVariables = AnyVariables, Data = any> = {
+  pause?: boolean;
+  context?: Partial<OperationContext> & { instanceName?: string };
+} & GraphQLRequestParams<Data, Variables>;
 
 /**
  * hook query
@@ -36,46 +48,46 @@ const runtime: RuntimePlugin = async ({ appContext, addProvider }) => {
  * @returns
  */
 export function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: UseQueryArgs<Variables, Data>,
-  instanceName?: string,
+  args: UseQueryArgs<Variables, Data>
 ) {
-  useEffect(() => {
-    const urqlInstance = getInstance(instanceName);
-    args.context = { url: urqlInstance.config.url, ...args.context }
-  }, [instanceName])
-  return useUrqlQuery(args);
+  const instanceName = args.context?.instanceName;
+  const urqlInstance = getInstance(instanceName);
+  args.context = { url: urqlInstance.config.url, ...args.context }
+  return useUrqlQuery(Object.assign(args, { context: useMemo(() => (args.context), []) }));
 }
 
 /**
  * hook paging
  * @param args
  * @param current
- * @param instanceName
  * @returns
  */
 export function usePaging<Data = any, Variables extends AnyVariables = AnyVariables>(
   args: UseQueryArgs<Variables, Data>,
   current: number,
-  instanceName?: string,
 ) {
-  useEffect(() => {
-    const urqlInstance = getInstance(instanceName);
-    args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
-  }, [instanceName])
-  return useUrqlQuery(args);
+  const instanceName = args.context?.instanceName;
+  const urqlInstance = getInstance(instanceName);
+  args.context = { url: `${urqlInstance.config.url}?p=${current}`, ...args.context }
+  return useUrqlQuery(Object.assign(args, { context: useMemo(() => (args.context), []) }));
 }
-
-
 
 /**
  * hook mutation
- * @param args
- * @returns
+ * @param query
+ * @returns [result, executeInstance]
  */
 export function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: DocumentInput<Data, Variables>,
+  query: DocumentInput<Data, Variables>,
 ) {
-  return useUrqlMutation(args);
+  const [result, execute] = useUrqlMutation(query);
+  const executeInstance = (variables: Variables, context?: Partial<OperationContext> & { instanceName?: string }) => {
+    const instanceName = context?.instanceName;
+    const urqlInstance = getInstance(instanceName);
+    context = { url: urqlInstance.config.url, ...context }
+    execute(variables, context)
+  }
+  return [result, executeInstance];
 }
 
 /**
@@ -88,7 +100,10 @@ export function useSubscription<Data = any, Result = Data, Variables extends Any
   args: UseSubscriptionArgs<Variables, Data>,
   handler?: SubscriptionHandler<Data, Result>,
 ) {
-  return useUrqlSubscription(args, handler);
+  const instanceName = args.context?.instanceName;
+  const urqlInstance = getInstance(instanceName);
+  args.context = { url: urqlInstance.config.url, ...args.context }
+  return useUrqlSubscription(Object.assign(args, { context: useMemo(() => (args.context), []) }), handler);
 }
 
 export default runtime;
