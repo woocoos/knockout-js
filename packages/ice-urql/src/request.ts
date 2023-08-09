@@ -137,17 +137,17 @@ export async function query<Data = any, Variables extends AnyVariables = AnyVari
  * @param variables
  * @param current
  * @param context
- * @param instanceName
  * @returns
  */
 export async function paging<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
   current: number,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string
+  }
 ) {
-  const urqlInstance = getInstance(instanceName);
+  const urqlInstance = getInstance(context?.instanceName);
 
   return await urqlInstance.client.query(query, variables, {
     url: `${urqlInstance.config.url}?p=${current}`,
@@ -160,7 +160,6 @@ export async function paging<Data = any, Variables extends AnyVariables = AnyVar
  * @param query
  * @param variables
  * @param context
- * @param instanceName
  * @returns
  */
 export async function mutation<Data = any, Variables extends AnyVariables = AnyVariables>(
@@ -183,7 +182,6 @@ export async function mutation<Data = any, Variables extends AnyVariables = AnyV
  * @param query
  * @param variables
  * @param context
- * @param instanceName
  * @returns
  */
 export async function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(

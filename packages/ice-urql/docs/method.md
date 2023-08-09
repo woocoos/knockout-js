@@ -89,8 +89,9 @@ import { query } from "@knockout-js/ice-urql/request";
 function query<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string;
+  },
 ): Promise<OperationResult<Data, Variables>>;
 ```
 
@@ -107,8 +108,9 @@ function paging<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
   current: number,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string;
+  },
 ): Promise<OperationResult<Data, Variables>>;
 ```
 
@@ -124,8 +126,9 @@ import { mutation } from "@knockout-js/ice-urql/request";
 function mutation<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string;
+  },
 ): Promise<OperationResult<Data, Variables>>;
 ```
 
@@ -144,7 +147,8 @@ function subscription<
 >(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
-  context?: Partial<OperationContext>,
-  instanceName?: string,
+  context?: Partial<OperationContext> & {
+    instanceName?: string;
+  },
 ): Promise<OperationResult<Data, Variables>>;
 ```
