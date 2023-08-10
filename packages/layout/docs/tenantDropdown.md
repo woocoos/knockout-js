@@ -8,6 +8,7 @@ sidebar_label: TenantDropdown
 import { TenantDropdown } from "@knockout-js/layout";
 import { useState } from "react";
 import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+
 createUrqlInstance([
   {
     instanceName: 'default',
@@ -19,8 +20,8 @@ export default () => {
   const [tenantId, setTenantId] = useState("1");
 
   return (
-    <div style={{ width: "100px" }}>      
-      <TenantDropdown value={tenantId} onChange={setTenantId} />
+    <div style={{width: "100px"}}>
+      <TenantDropdown value={tenantId} onChange={setTenantId}/>
     </div>
   );
 };
@@ -28,7 +29,7 @@ export default () => {
 
 ## props
 
-| 属性     | 描述   | 类型                 | 必填 | 默认值 |
-| -------- | ------ | -------------------- | ---- | ------ |
-| value    | 值     | string               | ✅   | -      |
-| onChange | 更新值 | (value:string)=>void | ✅   | -      |
+| 属性       | 描述  | 类型                   | 必填 | 默认值 |
+|----------|-----|----------------------|----|-----|
+| value    | 值   | string               | ✅  | -   |
+| onChange | 更新值 | (value:string)=>void | ✅  | -   |

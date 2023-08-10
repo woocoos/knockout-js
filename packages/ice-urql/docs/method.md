@@ -10,17 +10,9 @@ sidebar_label: 方法
 
 提供query的`hook`方法与urql使用一致，instanceName通过context传值
 
-```ts
-import { useQuery } from "@knockout-js/ice-urql/runtime";
-
-function useQuery<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: UseQueryArgs<Variables, Data>,
-): UseQueryResponse<Data, Variables>;
-```
-
 示例：
 
-```ts
+```tsx
 import { useQuery } from "@knockout-js/ice-urql/runtime";
 
 const TodosQuery = gql`
@@ -55,18 +47,9 @@ const Todos = () => {
 
 提供query的`hook`方法与urql使用一致，instanceName通过context传值
 
-```ts
-import { usePaging } from "@knockout-js/ice-urql/runtime";
-
-function usePaging<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: UseQueryArgs<Variables, Data>,
-  current: number,
-): UseQueryResponse<Data, Variables>;
-```
-
 示例：
 
-```ts
+```tsx
 import { usePaging } from "@knockout-js/ice-urql/runtime";
 
 const TodosQuery = gql`
@@ -102,17 +85,9 @@ const Todos = () => {
 
 提供mutation的`hook`方法与urql使用一致，instanceName通过context传值
 
-```ts
-import { useMutation } from "@knockout-js/ice-urql/runtime";
-
-function useMutation<Data = any, Variables extends AnyVariables = AnyVariables>(
-  args: DocumentInput<Data, Variables>,
-): UseMutationResponse<Data, Variables>;
-```
-
 示例：
 
-```ts
+```tsx
 import { useMutation } from "@knockout-js/ice-urql/runtime";
 
 const UpdateTodo = `
@@ -143,22 +118,9 @@ const Todo = () => {
 
 提供subscription的`hook`方法与urql使用一致，instanceName通过context传值
 
-```ts
-import { useSubscription } from "@knockout-js/ice-urql/runtime";
-
-function useSubscription<
-  Data = any,
-  Result = Data,
-  Variables extends AnyVariables = AnyVariables,
->(
-  args: UseSubscriptionArgs<Variables, Data>,
-  handler?: SubscriptionHandler<Data, Result>,
-): UseSubscriptionResponse<Result, Variables>;
-```
-
 示例：
 
-```ts
+```tsx
 import { useSubscription } from "@knockout-js/ice-urql/runtime";
 
 const newMessages = `
@@ -203,28 +165,19 @@ instanceName不传入默认取default
 ```ts
 import { getInstance } from "@knockout-js/ice-urql/request";
 
-function getInstance(instanceName?: string): {
-  client: Client;
-  config: CustomClientOptions;
-};
+getInstance("ucenter");
 ```
 
 ## query
 
-执行query时使用
+执行query时使用,与 urql的client.query一致
 
 instanceName不传入默认取default
 
 ```ts
 import { query } from "@knockout-js/ice-urql/request";
 
-function query<Data = any, Variables extends AnyVariables = AnyVariables>(
-  query: DocumentInput<Data, Variables>,
-  variables: Variables,
-  context?: Partial<OperationContext> & {
-    instanceName?: string;
-  },
-): Promise<OperationResult<Data, Variables>>;
+query('', {}, { instanceName: 'default'} );
 ```
 
 ## paging
@@ -236,14 +189,8 @@ instanceName不传入默认取default
 ```ts
 import { paging } from "@knockout-js/ice-urql/request";
 
-function paging<Data = any, Variables extends AnyVariables = AnyVariables>(
-  query: DocumentInput<Data, Variables>,
-  variables: Variables,
-  current: number,
-  context?: Partial<OperationContext> & {
-    instanceName?: string;
-  },
-): Promise<OperationResult<Data, Variables>>;
+paging('', {}, 1,{ instanceName: 'ucenter'} );
+
 ```
 
 ## mutation
@@ -255,13 +202,7 @@ instanceName不传入默认取default
 ```ts
 import { mutation } from "@knockout-js/ice-urql/request";
 
-function mutation<Data = any, Variables extends AnyVariables = AnyVariables>(
-  query: DocumentInput<Data, Variables>,
-  variables: Variables,
-  context?: Partial<OperationContext> & {
-    instanceName?: string;
-  },
-): Promise<OperationResult<Data, Variables>>;
+mutation('', {}, { instanceName: 'ucenter'} );
 ```
 
 ## subscription
@@ -273,14 +214,5 @@ instanceName不传入默认取default
 ```ts
 import { subscription } from "@knockout-js/ice-urql/request";
 
-function subscription<
-  Data = any,
-  Variables extends AnyVariables = AnyVariables,
->(
-  query: DocumentInput<Data, Variables>,
-  variables: Variables,
-  context?: Partial<OperationContext> & {
-    instanceName?: string;
-  },
-): Promise<OperationResult<Data, Variables>>;
+subscription('', {}, { instanceName: 'ucenter'} );
 ```

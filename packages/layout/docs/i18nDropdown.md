@@ -13,7 +13,7 @@ export default () => {
 
   return (
     <BasicProvider locale={locale}>
-      <I18nDropdown onChange={setLocale} />
+      <I18nDropdown onChange={setLocale}/>
     </BasicProvider>
   );
 };
@@ -23,6 +23,6 @@ export default () => {
 
 <!-- <ReactDocgenProps path="../src/components/i18n-dropdown/index.tsx"></ReactDocgenProps> -->
 
-| 属性     | 描述                                    | 类型     | 必填 | 默认值 |
-| -------- | --------------------------------------- | -------- | ---- | ------ |
-| onChange | 值变更事件 (value: LocaleType) => void; | Function | ❌   | -      |
+| 属性       | 描述                                 | 类型       | 必填 | 默认值 |
+|----------|------------------------------------|----------|----|-----|
+| onChange | 值变更事件 (value: LocaleType) => void; | Function | ❌  | -   |

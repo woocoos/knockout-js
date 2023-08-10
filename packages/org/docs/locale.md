@@ -15,12 +15,12 @@ export default () => {
     <>
       <div>
         中文
-        <OrgSelect value={org} onChange={setOrg} />
+        <OrgSelect value={org} onChange={setOrg}/>
       </div>
       <div>
         英文
         <BasicProvider locale={LocaleType.enUS}>
-          <OrgSelect value={org} onChange={setOrg} />
+          <OrgSelect value={org} onChange={setOrg}/>
         </BasicProvider>
       </div>
     </>
@@ -30,10 +30,10 @@ export default () => {
 
 ## Props
 
-| 属性     | 描述         | 类型            | 必填 | 默认值 |
-| -------- | ------------ | --------------- | ---- | ------ |
-| locale   | 使用的多语言 | Locale          | ❌   | -      |
-| children | 子节点       | React.ReactNode | ✅   | -      |
+| 属性       | 描述     | 类型              | 必填 | 默认值 |
+|----------|--------|-----------------|----|-----|
+| locale   | 使用的多语言 | Locale          | ❌  | -   |
+| children | 子节点    | React.ReactNode | ✅  | -   |
 
 ## hook
 

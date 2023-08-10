@@ -3,7 +3,6 @@ import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
 import { debugExchange, fetchExchange } from "urql";
-import store from '@/store';
 
 export default {
   app: {
