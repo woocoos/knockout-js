@@ -61,6 +61,7 @@
     "react": "^17 || ^18"
   },
   "publishConfig": {
+    "access": "public",
     "registry": "https://registry.npmjs.org/"
   },
   "license": "MIT"
