@@ -27,7 +27,7 @@ const Todos = () => {
   const [result, reexecuteQuery] = useQuery({
     query: TodosQuery,
     context: {
-      instanceName: 'default'
+      instanceName: 'ucenter'
     }
   });
   const { data, fetching, error } = result;
@@ -65,7 +65,7 @@ const Todos = () => {
     query: TodosQuery,
     current: 1,
     context: {
-      instanceName: 'default'
+      instanceName: 'ucenter'
     }
   });
   const { data, fetching, error } = result;
@@ -104,7 +104,7 @@ const Todo = () => {
 
   const submit = newTitle => {
     const variables = { id: 1, title: newTitle || '' };
-    const context = { context: { instanceName: 'default' } }
+    const context = { context: { instanceName: 'ucenter' } }
     updateTodo(variables,context).then(result => {
       // The result is almost identical to `updateTodoResult` with the exception
       // of `result.fetching` not being set.
@@ -138,7 +138,7 @@ const handleSubscription = (messages = [], response) => {
 };
 
 const Messages = () => {
-  const [res] = useSubscription({ query: newMessages, context: { instanceName: 'default'} }, handleSubscription);
+  const [res] = useSubscription({ query: newMessages, context: { instanceName: 'ucenter'} }, handleSubscription);
 
   if (!res.data) {
     return <p>No new messages</p>;
@@ -177,7 +177,7 @@ instanceName不传入默认取default
 ```ts
 import { query } from "@knockout-js/ice-urql/request";
 
-query('', {}, { instanceName: 'default'} );
+query('', {}, { instanceName: 'ucenter'} );
 ```
 
 ## paging

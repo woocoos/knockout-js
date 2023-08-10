@@ -1,44 +1,47 @@
 import { test, expect } from 'vitest';
 import * as React from 'react';
 import { fireEvent, render, renderHook, screen } from '@testing-library/react';
-import { CClient, OrgSelect } from '@knockout-js/org';
-import { Provider, Client, cacheExchange, fetchExchange } from 'urql';
+import { OrgSelect } from '@knockout-js/org';
 import { useState } from "react";
-import { OrgKind, orgListQuery } from "@knockout-js/api";
+import { OrgKind } from "@knockout-js/api";
+import { query } from '@knockout-js/ice-urql/request';
+import { gql } from 'urql'
+import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+createUrqlInstance([
+  {
+    instanceName: 'default',
+    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+  }
+])
+
+const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrder,$where:OrgWhereInput){
+  organizations(first:$first,orderBy: $orderBy,where: $where){
+    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+    edges{
+      cursor,node{
+        id,name
+      }
+    }
+  }
+}`);
 
 test('mocktest', async () => {
-  const client = new Client({
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
-    exchanges: [cacheExchange, fetchExchange],
-  });
-
-  const result = await client.query(orgListQuery, {
+  const result = await query(orgListQuery, {
     first: 10,
-  }).toPromise()
+  })
 
   console.log('--result--', result)
   expect(result.data).toBeDefined()
-
 });
 
 test('render OrgSelect', async () => {
-  const url = 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
-    client = new Client({
-      url,
-      exchanges: [cacheExchange, fetchExchange],
-    }) as CClient;
-
-  client.url = url
-
   const { result } = renderHook(() => useState({ id: '1', name: 'org1' }))
   const [org, setOrg] = result.current;
-  const ele = render(<Provider value={client}>
-    <OrgSelect value={org} onChange={setOrg} orgId={org.id} kind={OrgKind.Root}    />
-  </Provider>);
+  const ele = render(
+    <OrgSelect value={org} onChange={setOrg} orgId={org.id} kind={OrgKind.Root} />
+  );
 
   // 模拟点击
   // fireEvent.click(ele.container.querySelector('.anticon-search') as Element)
-
   expect(ele.getByDisplayValue('org1')).toBeDefined();
-
 });
