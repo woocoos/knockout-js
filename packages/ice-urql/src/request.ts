@@ -51,7 +51,7 @@ function createDefaultClient(config: CustomClientOptions) {
 
 /**
  * 根据配置处理实例的创建
- * @param config
+ * @param reqConf
  */
 export function createUrqlInstance(reqConf: RequestConfig) {
 
@@ -116,7 +116,6 @@ export function getInstance(instanceName?: string) {
  * @param query
  * @param variables
  * @param context
- * @param instanceName
  * @returns
  */
 export async function query<Data = any, Variables extends AnyVariables = AnyVariables>(
