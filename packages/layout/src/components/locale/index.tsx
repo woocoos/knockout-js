@@ -15,8 +15,8 @@ export interface Locale {
 }
 
 export enum LocaleType {
-  zhCN = "zh-cn",
-  enUS = "en-us",
+  zhCN = "zh-CN",
+  enUS = "en-US",
 }
 
 export interface BasicProviderProps {

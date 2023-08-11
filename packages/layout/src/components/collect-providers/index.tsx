@@ -1,20 +1,17 @@
 import { Locale } from "antd/es/locale";
 import { LocaleType } from "../locale"
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { ProConfigProvider } from "@ant-design/pro-provider";
 import { BasicProvider, LeavePrompt } from "..";
 import { ConfigProvider } from "antd";
 import { AliveScope } from "react-activation";
-
+import zhCN from 'antd/locale/zh_CN';
+import enUS from 'antd/locale/en_US';
 export interface CollectProviderProps {
   /**
    * @knockout-js 的多语言 locale
    */
   locale: LocaleType;
-  /**
-   * ant 多语言的 locale
-   */
-  antLocale: Locale;
   /**
    * ProConfig dark主题
    */
@@ -30,10 +27,21 @@ export interface CollectProviderProps {
 }
 
 export default (props: CollectProviderProps) => {
+
+  const [antLocale, setAntLocale] = useState<Locale>(zhCN);
+
+  useEffect(() => {
+    if (props.locale === LocaleType.zhCN) {
+      setAntLocale(zhCN)
+    } else if (props.locale === LocaleType.enUS) {
+      setAntLocale(enUS)
+    }
+  }, [props.locale]);
+
   return (
     <ProConfigProvider dark={props.dark}>
       <BasicProvider locale={props.locale}>
-        <ConfigProvider locale={props.antLocale}>
+        <ConfigProvider locale={antLocale}>
           <LeavePrompt pathname={props.pathname}>
             <AliveScope>
               {props.children}

@@ -20,7 +20,4 @@
     position: unset !important;
   }
 
-  :global(.ant-pro-global-header-header-actions-item .ant-switch) {
-    padding-block: 0;
-  }
 }

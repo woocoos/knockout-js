@@ -81,5 +81,5 @@ export const useLeavePrompt = () => {
     }))
   };
 
-  return [checkLeave, setLeavePromptWhen]
+  return [checkLeave, setLeavePromptWhen] as const
 }

@@ -15,7 +15,7 @@ export interface ThemeSwitchProps {
   /**
    * switch的设置
    */
-  switchProps: SwitchProps;
+  switchProps?: SwitchProps;
   /**
    * 值变更事件 (value: boolean) => void;
    */
