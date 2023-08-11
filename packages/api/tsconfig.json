@@ -1,0 +1,8 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react"
+  },
+  "extends": "../../tsconfig.base.json",
+  "include": ["src"],
+}
