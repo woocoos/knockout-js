@@ -1,7 +1,6 @@
 
-import { query } from '@knockout-js/ice-urql/request';
+import { query, gql } from '@knockout-js/ice-urql/request';
 import { useQuery } from '@knockout-js/ice-urql/runtime';
-import { gql } from 'urql';
 
 const pokemonsQuery = gql`query pokemons{
   pokemons(limit:5){

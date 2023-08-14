@@ -8,17 +8,17 @@
   },
   "dependencies": {
     "@ice/plugin-request": "^1.0.1",
-    "@ice/runtime": "^1.2.4",
-    "@knockout-js/api": "^0.0.2",
-    "@knockout-js/ice-urql": "^0.0.2",
-    "@knockout-js/layout": "^0.0.2",
-    "@knockout-js/org": "^0.0.2",
+    "@ice/runtime": "^1.2.7",
+    "@knockout-js/api": "workspace:*",
+    "@knockout-js/ice-urql": "workspace:*",
+    "@knockout-js/layout": "workspace:*",
+    "@knockout-js/org": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@ice/app": "^3.2.6",
+    "@ice/app": "^3.2.9",
     "@ice/plugin-store": "^1.1.1",
     "@types/react": "^18.0.0"
   }

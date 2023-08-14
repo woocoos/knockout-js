@@ -2,7 +2,6 @@ import { defineDataLoader } from '@ice/runtime';
 import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
-import { debugExchange, fetchExchange } from "urql";
 
 export default {
   app: {
@@ -44,10 +43,6 @@ export const urqlConfig = defineUrqlConfig(async () => {
     {
       instanceName: 'instance2',
       url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
-      exchanges: [
-        fetchExchange,
-        debugExchange,
-      ],
     },
     {
       instanceName: 'ucenter',
