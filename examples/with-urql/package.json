@@ -9,7 +9,10 @@
   "dependencies": {
     "@ice/plugin-request": "^1.0.1",
     "@ice/runtime": "^1.2.4",
-    "@knockout-js/ice-urql": "workspace:*",
+    "@knockout-js/api": "^0.0.2",
+    "@knockout-js/ice-urql": "^0.0.2",
+    "@knockout-js/layout": "^0.0.2",
+    "@knockout-js/org": "^0.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tslib": "^2.4.0"

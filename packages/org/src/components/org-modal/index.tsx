@@ -13,9 +13,8 @@ import {
   OrgWhereInput,
   gid
 } from "@knockout-js/api";
-import { gql } from 'urql'
 import { useLocale } from '../locale';
-import { paging } from '@knockout-js/ice-urql/request';
+import { gql, paging } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '../';
 
 export interface OrgModalLocale {

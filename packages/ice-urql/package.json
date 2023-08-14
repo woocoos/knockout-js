@@ -52,8 +52,7 @@
     "access": "public"
   },
   "scripts": {
-    "start": "tsc",
-    "watch": "tsc -w",
+    "start": "tsc -w",
     "build": "tsc",
     "prepublishOnly": "npm run build"
   },

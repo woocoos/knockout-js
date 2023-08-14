@@ -18,10 +18,14 @@ createUrqlInstance([
 
 export default () => {
   const [tenantId, setTenantId] = useState("1");
+  const dataSource = [
+    {id:1,name:'tenant-1'},
+    {id:2,name:'tenant-2'},
+  ]
 
   return (
     <div style={{width: "100px"}}>
-      <TenantDropdown value={tenantId} onChange={setTenantId}/>
+      <TenantDropdown value={tenantId} dataSource={dataSource} onChange={setTenantId}/>
     </div>
   );
 };
@@ -32,4 +36,5 @@ export default () => {
 | 属性       | 描述  | 类型                   | 必填 | 默认值 |
 |----------|-----|----------------------|----|-----|
 | value    | 值   | string               | ✅  | -   |
+| dataSource    | 提供数据源   | Org[]               | ✅  | -   |
 | onChange | 更新值 | (value:string)=>void | ✅  | -   |

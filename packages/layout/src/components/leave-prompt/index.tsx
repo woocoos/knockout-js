@@ -81,5 +81,6 @@ export const useLeavePrompt = () => {
     }))
   };
 
-  return [checkLeave, setLeavePromptWhen] as const
+  const result: [() => boolean, (when: boolean) => void] = [checkLeave, setLeavePromptWhen]
+  return result
 }

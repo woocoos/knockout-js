@@ -6,6 +6,20 @@ sidebar_label: 方法
 
 提供了各种urql调用方法可在页面中或者方法中使用
 
+## gql
+
+```ts
+import { gql } from "@knockout-js/ice-urql/request";
+
+const TodosQuery = gql`
+  query {
+    todos {
+      id
+    }
+  }
+`;
+```
+
 ## useQuery
 
 提供query的`hook`方法与urql使用一致，instanceName通过context传值

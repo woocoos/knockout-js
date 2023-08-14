@@ -9,10 +9,12 @@ import {
   createClient,
   ClientOptions,
   mapExchange,
+  gql as urqlGql
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
 import { authExchange } from './exchange.js';
 
+export const gql = urqlGql;
 
 export const urqlInstances: Record<string, {
   client: Client;

@@ -48,8 +48,7 @@
     "@knockout-js/layout": "workspace:^",
     "@knockout-js/ice-urql": "workspace:^",
     "@swc/helpers": "^0.5.1",
-    "antd": "^5.6.3",
-    "urql": "^4.0.4"
+    "antd": "^5.6.3"
   },
   "devDependencies": {
     "@ice/pkg": "^1.5.11",

@@ -5,15 +5,14 @@ import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
 import { ReactNode, useCallback, useState } from 'react';
-import { gql } from 'urql';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 import { LocaleType } from '../locale';
 import { CollectProviders } from '..';
-import { query } from '@knockout-js/ice-urql/request';
+import { gql, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
-import logo from './woocoo.png';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
+import { logoBase64 } from './logo';
 
 export interface LayoutProps {
   /**
@@ -69,6 +68,7 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
   }
 }`);
 
+
 const Layout = (props: LayoutProps) => {
 
   const [locale, setLocale] = useState(LocaleType.zhCN);
@@ -98,7 +98,7 @@ const Layout = (props: LayoutProps) => {
       <ProLayout
         className={styles.layout}
         title='adminx'
-        logo={<img src={logo} alt="logo" />}
+        logo={<img src={logoBase64} alt="logo" />}
         layout="mix"
         fixSiderbar
         menu={{

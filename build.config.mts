@@ -7,6 +7,7 @@ export default defineConfig({
       {
         title: '@knockout-js',
         path: 'packages',
+        navBarTitle: 'knockout-js',
         sidebarItemsGenerator: (args: any) => {
           // The index.md doc should not be the category, so we rewrite the default isCategoryIndex function.
           function isCategoryIndex({ fileName, directories }: any) {
@@ -24,7 +25,7 @@ export default defineConfig({
           // 2. Remove category link.
           const newSidebarItems = defaultSidebarItems.map(({ link, ...rest }: any) => ({
             ...rest,
-            items: rest.items.map((item: any) => item.items).flat(),
+            items: rest.items.map((item: any) => item.items).flat().filter(item => item),
           }));
 
           return newSidebarItems;

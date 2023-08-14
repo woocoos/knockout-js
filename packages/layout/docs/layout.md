@@ -65,7 +65,7 @@ export default () => {
                 },
                 {
                   name: "菜单1",
-                  icon: "yakIcon-daiyue",
+                  icon:  <IconFont type="yakIcon-daiyue" /> ,
                   children: [
                     {
                       name: "菜单1-1",

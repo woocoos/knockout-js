@@ -1,6 +1,6 @@
 {
   "name": "knockout-js",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "private": true,
   "workspaces": [
     "packages/*"
@@ -8,7 +8,7 @@
   "scripts": {
     "start": "pnpm packages:start & pnpm docs:start",
     "build": "pnpm packages:build && pnpm docs:build",
-    "packages:start": "pnpm -r run start",
+    "packages:start": "pnpm --parallel -r run start",
     "packages:build": "pnpm -r run build",
     "docs:start": "ice-pkg start",
     "docs:build": "ice-pkg build",
@@ -47,7 +47,6 @@
     "react-dom": "^18.2.0",
     "rimraf": "^4.3.1",
     "stylelint": "^15.0.0",
-    "urql": "^4.0.4",
     "vitest": "^0.33.0"
   },
   "packageManager": "pnpm@7.22.0"
