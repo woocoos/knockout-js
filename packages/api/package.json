@@ -39,17 +39,18 @@
     "gqlgen:watch": "pnpm gqlgen --watch"
   },
   "dependencies": {
+    "@swc/helpers": "^0.5.1",
     "crypto-js": "^4.1.1",
     "graphql": "^16.6.0"
   },
   "devDependencies": {
-    "@ice/pkg": "^1.5.11",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/client-preset": "^4.0.0",
     "@graphql-codegen/schema-ast": "^4.0.0",
     "@graphql-tools/mock": "^8.7.20",
     "@graphql-tools/schema": "^10.0.0",
     "@graphql-typed-document-node/core": "^3.2.0",
+    "@ice/pkg": "^1.5.11",
     "@types/crypto-js": "^4.1.1",
     "typescript": "^4.9.4"
   },
