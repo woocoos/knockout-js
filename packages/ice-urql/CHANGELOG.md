@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.0.3-beta.3
+
+### Patch Changes
+
+- 调整tsc target
+
 ## 0.0.3-beta.2
 
 ### Patch Changes
