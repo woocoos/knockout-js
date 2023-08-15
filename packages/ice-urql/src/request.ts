@@ -195,7 +195,6 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
   context?: Partial<OperationContext> & {
     instanceName?: string
   },
-
 ) {
   const urqlInstance = getInstance(context?.instanceName);
 
@@ -204,3 +203,5 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
     ...context
   }).toPromise();
 }
+
+

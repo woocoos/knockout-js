@@ -1,7 +1,8 @@
 import { defineDataLoader } from '@ice/runtime';
 import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/esm/types";
+import store from './store';
 
 export default {
   app: {
@@ -39,6 +40,23 @@ export const urqlConfig = defineUrqlConfig(async () => {
     {
       instanceName: 'default',
       url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
+      // exchangeOpt: {
+      //   authOpts: {
+      //     store: {
+      //       getState: () => {
+      //         const { token, tenantId, refreshToken } = store.getModelState('user')
+      //         return {
+      //           token, tenantId, refreshToken
+      //         }
+      //       },
+      //       setStateToken: (newToken) => {
+      //         store.dispatch.user.updateToken(newToken)
+      //       }
+      //     },
+      //     login: '/login',
+      //     refreshApi: "/api-auth/login/refresh-token"
+      //   }
+      // }
     },
     {
       instanceName: 'instance2',
@@ -53,4 +71,15 @@ export const urqlConfig = defineUrqlConfig(async () => {
 
 export const requestConfig = defineRequestConfig(() => ({
   baseURL: '/',
+  interceptors: requestInterceptor({
+    store: {
+      getState: () => {
+        const { token, tenantId } = store.getModelState('user')
+        return {
+          token, tenantId
+        }
+      }
+    },
+    login: '/login'
+  })
 }));

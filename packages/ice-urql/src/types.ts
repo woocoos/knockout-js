@@ -1,6 +1,8 @@
 import { Exchange, MapExchangeOpts } from 'urql';
 import { AuthExchangeOpts } from './exchange';
 
+export * from './requestInterceptor.js'
+
 export interface CustomClientOptions {
   /**
    * 请求url
@@ -28,3 +30,5 @@ export type RequestConfig = CustomClientOptions | CustomClientOptions[];
 export function defineUrqlConfig(configOrDefineConfig: RequestConfig | ((data?: any) => Promise<RequestConfig>)) {
   return configOrDefineConfig;
 }
+
+
