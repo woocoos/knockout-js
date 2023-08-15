@@ -19,6 +19,10 @@
   },
   "devDependencies": {
     "@ice/app": "^3.2.9",
+    "@ice/plugin-antd": "^1.0.1",
+    "@ice/plugin-auth": "^1.0.1",
+    "@ice/plugin-icestark": "^1.1.0",
+    "@ice/plugin-jsx-plus": "^1.0.2",
     "@ice/plugin-store": "^1.1.1",
     "@types/react": "^18.0.0"
   }

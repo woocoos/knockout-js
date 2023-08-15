@@ -120,6 +120,18 @@ importers:
       '@ice/app':
         specifier: ^3.2.9
         version: 3.2.9(react-dom@18.2.0)(react@18.2.0)
+      '@ice/plugin-antd':
+        specifier: ^1.0.1
+        version: 1.0.1
+      '@ice/plugin-auth':
+        specifier: ^1.0.1
+        version: 1.0.1(react-dom@18.2.0)(react@18.2.0)
+      '@ice/plugin-icestark':
+        specifier: ^1.1.0
+        version: 1.1.0(react@18.2.0)
+      '@ice/plugin-jsx-plus':
+        specifier: ^1.0.2
+        version: 1.0.2
       '@ice/plugin-store':
         specifier: ^1.1.1
         version: 1.1.1(react-dom@18.2.0)(react@18.2.0)
@@ -4840,6 +4852,46 @@ packages:
       - supports-color
     dev: true
 
+  /@ice/plugin-antd@1.0.1:
+    resolution: {integrity: sha512-Iib0HKyKCMKmttVf3K/I0G18KZs4wQtoSduzFukEB3eNiQFD2SKwskI+xsGEXGr9y0FaTk1tD1Xb+vjYIyZrsg==}
+    dependencies:
+      '@ice/style-import': 1.0.0
+    dev: true
+
+  /@ice/plugin-auth@1.0.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-6qPC4jXW04nx9qI9HG02sWbUpw+1xiWJ95ztR3c042jF/nB6CH95TY3dKRqStlfS3Qx17iVBB8eJ8mtODHxNpg==}
+    peerDependencies:
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: true
+
+  /@ice/plugin-icestark@1.1.0(react@18.2.0):
+    resolution: {integrity: sha512-G39Ci/k8JqfVDh/lVkwwwWTnC4wdtNS0VuplC0AmPhqK5V+LqSL/v+xXAWLOdKR9m7r573gf8DiBA3cv7KdegQ==}
+    dependencies:
+      '@ice/stark': 2.7.5(react@18.2.0)
+      '@ice/stark-app': 1.5.0
+    transitivePeerDependencies:
+      - react
+    dev: true
+
+  /@ice/plugin-jsx-plus@1.0.2:
+    resolution: {integrity: sha512-3UnZdebRu+zgPsBfiKXcAl5gaL96vFBWj34iqzDdTkJock9HT3sIKX/71v16ZDaKiGhfLdA7pvpI3lkktbSeKQ==}
+    dependencies:
+      '@babel/core': 7.22.10
+      babel-plugin-transform-jsx-class: 0.1.3
+      babel-plugin-transform-jsx-condition: 0.1.3
+      babel-plugin-transform-jsx-fragment: 0.1.5
+      babel-plugin-transform-jsx-list: 0.1.2
+      babel-plugin-transform-jsx-memo: 0.1.4
+      babel-plugin-transform-jsx-slot: 0.1.2
+      babel-runtime-jsx-plus: 0.1.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /@ice/plugin-request@1.0.1(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-rRSP7Kd4///ObI3bJV4SA7nBS2lb88Jt03oUtVHev4q/o85Z/zAuR1VB7riClYx7udOWPL3bnigecojj0QDnlw==}
     peerDependencies:
@@ -4912,6 +4964,27 @@ packages:
       semver: 7.5.4
       source-map: 0.7.4
 
+  /@ice/sandbox@1.1.4:
+    resolution: {integrity: sha512-MEVF0Ze3McKDutnFiUAhUoc+WwOFxITVBgSSHmbGpKtWbXJX9kUVlx3VsEVJvdqU3O1kiBNx6zE1sFMjKPRTIQ==}
+    dev: true
+
+  /@ice/stark-app@1.5.0:
+    resolution: {integrity: sha512-9fuCri48eZj6TnfPkCju4vVLhGurz+mt6lFx4JQFHhnRBQ5MuiBqRZg5F/3vdnJ7dAYQJlCXmHlQtBHok82z+g==}
+    dev: true
+
+  /@ice/stark@2.7.5(react@18.2.0):
+    resolution: {integrity: sha512-HyV3/6PtTfNiKBkncztunpjsWMBw/SyQ24TvrYLnpkuSmrlZ9t0/jkJWuaM6nGpAufyZ62YfQ2Tn032So9OeIg==}
+    peerDependencies:
+      react: '>=15.0.0'
+    dependencies:
+      '@ice/sandbox': 1.1.4
+      lodash.isempty: 4.4.0
+      lodash.isequal: 4.5.0
+      path-to-regexp: 1.8.0
+      react: 18.2.0
+      url-parse: 1.5.10
+    dev: true
+
   /@ice/store@2.0.4(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-EAcoHlemj4pYuFWC4D8RfmoFtjHqq4REi9trTAUipnXO8f4paZWbHwnnoHXbSHtsQBdTTYavNvHK4dnnNsd6bw==}
     peerDependencies:
@@ -4926,6 +4999,13 @@ packages:
     transitivePeerDependencies:
       - react-dom
       - react-native
+    dev: true
+
+  /@ice/style-import@1.0.0:
+    resolution: {integrity: sha512-JbXBNfuEyIbopLM2sBznMPrUVZdaFT9CVddkaWceDs17GrDEABUx01L49HIYec9iEScWQ43ocF5J7GSE1b35Tg==}
+    dependencies:
+      es-module-lexer: 1.3.0
+      magic-string: 0.26.7
     dev: true
 
   /@ice/swc-plugin-keep-export@0.1.4-2:
@@ -7488,6 +7568,32 @@ packages:
     resolution: {integrity: sha512-Xj9XuRuz3nTSbaTXWv3itLOcxyF4oPD8douBBmj7U9BBC6nEBYfyOJYQMf/8PJAFotC62UY5dFfIGEPr7WswzQ==}
     dev: true
 
+  /babel-plugin-transform-jsx-class@0.1.3:
+    resolution: {integrity: sha512-Udi3d5qzwEyteqchxKoV/JfgktZZ8O3SLlADO936Os8LXolkuhl3joq71KiU0yMip8wz7+3zBKU+7otK1iZCLw==}
+    dev: true
+
+  /babel-plugin-transform-jsx-condition@0.1.3:
+    resolution: {integrity: sha512-WfN3XpoL53z/k1YAXbLCEQ3qa7YxQd2Wc00eoe4Hfh9JFzSLHhU7lKGFdDbwEYJzM+YI+pDe0hXDqD2b784pXg==}
+    dev: true
+
+  /babel-plugin-transform-jsx-fragment@0.1.5:
+    resolution: {integrity: sha512-s12RL9XMM4Z3xgwaq3dSSyJhBmv2MZmFVlhdIc9L5qEcS/on4LkLgIcVU8S8dZB44wpBLoqU0k8LkvDvvIZVuA==}
+    dev: true
+
+  /babel-plugin-transform-jsx-list@0.1.2:
+    resolution: {integrity: sha512-6ajrUOorIkdKwHWAeN8ZUp67yaFl0PYyHKUGY31Pw/ZtF0EIygfD8oxjcbFp0rZpTcVEYTMmh+s1xc6cnKy79g==}
+    dev: true
+
+  /babel-plugin-transform-jsx-memo@0.1.4:
+    resolution: {integrity: sha512-v9L9oFFbPjaVytLhxsmuFLm3USIoTeZQHz4xid2qnT87/C5cCbE8GtE26xbPXTc2LBj1roSDIO3hgR+2JAv1vA==}
+    dev: true
+
+  /babel-plugin-transform-jsx-slot@0.1.2:
+    resolution: {integrity: sha512-ske7KaYo4w4p2w1q7C3653pNje765P24vLF59qmXlgvlPYuFVCTaGS+PYEyb5xIDRDhgiSO2KtDdYK6f6ONxkQ==}
+    dependencies:
+      '@babel/types': 7.22.10
+    dev: true
+
   /babel-preset-fbjs@3.4.0(@babel/core@7.22.10):
     resolution: {integrity: sha512-9ywCsCvo1ojrw0b+XYk7aFvTH6D9064t0RIL1rtMf3nsa02Xw41MS7sZw216Im35xj/UY0PDBQsa1brUDDF1Ow==}
     peerDependencies:
@@ -7521,6 +7627,10 @@ packages:
       '@babel/plugin-transform-spread': 7.22.5(@babel/core@7.22.10)
       '@babel/plugin-transform-template-literals': 7.22.5(@babel/core@7.22.10)
       babel-plugin-syntax-trailing-function-commas: 7.0.0-beta.0
+    dev: true
+
+  /babel-runtime-jsx-plus@0.1.5:
+    resolution: {integrity: sha512-5qjZDfUzZGxHgX8o0tkS9o0HbyBvnUuaAtqHC9IN5CgjWFGJBg6a0Xp31wiG7btiHV0dP5t1t8cthlTCYwtnig==}
     dev: true
 
   /bail@1.0.5:
@@ -12002,6 +12112,14 @@ packages:
     resolution: {integrity: sha512-ff3BX/tSioo+XojX4MOsOMhJw0nZoUEF011LX8g8d3gvjVbxd89cCio4BCXronjxcTUIJUoqKEUA+n4CqvvRPw==}
     dev: true
 
+  /lodash.isempty@4.4.0:
+    resolution: {integrity: sha512-oKMuF3xEeqDltrGMfDxAPGIVMSSRv8tbRSODbrs4KGsRRLEhrW8N8Rd4DRgB2+621hY8A8XwwrTVhXWpxFvMzg==}
+    dev: true
+
+  /lodash.isequal@4.5.0:
+    resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    dev: true
+
   /lodash.isfunction@3.0.9:
     resolution: {integrity: sha512-AirXNj15uRIMMPihnkInB4i3NHeb4iBtNg9WRWuK2o31S+ePwwNmDPaTL3o7dTJ+VXNZim7rFs4rxN4YU1oUJw==}
     dev: true
@@ -12147,6 +12265,13 @@ packages:
 
   /magic-string@0.25.9:
     resolution: {integrity: sha512-RmF0AsMzgt25qzqqLc1+MbHmhdx0ojF2Fvs4XnOqz2ZOBXzzkEwc/dJQZCYHAn7v1jbVOjAZfK8msRn4BxO4VQ==}
+    dependencies:
+      sourcemap-codec: 1.4.8
+    dev: true
+
+  /magic-string@0.26.7:
+    resolution: {integrity: sha512-hX9XH3ziStPoPhJxLq1syWuZMxbDvGNbVchfrdCtanC7D13888bMFow61x8axrx+GfHLtVeAx2kxL7tTGRl+Ow==}
+    engines: {node: '>=12'}
     dependencies:
       sourcemap-codec: 1.4.8
     dev: true
@@ -13247,7 +13372,7 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       bl: 4.1.0
-      chalk: 4.1.1
+      chalk: 4.1.2
       cli-cursor: 3.1.0
       cli-spinners: 2.9.0
       is-interactive: 1.0.0
