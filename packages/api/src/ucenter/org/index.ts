@@ -2,10 +2,16 @@ import { query } from '@knockout-js/ice-urql/request';
 import { gql, Org, gid } from '../..';
 import { instanceName } from '..';
 
-export const cacheOrg: Record<string, Org> = {}
-
 const orgIdListQuery = gql(/* GraphQL */`query apiOrgIdList($ids:[GID!]!){
   nodes(ids: $ids){
+    ... on Org{
+      id,code,name
+    }
+  }
+}`)
+
+const orgIdQuery = gql(/* GraphQL */`query apiOrgId($id:GID!){
+  node(id: $id){
     ... on Org{
       id,code,name
     }
@@ -15,21 +21,40 @@ const orgIdListQuery = gql(/* GraphQL */`query apiOrgIdList($ids:[GID!]!){
 
 /**
  * 缓存org值
- * @param ids
+ * @param orgIds
  */
-export async function updateCacheOrgListByIds(ids: (string | number)[]) {
-  const cacheIds = Object.keys(cacheOrg)
-  const newCacheIds = ids.filter(id => !cacheIds.includes(`${id}`))
-  if (newCacheIds.length) {
-    const result = await query(orgIdListQuery, {
-      ids: newCacheIds.map(id => gid('org', id))
-    }, {
-      instanceName,
-    })
-    result.data?.nodes?.forEach(item => {
-      if (item?.__typename === 'Org') {
-        cacheOrg[item.id] = item as Org
-      }
-    })
+export async function getCacheOrgs(orgIds: (string | number)[]) {
+  const result = await query(orgIdListQuery, {
+    ids: orgIds.map(id => gid('org', id))
+  }, {
+    instanceName,
+    requestPolicy: "cache-first",
+  }), list: Org[] = [];
+
+  result.data?.nodes?.forEach(item => {
+    if (item?.__typename === 'Org') {
+      list.push(item as Org)
+    }
+  })
+
+  return list;
+}
+
+/**
+ * 缓存org值
+ * @param orgId
+ */
+export async function getCacheOrg(orgId: (string | number)) {
+  const result = await query(orgIdQuery, {
+    id: gid('org', orgId)
+  }, {
+    instanceName,
+    requestPolicy: "cache-first",
+  });
+
+  if (result.data?.node?.__typename === 'Org') {
+    return result.data.node
   }
+
+  return null;
 }

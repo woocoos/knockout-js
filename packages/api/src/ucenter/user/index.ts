@@ -2,10 +2,16 @@ import { query } from '@knockout-js/ice-urql/request';
 import { instanceName } from '..';
 import { AppActionKind, AppActionMethod, User, gid, gql } from '../..';
 
-export const cacheUser: Record<string, User> = {}
-
 const userIdListQuery = gql(/* GraphQL */`query apiUserIdList($ids:[GID!]!){
   nodes(ids: $ids){
+    ... on User{
+      id,displayName
+    }
+  }
+}`)
+
+const userIdQuery = gql(/* GraphQL */`query apiUserId($id:GID!){
+  node(id: $id){
     ... on User{
       id,displayName
     }
@@ -49,21 +55,40 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
 
 /**
  * 缓存user值
- * @param ids
+ * @param userIds
  */
-export async function updateCacheUserListByIds(ids: (string | number)[]) {
-  const cacheIds = Object.keys(cacheUser)
-  const newCacheIds = ids.filter(id => !cacheIds.includes(`${id}`))
-  if (newCacheIds.length) {
-    const result = await query(userIdListQuery, {
-      ids: newCacheIds.map(id => gid('user', id))
-    }, {
-      instanceName,
-    })
-    result.data?.nodes?.forEach(item => {
-      if (item?.__typename === 'User') {
-        cacheUser[item.id] = item as User
-      }
-    })
+export async function getCacheUsers(userIds: (string | number)[]) {
+  const result = await query(userIdListQuery, {
+    ids: userIds.map(id => gid('user', id))
+  }, {
+    instanceName,
+    requestPolicy: "cache-first",
+  }), list: User[] = [];
+
+  result.data?.nodes?.forEach(item => {
+    if (item?.__typename === 'User') {
+      list.push(item as User)
+    }
+  })
+
+  return list;
+}
+
+/**
+ * 缓存user值
+ * @param userId
+ */
+export async function getCacheUser(userId: (string | number)) {
+  const result = await query(userIdQuery, {
+    id: gid('user', userId)
+  }, {
+    instanceName,
+    requestPolicy: "cache-first",
+  });
+
+  if (result.data?.node?.__typename === 'User') {
+    return result.data.node
   }
+
+  return null;
 }

@@ -2,8 +2,6 @@ import { OrgRole, OrgRoleOrder, OrgRoleWhereInput, gid, gql } from '../..';
 import { paging, query } from '@knockout-js/ice-urql/request';
 import { instanceName } from '..';
 
-export const cacheOrgRole: Record<string, OrgRole> = {}
-
 const orgGroupListQuery = gql(/* GraphQL */`query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){
   orgGroups(first:$first,orderBy: $orderBy,where: $where){
     totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
@@ -17,6 +15,14 @@ const orgGroupListQuery = gql(/* GraphQL */`query apiOrgGroupList($first: Int,$o
 
 const orgRoleIdListQuery = gql(/* GraphQL */`query apiOrgRoleIdList($ids:[GID!]!){
   nodes(ids: $ids){
+    ... on OrgRole{
+      id,orgID,kind,name
+    }
+  }
+}`)
+
+const orgRoleIdQuery = gql(/* GraphQL */`query apiOrgRoleId($id:GID!){
+  node(id: $id){
     ... on OrgRole{
       id,orgID,kind,name
     }
@@ -56,21 +62,40 @@ export async function getOrgGroupList(
 
 /**
  * 缓存orgRole值
- * @param ids
+ * @param orgRoleIds
  */
-export async function updateCacheOrgRoleListByIds(ids: (string | number)[]) {
-  const cacheIds = Object.keys(cacheOrgRole)
-  const newCacheIds = ids.filter(id => !cacheIds.includes(`${id}`))
-  if (newCacheIds.length) {
-    const result = await query(orgRoleIdListQuery, {
-      ids: newCacheIds.map(id => gid('org_role', id))
-    }, {
-      instanceName,
-    });
-    result.data?.nodes?.forEach(item => {
-      if (item?.__typename === 'OrgRole') {
-        cacheOrgRole[item.id] = item as OrgRole
-      }
-    })
+export async function getCacheOrgRoles(orgRoleIds: (string | number)[]) {
+  const result = await query(orgRoleIdListQuery, {
+    ids: orgRoleIds.map(id => gid('org_role', id)),
+    requestPolicy: "cache-first",
+  }, {
+    instanceName,
+  }), list: OrgRole[] = [];
+
+  result.data?.nodes?.forEach(item => {
+    if (item?.__typename === 'OrgRole') {
+      list.push(item as OrgRole);
+    }
+  })
+
+  return list;
+}
+
+/**
+ * 缓存orgRole值
+ * @param orgRoleId
+ */
+export async function getCacheOrgRole(orgRoleId: (string | number)) {
+  const result = await query(orgRoleIdQuery, {
+    id: gid('org_role', orgRoleId),
+    requestPolicy: "cache-first",
+  }, {
+    instanceName,
+  });
+
+  if (result.data?.node?.__typename === 'OrgRole') {
+    return result.data.node
   }
+
+  return null;
 }

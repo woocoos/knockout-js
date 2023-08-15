@@ -14,11 +14,15 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdListDocument,
+    "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdDocument,
     "query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdListDocument,
+    "query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdDocument,
     "query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){\n  orgGroups(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      cursor,node{\n        id,orgID,kind,name,comments\n      }\n    }\n  }\n}": types.ApiOrgGroupListDocument,
     "query apiOrgRoleIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on OrgRole{\n      id,orgID,kind,name\n    }\n  }\n}": types.ApiOrgRoleIdListDocument,
+    "query apiOrgRoleId($id:GID!){\n  node(id: $id){\n    ... on OrgRole{\n      id,orgID,kind,name\n    }\n  }\n}": types.ApiOrgRoleIdDocument,
     "query apiOrgUserList($gid: GID!,$first: Int,$orderBy:UserOrder,$where:UserWhereInput){\n  node(id:$gid){\n    ... on Org{\n      id,\n      users(first:$first,orderBy: $orderBy,where: $where){\n        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n        edges{\n          cursor,node{\n            id,displayName,email\n          }\n        }\n      }\n    }\n  }\n}": types.ApiOrgUserListDocument,
     "query apiUserIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on User{\n      id,displayName\n    }\n  }\n}": types.ApiUserIdListDocument,
+    "query apiUserId($id:GID!){\n  node(id: $id){\n    ... on User{\n      id,displayName\n    }\n  }\n}": types.ApiUserIdDocument,
     "query apiUserPermissionList($where: AppActionWhereInput){\n  userPermissions(where: $where){\n    id,appID,name,kind,method\n  }\n}": types.ApiUserPermissionListDocument,
     "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}": types.UserMenuListDocument,
     "query userRootOrgs{\n  userRootOrgs{\n    id,parentID,kind,domain,code,name,status,path,displaySort,countryCode,timezone\n  }\n}": types.UserRootOrgsDocument,
@@ -52,7 +56,15 @@ export function gql(source: "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $id
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -64,11 +76,19 @@ export function gql(source: "query apiOrgRoleIdList($ids:[GID!]!){\n  nodes(ids:
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "query apiOrgRoleId($id:GID!){\n  node(id: $id){\n    ... on OrgRole{\n      id,orgID,kind,name\n    }\n  }\n}"): (typeof documents)["query apiOrgRoleId($id:GID!){\n  node(id: $id){\n    ... on OrgRole{\n      id,orgID,kind,name\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "query apiOrgUserList($gid: GID!,$first: Int,$orderBy:UserOrder,$where:UserWhereInput){\n  node(id:$gid){\n    ... on Org{\n      id,\n      users(first:$first,orderBy: $orderBy,where: $where){\n        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n        edges{\n          cursor,node{\n            id,displayName,email\n          }\n        }\n      }\n    }\n  }\n}"): (typeof documents)["query apiOrgUserList($gid: GID!,$first: Int,$orderBy:UserOrder,$where:UserWhereInput){\n  node(id:$gid){\n    ... on Org{\n      id,\n      users(first:$first,orderBy: $orderBy,where: $where){\n        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n        edges{\n          cursor,node{\n            id,displayName,email\n          }\n        }\n      }\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "query apiUserIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on User{\n      id,displayName\n    }\n  }\n}"): (typeof documents)["query apiUserIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on User{\n      id,displayName\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query apiUserId($id:GID!){\n  node(id: $id){\n    ... on User{\n      id,displayName\n    }\n  }\n}"): (typeof documents)["query apiUserId($id:GID!){\n  node(id: $id){\n    ... on User{\n      id,displayName\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
