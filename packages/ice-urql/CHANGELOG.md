@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.0.3-beta.1
+
+### Patch Changes
+
+- 调整api缓存和处理启动出现的 es2015 异常
+
 ## 0.0.3-beta.0
 
 ### Patch Changes
