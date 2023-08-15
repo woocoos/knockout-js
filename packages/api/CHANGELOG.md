@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.0.3-beta.2
+
+### Patch Changes
+
+- fix api名称调整 升级urql版本
+
 ## 0.0.3-beta.1
 
 ### Patch Changes
