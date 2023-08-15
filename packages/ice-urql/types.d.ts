@@ -1,1 +1,1 @@
-export * from './esm/types';
+export * from './es2017/types';

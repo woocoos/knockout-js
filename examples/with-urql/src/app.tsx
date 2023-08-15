@@ -2,7 +2,7 @@ import { defineDataLoader } from '@ice/runtime';
 import { defineAuthConfig } from '@ice/plugin-auth/esm/types';
 import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
-import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
 import { userPermissions } from '@knockout-js/api';
 

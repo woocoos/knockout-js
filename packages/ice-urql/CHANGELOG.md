@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.0.3-beta.4
+
+### Patch Changes
+
+- 改为 ice-pkg build es2017
+
 ## 0.0.3-beta.3
 
 ### Patch Changes

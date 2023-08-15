@@ -48,7 +48,7 @@ sidebar_label: 配置
 ### 单对象配置
 
 ```ts
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig } from "@knockout-js/ice-urql/types";
 import { debugExchange, fetchExchange } from "urql";
 import store from "@/store";
 
@@ -91,7 +91,7 @@ export const urqlConfig = defineUrqlConfig(() => ({
 ### 数组配置
 
 ```ts
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig } from "@knockout-js/ice-urql/types";
 import { debugExchange, fetchExchange } from "urql";
 import store from "@/store";
 
