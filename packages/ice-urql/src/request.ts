@@ -29,7 +29,7 @@ export const urqlInstances: Record<string, {
 function createDefaultClient(config: CustomClientOptions) {
   const defaultOpt: ClientOptions = {
     url: config.url,
-    requestPolicy: 'cache-and-network',
+    requestPolicy: config.requestPolicy ?? 'cache-and-network',
     exchanges: [],
   }
   if (config.exchanges) {

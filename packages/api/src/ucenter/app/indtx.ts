@@ -23,7 +23,7 @@ const appIdQuery = gql(/* GraphQL */`query apiAppId($id:GID!){
  * 缓存app 值
  * @param appIds
  */
-export async function getCacheApps(appIds: (string | number)[]) {
+export async function getApps(appIds: (string | number)[]) {
   const result = await query(appIdListQuery, {
     ids: appIds.map(id => gid('app', id))
   }, {
@@ -44,7 +44,7 @@ export async function getCacheApps(appIds: (string | number)[]) {
  * 缓存app 值
  * @param appId
  */
-export async function getCacheApp(appId: (string | number)) {
+export async function getApp(appId: (string | number)) {
   const result = await query(appIdQuery, {
     id: gid('app', appId)
   }, {

@@ -64,7 +64,7 @@ export async function getOrgGroupList(
  * 缓存orgRole值
  * @param orgRoleIds
  */
-export async function getCacheOrgRoles(orgRoleIds: (string | number)[]) {
+export async function getOrgRoles(orgRoleIds: (string | number)[]) {
   const result = await query(orgRoleIdListQuery, {
     ids: orgRoleIds.map(id => gid('org_role', id)),
     requestPolicy: "cache-first",
@@ -85,7 +85,7 @@ export async function getCacheOrgRoles(orgRoleIds: (string | number)[]) {
  * 缓存orgRole值
  * @param orgRoleId
  */
-export async function getCacheOrgRole(orgRoleId: (string | number)) {
+export async function getOrgRole(orgRoleId: (string | number)) {
   const result = await query(orgRoleIdQuery, {
     id: gid('org_role', orgRoleId),
     requestPolicy: "cache-first",

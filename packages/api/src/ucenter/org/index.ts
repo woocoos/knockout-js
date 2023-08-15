@@ -23,7 +23,7 @@ const orgIdQuery = gql(/* GraphQL */`query apiOrgId($id:GID!){
  * 缓存org值
  * @param orgIds
  */
-export async function getCacheOrgs(orgIds: (string | number)[]) {
+export async function getOrgs(orgIds: (string | number)[]) {
   const result = await query(orgIdListQuery, {
     ids: orgIds.map(id => gid('org', id))
   }, {
@@ -44,7 +44,7 @@ export async function getCacheOrgs(orgIds: (string | number)[]) {
  * 缓存org值
  * @param orgId
  */
-export async function getCacheOrg(orgId: (string | number)) {
+export async function getOrg(orgId: (string | number)) {
   const result = await query(orgIdQuery, {
     id: gid('org', orgId)
   }, {

@@ -57,7 +57,7 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
  * 缓存user值
  * @param userIds
  */
-export async function getCacheUsers(userIds: (string | number)[]) {
+export async function getUsers(userIds: (string | number)[]) {
   const result = await query(userIdListQuery, {
     ids: userIds.map(id => gid('user', id))
   }, {
@@ -78,7 +78,7 @@ export async function getCacheUsers(userIds: (string | number)[]) {
  * 缓存user值
  * @param userId
  */
-export async function getCacheUser(userId: (string | number)) {
+export async function getUser(userId: (string | number)) {
   const result = await query(userIdQuery, {
     id: gid('user', userId)
   }, {
