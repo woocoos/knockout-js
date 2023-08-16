@@ -26,7 +26,7 @@ export default defineConfig(() => ({
 [详见](./config)
 
 ```ts title=app.tsx
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig } from "@knockout-js/ice-urql/types";
 
 export const urqlConfig = defineUrqlConfig(() => [
  

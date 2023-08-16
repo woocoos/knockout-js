@@ -5,12 +5,15 @@
     "rootDir": "src",
     "outDir": "esm",
     "jsx": "react",
+    "target": "ESNext",
+    "module": "ESNext",
     "declaration": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "allowJs": true
-
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
 }

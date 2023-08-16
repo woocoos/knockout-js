@@ -14,6 +14,7 @@ sidebar_label: 配置
 |--------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|----|-----|
 | instanceName | 用来寻找client的key                                                                                                                                                                | string                                                                                                        | ✅  | --- |
 | url          | 请求地址                                                                                                                                                                          | string                                                                                                        | ✅  | --- |
+| requestPolicy          | 请求策略                                                                                                                                                                          | [RequestPolicy](https://formidable.com/open-source/urql/docs/basics/document-caching/#request-policies)                                                                                                        | ❌  | cache-and-network |
 | exchanges    | 自定义exchanges                                                                                                                                                                  | Exchange[]                                                                                                    | ❌  | --- |
 | exchangeOpt  | 可以启用[Authentication](https://formidable.com/open-source/urql/docs/advanced/authentication/)或[mapExchange](https://formidable.com/open-source/urql/docs/api/core/#mapexchange) | {<br/>authOpts?:[AuthExchangeOpts](#authexchangeopts),<br/>mapOpts?:[MapExchangeOpts](#mapexchangeopts)<br/>} | ❌  | --- |
 
@@ -47,7 +48,7 @@ sidebar_label: 配置
 ### 单对象配置
 
 ```ts
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig } from "@knockout-js/ice-urql/types";
 import { debugExchange, fetchExchange } from "urql";
 import store from "@/store";
 
@@ -90,7 +91,7 @@ export const urqlConfig = defineUrqlConfig(() => ({
 ### 数组配置
 
 ```ts
-import { defineUrqlConfig } from "@knockout-js/ice-urql/esm/types";
+import { defineUrqlConfig } from "@knockout-js/ice-urql/types";
 import { debugExchange, fetchExchange } from "urql";
 import store from "@/store";
 

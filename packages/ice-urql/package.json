@@ -1,73 +1,61 @@
 {
   "name": "@knockout-js/ice-urql",
-  "version": "0.0.2",
+  "version": "0.0.3-beta.4",
   "description": "urql plugin for ice",
   "license": "MIT",
   "type": "module",
-  "main": "./esm/index.js",
-  "types": "./esm/index.d.ts",
+  "main": "./es2017/index.js",
+  "types": "./es2017/index.d.ts",
   "exports": {
     ".": {
-      "types": "./esm/index.d.ts",
-      "import": "./esm/index.js",
-      "default": "./esm/index.js"
+      "types": "./es2017/index.d.ts",
+      "import": "./es2017/index.js",
+      "default": "./es2017/index.js"
     },
     "./runtime": {
-      "types": "./esm/runtime.d.ts",
-      "import": "./esm/runtime.js",
-      "default": "./esm/runtime.js"
+      "types": "./es2017/runtime.d.ts",
+      "import": "./es2017/runtime.js",
+      "default": "./es2017/runtime.js"
     },
     "./request": {
-      "types": "./esm/request.d.ts",
-      "import": "./esm/request.js",
-      "default": "./esm/request.js"
+      "types": "./es2017/request.d.ts",
+      "import": "./es2017/request.js",
+      "default": "./es2017/request.js"
     },
     "./types": {
-      "types": "./esm/types.d.ts",
-      "import": "./esm/types.js",
-      "default": "./esm/types.js"
+      "types": "./es2017/types.d.ts",
+      "import": "./es2017/types.js",
+      "default": "./es2017/types.js"
     },
-    "./esm/request": {
-      "types": "./esm/request.d.ts",
-      "import": "./esm/request.js",
-      "default": "./esm/request.js"
-    },
-    "./esm/types": {
-      "types": "./esm/types.d.ts",
-      "import": "./esm/types.js",
-      "default": "./esm/types.js"
-    },
-    "./esm/runtime": {
-      "types": "./esm/runtime.d.ts",
-      "import": "./esm/runtime.js",
-      "default": "./esm/runtime.js"
-    }
+    "./*": "./*"
   },
   "files": [
-    "esm",
-    "!esm/**/*.map",
+    "es2017",
+    "!es2017/**/*.map",
     "*.d.ts"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
-    "start": "tsc",
-    "watch": "tsc -w",
-    "build": "tsc",
+    "start": "ice-pkg start",
+    "build": "ice-pkg build",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@ice/app": "^3.2.6",
+    "@ice/jsx-runtime": "^0.2.0",
+    "@swc/helpers": "^0.5.1",
     "@ice/plugin-request": "^1.0.1",
     "@ice/runtime": "^1.2.4",
     "@urql/exchange-auth": "^2.1.6",
     "antd": "^5.6.3",
     "jwt-decode": "^3.1.2",
-    "urql": "^4.0.4"
+    "urql": "^4.0.5"
   },
   "devDependencies": {
     "@types/react": "^18.0.0",
+    "axios": "^1.4.0",
     "react": "^18.0.0",
     "typescript": "^4.9.4"
   },

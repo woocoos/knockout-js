@@ -9,10 +9,12 @@ import {
   createClient,
   ClientOptions,
   mapExchange,
+  gql as urqlGql
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
 import { authExchange } from './exchange.js';
 
+export const gql = urqlGql;
 
 export const urqlInstances: Record<string, {
   client: Client;
@@ -27,7 +29,7 @@ export const urqlInstances: Record<string, {
 function createDefaultClient(config: CustomClientOptions) {
   const defaultOpt: ClientOptions = {
     url: config.url,
-    requestPolicy: 'cache-and-network',
+    requestPolicy: config.requestPolicy ?? 'cache-and-network',
     exchanges: [],
   }
   if (config.exchanges) {
@@ -193,7 +195,6 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
   context?: Partial<OperationContext> & {
     instanceName?: string
   },
-
 ) {
   const urqlInstance = getInstance(context?.instanceName);
 
@@ -202,3 +203,5 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
     ...context
   }).toPromise();
 }
+
+

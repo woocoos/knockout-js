@@ -1,17 +1,11 @@
 
-import { query } from '@knockout-js/ice-urql/request';
+import { query, gql } from '@knockout-js/ice-urql/request';
 import { useQuery } from '@knockout-js/ice-urql/runtime';
-import { gql } from 'urql';
+import { userPermissions } from '@knockout-js/api';
 
 const pokemonsQuery = gql`query pokemons{
   pokemons(limit:5){
     id,name
-  }
-}`;
-
-const errorQuery = gql`query pokemonsErr{
-  pokemons(limit:5){
-    id,name,tt
   }
 }`;
 
@@ -54,8 +48,8 @@ export default function Home() {
 
       </div>
       <div>
-        <h2>测试gql异常：<button onClick={async () => {
-          const result = await query(errorQuery, {});
+        <h2>测试权限请求：<button onClick={async () => {
+          const result = await userPermissions('aaa')
           console.log(result)
         }}>请求</button> </h2>
 

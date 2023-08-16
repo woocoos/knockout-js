@@ -3,19 +3,26 @@
   "private": true,
   "version": "0.0.1",
   "scripts": {
-    "start": "ice start",
+    "dev": "ice start",
     "build": "ice build"
   },
   "dependencies": {
     "@ice/plugin-request": "^1.0.1",
-    "@ice/runtime": "^1.2.4",
+    "@ice/runtime": "^1.2.7",
+    "@knockout-js/api": "workspace:*",
     "@knockout-js/ice-urql": "workspace:*",
+    "@knockout-js/layout": "workspace:*",
+    "@knockout-js/org": "workspace:*",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@ice/app": "^3.2.6",
+    "@ice/app": "^3.2.9",
+    "@ice/plugin-antd": "^1.0.1",
+    "@ice/plugin-auth": "^1.0.1",
+    "@ice/plugin-icestark": "^1.1.0",
+    "@ice/plugin-jsx-plus": "^1.0.2",
     "@ice/plugin-store": "^1.1.1",
     "@types/react": "^18.0.0"
   }

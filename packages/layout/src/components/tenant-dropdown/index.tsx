@@ -2,9 +2,8 @@ import { Dropdown, MenuProps, Modal } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import { useLocale } from '../locale';
-import { gql } from 'urql'
 import { Org, UserRootOrgsQuery, UserRootOrgsQueryVariables } from '@knockout-js/api';
-import { query } from '@knockout-js/ice-urql/request';
+import { gql, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
 
 export interface TenantDropdownLocale {
@@ -18,6 +17,10 @@ export interface TenantDropdownProps {
    * 当前 tenantId
    */
   value: string;
+  /**
+   * 数据源
+   */
+  dataSource?: Org[]
   /**
    * value变更事件 (value: string) => void;
    */
@@ -82,8 +85,12 @@ export default (props: TenantDropdownProps) => {
   }, [list]);
 
   useEffect(() => {
-    getRequest();
-  }, []);
+    if (props.dataSource) {
+      setList(props.dataSource)
+    } else {
+      getRequest();
+    }
+  }, [, props.dataSource]);
 
   return info ? <Dropdown menu={menu} disabled={menu?.items?.length === 0}>
     <span className={styles.action}>

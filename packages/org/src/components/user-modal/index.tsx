@@ -1,10 +1,9 @@
 import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput, gid } from "@knockout-js/api";
-import { gql } from "urql";
 import { useLocale } from "../locale";
 import { useState } from "react";
 import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";
 import { Modal, ModalProps } from "antd";
-import { paging } from '@knockout-js/ice-urql/request';
+import { gql, paging } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '../';
 
 export interface UserModalLocale {
