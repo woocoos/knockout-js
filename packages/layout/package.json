@@ -51,7 +51,8 @@
     "@knockout-js/ice-urql": "workspace:^",
     "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
-    "react-activation": "^0.12.4"
+    "react-activation": "^0.12.4",
+    "react-draggable": "^4.4.5"
   },
   "devDependencies": {
     "@ice/pkg": "^1.5.0",
