@@ -30,6 +30,7 @@ export default () => {
       </Button>
       <AppModal
           open={open}
+          title="选择应用"
           onClose={(data) => {
             console.log(data);
             setOpen(false);

@@ -30,6 +30,7 @@ export default () => {
       </Button>
       <UserModal
         open={open}
+        title="用户列表"
         onClose={(data) => {
           console.log(data);
           setOpen(false);

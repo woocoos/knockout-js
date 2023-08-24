@@ -31,6 +31,7 @@ export default () => {
       </Button>
       <OrgModal
         open={open}
+        title="组织列表"
         kind={OrgKind.Root}
         onClose={(data) => {
           console.log(data);

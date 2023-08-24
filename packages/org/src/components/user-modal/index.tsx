@@ -2,9 +2,10 @@ import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, 
 import { useLocale } from "../locale";
 import { useState } from "react";
 import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";
-import { Modal, ModalProps } from "antd";
+import { ModalProps } from "antd";
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '../';
+import { Modal } from "@knockout-js/layout";
 
 export interface UserModalLocale {
   principal_name: string;
