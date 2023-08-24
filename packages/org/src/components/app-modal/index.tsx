@@ -74,7 +74,7 @@ const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrd
     edges{
       cursor,node{
         id,name,code,kind,redirectURI,appKey,appSecret,scopes,tokenValidity,
-        refreshTokenValidity,logo,comments,status,createdAt
+        refreshTokenValidity,comments,status,createdAt
       }
     }
   }

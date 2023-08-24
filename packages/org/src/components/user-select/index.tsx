@@ -1,11 +1,13 @@
 import { Input, ModalProps } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import UserModal from '../user-modal';
-import { User, UserUserType } from '@knockout-js/api';
+import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, User, UserUserType, gid } from '@knockout-js/api';
 import { CloseCircleFilled } from '@ant-design/icons';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
+import { gql, query } from '@knockout-js/ice-urql/request';
+import { iceUrqlInstance } from '..';
 
 export interface UserSelectLocale {
   placeholder: string;
@@ -16,7 +18,7 @@ export interface UserSelectProps {
   /**
    * 值
    */
-  value?: User;
+  value?: User | User['id'];
   /**
    * 禁用
    */
@@ -46,25 +48,61 @@ export interface UserSelectProps {
    */
   proTableProps?: ProTableProps<User, Record<string, any>, 'text'>;
   /**
-   * 值变更事件  (value?: User) => void;
+* 有缓存列表可以快速提供初始化值配合value传入的是id处理
+*/
+  dataSource?: User[];
+  /**
+   * changeValue=id: onChange的第一个参数值就为id的值
    */
-  onChange?: (value?: User) => void;
+  changeValue?: keyof User;
+  /**
+   * 值变更事件 (value?: User[keyof User] | User, original?: User) => void;
+   */
+  onChange?: (value?: User[keyof User] | User, original?: User) => void;
 }
+
+const userInfoQuery = gql(/* GraphQL */`query orgPkgUserInfo($gid: GID!){
+  node(id:$gid){
+    ... on User{
+      id,displayName,email,mobile
+    }
+  }
+}`);
 
 const OrgSelect = (props: UserSelectProps) => {
   const locale = useLocale('UserSelect'),
+    [info, setInfo] = useState<User>(),
     [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof props.value === 'string') {
+      if (props.dataSource) {
+        setInfo(props.dataSource.find(item => item.id === props.value));
+      } else {
+        query<OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables>(userInfoQuery, {
+          gid: gid('user', props.value),
+        }, { instanceName: iceUrqlInstance.ucenter }).then(result => {
+          if (result.data?.node?.__typename === 'User') {
+            setInfo(result.data.node as User);
+          }
+        })
+      }
+    } else {
+      setInfo(props.value)
+    }
+  }, [props.value, props.dataSource])
 
   return (
     <>
       <Input.Search
         placeholder={locale.placeholder}
         {...props.searchProps}
-        value={props.value?.displayName}
+        value={info?.displayName}
         disabled={props.disabled}
-        suffix={props.value && !props.disabled ? <CloseCircleFilled
+        suffix={info && !props.disabled ? <CloseCircleFilled
           style={{ fontSize: '12px', cursor: 'pointer', color: 'rgba(0, 0, 0, 0.25)' }}
           onClick={() => {
+            setInfo(undefined);
             props.onChange?.();
           }} rev={undefined} /> : <span />}
         onSearch={() => {
@@ -79,8 +117,13 @@ const OrgSelect = (props: UserSelectProps) => {
         title={locale.title}
         modalProps={props.modalProps}
         proTableProps={props.proTableProps}
-        onClose={(data) => {
-          props.onChange?.(data?.[0])
+        onClose={(selectData) => {
+          if (selectData?.length) {
+            const original = selectData[0],
+              value = props.changeValue ? original[props.changeValue] : original;
+            setInfo(original);
+            props.onChange?.(value, original);
+          }
           setOpen(false);
         }}
       />
