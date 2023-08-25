@@ -1,10 +1,10 @@
 import { ExpandOutlined } from "@ant-design/icons";
-import { Modal as AntdModal, Button, ModalProps } from "antd";
+import { Modal as AntdModal, Button, ModalProps as AntdModalProps } from "antd";
 import { ReactNode, useRef, useState } from "react";
 import Draggable from 'react-draggable';
-import styles from './index.modules.css';
+import styles from './index.module.css';
 
-const Modal = (props: ModalProps & {
+export type ModalProps = AntdModalProps & {
   /**
    * 是否头部可拖拽
    */
@@ -17,7 +17,9 @@ const Modal = (props: ModalProps & {
    * 全屏图标
    */
   screenfulIcon?: ReactNode | false;
-}) => {
+}
+
+const Modal = (props: ModalProps) => {
   const { width, style, title, defaultScreenful, isDraggable, screenfulIcon, ...restProps } = props;
   const [screenful, setScreenful] = useState(defaultScreenful ?? false);
   const [disabled, setDisabled] = useState(true);

@@ -1,13 +1,14 @@
-import { Input, ModalProps } from 'antd';
+import { AutoComplete, Input, ModalProps } from 'antd';
 import ModalApp from '../app-modal';
-import { useEffect, useState } from 'react';
-import { CloseCircleFilled } from '@ant-design/icons';
-import { App, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables, gid } from '@knockout-js/api';
+import { useCallback, useEffect, useState } from 'react';
+import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables, gid } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { SearchProps } from 'antd/es/input';
 import { ProTableProps } from '@ant-design/pro-table';
-import { gql, query } from '@knockout-js/ice-urql/request';
+import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
+import { BaseOptionType } from 'antd/es/select';
+import styles from '../assets/autoComplete.module.css';
 
 export interface AppSelectLocale {
   placeholder: string;
@@ -61,53 +62,158 @@ const appInfoQuery = gql(/* GraphQL */`query orgPkgAppInfo($gid: GID!){
   }
 }`);
 
+const orgAppListQuery = gql(/* GraphQL */`query orgAppList($gid: GID!,$first: Int,$orderBy:AppOrder,$where:AppWhereInput){
+  node(id:$gid){
+    ... on Org{
+      id
+      apps(first:$first,orderBy: $orderBy,where: $where){
+        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+        edges{
+          cursor,node{
+            id,name,code,kind,comments,status
+          }
+        }
+      }
+    }
+  }
+}`);
+
+const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrder,$where:AppWhereInput){
+  apps(first:$first,orderBy: $orderBy,where: $where){
+    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
+    edges{
+      cursor,node{
+        id,name,code,kind,comments,status
+      }
+    }
+  }
+}`);
+
+let searchTimeoutFn: NodeJS.Timeout | undefined = undefined;
+
 export default (props: AppSelectProps) => {
   const locale = useLocale('AppSelect'),
     [info, setInfo] = useState<App>(),
+    [keyword, setKeyword] = useState<string>(),
+    [options, setOptions] = useState<BaseOptionType[]>([]),
     [modal, setModal] = useState<{
       open: boolean;
     }>({
       open: false,
     });
 
+  const setValue = useCallback((original?: App) => {
+    if (original) {
+      const value = props.changeValue ? original[props.changeValue] : original;
+      setInfo(original);
+      setKeyword(original.name);
+      props.onChange?.(value, original);
+    } else {
+      setKeyword(undefined);
+      setInfo(undefined);
+      props.onChange?.();
+    }
+  }, [])
+
   useEffect(() => {
     if (typeof props.value === 'string') {
       if (props.dataSource) {
-        setInfo(props.dataSource.find(item => item.id === props.value));
+        const data = props.dataSource.find(item => item.id === props.value)
+        setInfo(data);
+        setKeyword(data?.name);
       } else {
         query<OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables>(appInfoQuery, {
           gid: gid('app', props.value),
         }, { instanceName: iceUrqlInstance.ucenter }).then(result => {
           if (result.data?.node?.__typename === 'App') {
             setInfo(result.data.node as App);
+            setKeyword(result.data.node.name);
           }
         })
       }
     } else {
       setInfo(props.value)
+      setKeyword(props.value?.name);
     }
   }, [props.value, props.dataSource])
 
   return (
     <>
-      <Input.Search
-        placeholder={locale.placeholder}
-        {...props.searchProps}
-        value={info?.name || ''}
+      <AutoComplete
+        className={styles.autoComplete}
+        value={keyword}
+        options={options}
+        allowClear={!props.disabled}
         disabled={props.disabled}
-        suffix={info && !props.disabled ? <CloseCircleFilled
-          style={{ fontSize: '12px', cursor: 'pointer', color: 'rgba(0, 0, 0, 0.25)' }}
-          onClick={() => {
-            setInfo(undefined);
-            props.onChange?.();
-          }}
-          rev={undefined}
-        /> : <span />}
-        onSearch={() => {
-          modal.open = true;
-          setModal({ ...modal });
+        onClear={() => {
+          setValue();
+          setOptions([]);
         }}
-      />
+        onBlur={() => {
+          setKeyword(info?.name);
+        }}
+        onSelect={(v, option) => {
+          setValue(option.info);
+        }}
+        onSearch={async (keywordStr) => {
+          setKeyword(keywordStr);
+          clearTimeout(searchTimeoutFn);
+          searchTimeoutFn = setTimeout(async () => {
+            const os: BaseOptionType[] = [];
+            if (keywordStr) {
+              if (props.orgId) {
+                const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+                  gid: gid('org', props.orgId),
+                  first: 15,
+                  where: {
+                    nameContains: keywordStr,
+                  }
+                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                if (result.data?.node?.__typename === 'Org') {
+                  result.data.node.apps.edges?.forEach(item => {
+                    if (item?.node) {
+                      os.push({
+                        label: item.node.name,
+                        value: item.node.id,
+                        info: item.node,
+                      })
+                    }
+                  })
+                }
+              } else {
+                const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
+                  first: 15,
+                  where: {
+                    nameContains: keywordStr,
+                  }
+                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                if (result.data?.apps.totalCount) {
+                  result.data.apps.edges?.forEach(item => {
+                    if (item?.node) {
+                      os.push({
+                        label: item.node.name,
+                        value: item.node.id,
+                        info: item.node,
+                      })
+                    }
+                  })
+                }
+              }
+            }
+            setOptions(os);
+          }, 500)
+        }}
+      >
+        <Input.Search
+          placeholder={locale.placeholder}
+          {...props.searchProps}
+          onSearch={(v, event) => {
+            event?.stopPropagation();
+            modal.open = true;
+            setModal({ ...modal });
+          }}
+        />
+      </AutoComplete>
       <ModalApp
         open={modal.open}
         title={locale.title}
@@ -116,10 +222,7 @@ export default (props: AppSelectProps) => {
         orgId={props.orgId}
         onClose={(selectData) => {
           if (selectData?.length) {
-            const original = selectData[0],
-              value = props.changeValue ? original[props.changeValue] : original;
-            setInfo(original);
-            props.onChange?.(value, original);
+            setValue(selectData[0])
           }
           modal.open = false;
           setModal({ ...modal });

@@ -7,7 +7,7 @@ export { default as LeavePrompt, useLeavePrompt } from './leave-prompt';
 export { default as I18nDropdown } from './i18n-dropdown';
 export { default as CollectProviders } from './collect-providers';
 export { default as Layout } from './layout';
-export { default as Modal } from './modal';
+export { default as Modal, type ModalProps } from './modal';
 export enum iceUrqlInstance {
   ucenter = "ucenter"
 }

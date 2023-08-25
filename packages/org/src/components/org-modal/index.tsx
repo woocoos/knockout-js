@@ -1,4 +1,3 @@
-import { ModalProps } from 'antd';
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
 import {
@@ -16,7 +15,7 @@ import {
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '../';
-import { Modal } from '@knockout-js/layout';
+import { Modal, ModalProps } from '@knockout-js/layout';
 
 export interface OrgModalLocale {
   name: string;
