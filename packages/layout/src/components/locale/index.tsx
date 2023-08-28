@@ -5,6 +5,7 @@ import { TenantDropdownLocale } from '../tenant-dropdown';
 import { ThemeSwitchLocale } from '../theme-switch';
 import { LeavePromptLocale } from '../leave-prompt';
 import { AvatarDropdownLocale } from '../avatar-dropdown';
+import { GatherMenuLocale } from "../gather-menu";
 
 export interface Locale {
   locale: string;
@@ -12,6 +13,7 @@ export interface Locale {
   LeavePrompt: LeavePromptLocale;
   AvatarDropdown: AvatarDropdownLocale;
   TenantDropdown: TenantDropdownLocale;
+  GatherMenu: GatherMenuLocale;
 }
 
 export enum LocaleType {

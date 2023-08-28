@@ -8,6 +8,7 @@ export { default as I18nDropdown } from './i18n-dropdown';
 export { default as CollectProviders } from './collect-providers';
 export { default as Layout } from './layout';
 export { default as Modal, type ModalProps } from './modal';
+export { default as GatherMenu, type GatherMenuDataSource } from './gather-menu';
 export enum iceUrqlInstance {
   ucenter = "ucenter"
 }

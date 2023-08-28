@@ -13,6 +13,8 @@ import { iceUrqlInstance } from '..';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
+import GatherMenu, { GatherMenuProps } from '../gather-menu';
+import { BarsOutlined } from '@ant-design/icons';
 
 export interface LayoutProps {
   /**
@@ -27,6 +29,10 @@ export interface LayoutProps {
    * 菜单启用iconfont
    */
   IconFont?: React.FC<IconFontProps<string>>;
+  /**
+   * 集成菜单
+   */
+  gatherMenuProps?: GatherMenuProps;
   /**
    * I18nDropdown组件对应的参数
    */
@@ -72,6 +78,7 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 const Layout = (props: LayoutProps) => {
 
   const [locale, setLocale] = useState(LocaleType.zhCN);
+  const [open, setOpen] = useState(false);
 
   // 根据列表格式化成菜单树结构
   const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
@@ -89,6 +96,8 @@ const Layout = (props: LayoutProps) => {
     return parentList;
   }, [])
 
+  const isGatherMenu = !!props.gatherMenuProps;
+
   return (
     <CollectProviders
       locale={locale}
@@ -97,11 +106,25 @@ const Layout = (props: LayoutProps) => {
     >
       <ProLayout
         className={styles.layout}
+        headerTitleRender={(logo, title) => {
+          return <>
+            {isGatherMenu ? <BarsOutlined
+              rev={undefined}
+              style={{ fontSize: 20, marginRight: 10 }}
+              onClick={() => {
+                setOpen(true);
+              }}
+            /> : <></>}
+            {logo}
+            {title}
+          </>
+        }}
         title='adminx'
         logo={<img src={logoBase64} alt="logo" />}
         layout="mix"
         fixSiderbar
-        menu={{
+        suppressSiderWhenMenuEmpty
+        menu={isGatherMenu ? <></> : {
           locale: true,
           request: async () => {
             const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
@@ -153,6 +176,11 @@ const Layout = (props: LayoutProps) => {
       >
         {props.children}
       </ProLayout>
+      <GatherMenu
+        {...props.gatherMenuProps}
+        open={open}
+        onChangeOpen={setOpen}
+      />
     </CollectProviders>
   )
 }

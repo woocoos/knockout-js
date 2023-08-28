@@ -1,0 +1,114 @@
+.customMenu {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.customMenuDrawer {
+
+  :global(.ant-drawer-header-title) {
+    flex-direction: row-reverse;
+  }
+
+  :global(.ant-drawer-body) {
+    padding: 0;
+  }
+
+}
+
+.customMenuDrawerRow {
+  height: 100%;
+  display: flex;
+}
+
+.customMenuDrawerMenu {
+  height: 100%;
+  border-right: 1px solid rgba(5, 5, 5, 0.06);
+}
+
+.customMenuDrawerAllMenu {
+  height: 100%;
+  padding: 16px;
+  overflow-y: auto;
+  column-count: 3;
+  column-gap: 10px;
+}
+
+.customMenuDrawerAllMenuColumn {
+  /* 瀑布流关键写法 */
+  break-inside: avoid;
+  margin-bottom: 16px;
+}
+
+
+.customMenuDrawerAllMenuTitle {
+  font-weight: bold;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 16px;
+}
+
+.customMenuDrawerAllMenuItem {
+  height: 32px;
+  line-height: 32px;
+  cursor: pointer;
+  padding: 0 16px;
+  display: flex;
+
+  &:hover {
+    background-color: #f1f1f1;
+
+    :global(.anticon-star) {
+      display: inline;
+    }
+  }
+
+  :global(.anticon-star.collect) {
+    color: rgb(255, 106, 0);
+  }
+
+  :global(.anticon-star) {
+    display: none;
+  }
+}
+
+.customMenuDrawerAllMenuItemName {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: auto;
+}
+
+.customMenuDrawerMenuItem {
+  height: 40px;
+  line-height: 40px;
+  cursor: pointer;
+  padding: 0 16px;
+  display: flex;
+
+  &:hover {
+    background-color: #f1f1f1;
+
+    .customMenuDrawerMenuItemIcons {
+      display: block;
+    }
+  }
+}
+
+.customMenuDrawerMenuItemIcons {
+  display: none;
+
+  :global(.anticon) {
+    color: #c1c1c1;
+
+    &:hover {
+      color: #8c8c8c;
+    }
+  }
+}
+
+.customMenuDrawerMenuItemName {
+  flex: auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
