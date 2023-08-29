@@ -1,5 +1,14 @@
 # @knockout-js/org
 
+## 0.0.4-beta.0
+
+### Patch Changes
+
+- 0.0.3 bate
+- Updated dependencies
+  - @knockout-js/layout@0.0.4-beta.0
+  - @knockout-js/api@0.0.4-beta.0
+
 ## 0.0.3
 
 ### Patch Changes
