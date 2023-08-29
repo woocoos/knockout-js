@@ -1,7 +1,7 @@
-import { CloseOutlined, DragOutlined, StarOutlined } from "@ant-design/icons"
+import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-design/icons"
 import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
-import { Col, Drawer, Empty, Row, Space } from "antd";
+import { Col, Drawer, Empty, Input, Row, Space } from "antd";
 import { gql, paging, query } from "@knockout-js/ice-urql/request";
 import { App, AppMenu, LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables, UserMenuListQuery, UserMenuListQueryVariables } from "@knockout-js/api";
 import { iceUrqlInstance } from "..";
@@ -28,6 +28,7 @@ const userOrgAppsQuery = gql(/* GraphQL */`query layoutPkgUserRootOrgs($first:In
 
 export type GatherMenuLocale = {
   notText: string;
+  searchPlaceholder: string;
 }
 
 export type GatherMenuDataSource = {
@@ -99,6 +100,7 @@ const DargItem = (props: {
 
 export default (props: GatherMenuProps) => {
   const [all, setAll] = useState<GatherMenuDataSource>([]),
+    [filterList, setFilterList] = useState<GatherMenuDataSource>([]),
     [collects, setCollects] = useState<AppMenu[]>([]),
     locale = useLocale('GatherMenu'),
     sensors = useSensors(
@@ -139,6 +141,7 @@ export default (props: GatherMenuProps) => {
         }
       }
       setAll(newAll);
+      setFilterList(newAll);
     }, []),
     checkCollect = useCallback((menuItem: AppMenu) => {
       return !!collects.find(item => item.id === menuItem.id && item.appID === menuItem.appID);
@@ -147,6 +150,7 @@ export default (props: GatherMenuProps) => {
   useEffect(() => {
     if (props.dataSource) {
       setAll(props.dataSource);
+      setFilterList(props.dataSource);
     } else {
       request();
     }
@@ -222,8 +226,30 @@ export default (props: GatherMenuProps) => {
           }
         </div>
         <div style={{ width: 820 }}>
+          <div className={styles.customMenuDrawerAllInput}>
+            <Input
+              bordered={false}
+              prefix={<SearchOutlined rev={undefined} />}
+              placeholder={locale.searchPlaceholder}
+              onChange={(event) => {
+                const keyword = event.target.value;
+                if (keyword) {
+                  const fList = all.map(f => {
+                    return {
+                      app: f.app,
+                      menu: f.menu.filter(fMenuItem => fMenuItem.name.indexOf(keyword) > -1),
+                    };
+                  }).filter(f => f.menu.length);
+
+                  setFilterList(fList);
+                } else {
+                  setFilterList([...all]);
+                }
+              }}
+            />
+          </div>
           <div className={styles.customMenuDrawerAllMenu}>
-            {all.map(item => (
+            {filterList.map(item => (
               <div key={item.app.code} className={styles.customMenuDrawerAllMenuColumn}>
                 <div className={styles.customMenuDrawerAllMenuTitle}>{item.app.name}</div>
                 {item.menu.map(menuItem => (
