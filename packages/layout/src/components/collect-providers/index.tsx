@@ -2,12 +2,20 @@ import { Locale } from "antd/es/locale";
 import { LocaleType } from "../locale"
 import { ReactNode, useEffect, useState } from "react";
 import { ProConfigProvider } from "@ant-design/pro-provider";
-import { BasicProvider, LeavePrompt } from "..";
+import { Provider, LeavePrompt } from "..";
 import { ConfigProvider } from "antd";
 import { AliveScope } from "react-activation";
 import zhCN from 'antd/locale/zh_CN';
 import enUS from 'antd/locale/en_US';
 export interface CollectProviderProps {
+  /**
+   * 应用code
+   */
+  appCode: string;
+  /**
+   * tenantId
+   */
+  tenantId: string;
   /**
    * @knockout-js 的多语言 locale
    */
@@ -40,7 +48,7 @@ export default (props: CollectProviderProps) => {
 
   return (
     <ProConfigProvider dark={props.dark}>
-      <BasicProvider locale={props.locale}>
+      <Provider locale={props.locale} appCode={props.appCode} tenantId={props.tenantId}>
         <ConfigProvider locale={antLocale}>
           <LeavePrompt pathname={props.pathname}>
             <AliveScope>
@@ -48,7 +56,7 @@ export default (props: CollectProviderProps) => {
             </AliveScope>
           </LeavePrompt>
         </ConfigProvider>
-      </BasicProvider>
+      </Provider>
     </ProConfigProvider >
   )
 }

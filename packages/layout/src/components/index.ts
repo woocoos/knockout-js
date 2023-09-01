@@ -1,4 +1,5 @@
-export { default as BasicProvider, BasicContext, type BasicProviderProps, LocaleType } from './locale';
+export { LocaleType } from './locale';
+export { default as Provider, Context, type ProviderProps, } from './provider';
 export { default as ThemeSwitch } from './theme-switch';
 export { default as AvatarDropdown } from './avatar-dropdown';
 export { default as KeepAlive } from './keep-alive';
@@ -8,7 +9,7 @@ export { default as I18nDropdown } from './i18n-dropdown';
 export { default as CollectProviders } from './collect-providers';
 export { default as Layout } from './layout';
 export { default as Modal, type ModalProps } from './modal';
-export { default as GatherMenu, type GatherMenuDataSource } from './gather-menu';
+export { default as AggregateMenu, type AggregateMenuDataSource } from './aggregate-menu';
 export enum iceUrqlInstance {
   ucenter = "ucenter"
 }

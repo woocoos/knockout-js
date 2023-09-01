@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
 import { Dropdown, MenuProps } from 'antd';
 import styles from './index.module.css';
-import { BasicContext, BasicProviderProps, LocaleType } from '../locale';
+import { Context, ProviderProps, LocaleType } from '..';
 
 export interface I18nDropdownProps {
   /**
@@ -11,7 +11,7 @@ export interface I18nDropdownProps {
 }
 
 function I18nDropdown(props: I18nDropdownProps) {
-  const ctx = useContext<BasicProviderProps>(BasicContext),
+  const ctx = useContext<ProviderProps>(Context),
     [localeName, setLocaleName] = useState(''),
     menuItemOnClick = useCallback(({ key }: { key: React.Key }) => {
       props.onChange?.(key as LocaleType)

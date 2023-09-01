@@ -41,7 +41,7 @@
     "component"
   ],
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
+    "@ant-design/icons": "^5.2.5",
     "@ant-design/pro-layout": "^7.16.6",
     "@ant-design/pro-provider": "^2.12.1",
     "@ant-design/pro-table": "^3.8.2",

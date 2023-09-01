@@ -4,7 +4,7 @@ import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, FC, useCallback, useState } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 import { LocaleType } from '../locale';
 import { CollectProviders } from '..';
@@ -13,7 +13,7 @@ import { iceUrqlInstance } from '..';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
-import GatherMenu, { GatherMenuProps } from '../gather-menu';
+import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
 import { BarsOutlined } from '@ant-design/icons';
 
 export interface LayoutProps {
@@ -28,11 +28,11 @@ export interface LayoutProps {
   /**
    * 菜单启用iconfont
    */
-  IconFont?: React.FC<IconFontProps<string>>;
+  IconFont?: FC<IconFontProps<string>>;
   /**
-   * 集成菜单
+   * 聚合菜单
    */
-  gatherMenuProps?: GatherMenuProps;
+  aggregateMenuProps?: AggregateMenuProps;
   /**
    * I18nDropdown组件对应的参数
    */
@@ -56,11 +56,13 @@ export interface LayoutProps {
   /**
    * 菜单点击返回 (item: MenuDataItem,isOpen?: boolean) => void;
    */
-  onClickMenuItem?: (item: MenuDataItem & {
-    isUrl: boolean;
-    onClick: () => void;
-  },
-    isOpen?: boolean) => void;
+  onClickMenuItem?: (
+    item: MenuDataItem & {
+      isUrl: boolean;
+      onClick: () => void;
+    },
+    isOpen?: boolean
+  ) => void;
   /**
    * 默认插槽
    */
@@ -78,7 +80,6 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 const Layout = (props: LayoutProps) => {
 
   const [locale, setLocale] = useState(LocaleType.zhCN);
-  const [open, setOpen] = useState(false);
 
   // 根据列表格式化成菜单树结构
   const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
@@ -96,11 +97,13 @@ const Layout = (props: LayoutProps) => {
     return parentList;
   }, [])
 
-  const isGatherMenu = !!props.gatherMenuProps;
+
 
   return (
     <CollectProviders
       locale={locale}
+      appCode={props.appCode}
+      tenantId={props.tenantProps.value}
       dark={props.themeSwitchProps.value}
       pathname={props.pathname}
     >
@@ -108,11 +111,11 @@ const Layout = (props: LayoutProps) => {
         className={styles.layout}
         headerTitleRender={(logo, title) => {
           return <>
-            {isGatherMenu ? <BarsOutlined
+            {typeof props.aggregateMenuProps?.open === 'boolean' ? <BarsOutlined
               rev={undefined}
               style={{ fontSize: 20, marginRight: 10 }}
               onClick={() => {
-                setOpen(true);
+                props.aggregateMenuProps?.onChangeOpen?.(true);
               }}
             /> : <></>}
             {logo}
@@ -124,7 +127,7 @@ const Layout = (props: LayoutProps) => {
         layout="mix"
         fixSiderbar
         suppressSiderWhenMenuEmpty
-        menu={isGatherMenu ? <></> : {
+        menu={{
           locale: true,
           request: async () => {
             const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
@@ -176,10 +179,8 @@ const Layout = (props: LayoutProps) => {
       >
         {props.children}
       </ProLayout>
-      <GatherMenu
-        {...props.gatherMenuProps}
-        open={open}
-        onChangeOpen={setOpen}
+      <AggregateMenu
+        {...props.aggregateMenuProps}
       />
     </CollectProviders>
   )

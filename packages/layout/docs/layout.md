@@ -112,6 +112,7 @@ export default () => {
 
   const [tenantId, setTenantId] = useState("1");
   const [theme, setTheme] = useState(false);
+  const [open, setOpen] = useState(false);
 
   return (
     <div className={styles.demoLayout}>
@@ -134,7 +135,9 @@ export default () => {
           value: theme,
           onChange: setTheme,
         }}
-        gatherMenuProps={{
+        aggregateMenuProps={{
+          open:open,
+          onChangeOpen:setOpen,
           onClick:(menuItem,app)=>{
             console.log(menuItem,app)
           }
@@ -149,18 +152,16 @@ export default () => {
 
 ## props
 
-<!-- <ReactDocgenProps path="../src/components/layout/index.tsx"></ReactDocgenProps> -->
-
-| 属性             | 描述                          | 类型                                           | 必填 | 默认值 |
-| ---------------- | ----------------------------- | ---------------------------------------------- | ---- | ------ |
-| appCode          | 应用code                      | string                                         | ✅    | -      |
-| pathname         | 传递动态的 location.pathname  | string                                         | ✅    | -      |
-| IconFont         | 菜单启用ant iconfont 解决方案 | 上图示例                                       | ❌    | -      |
-| i18nProps        | I18nDropdown组件对应的参数    | I18nDropdownProps                              | ❌    | -      |
-| tenantProps      | TenantDropdown组件对应的参数  | TenantDropdownProps                            | ✅    | -      |
-| avatarProps      | AvatarDropdown组件对应的参数  | AvatarDropdownProps                            | ✅    | -      |
-| themeSwitchProps | ThemeSwitch组件对应的参数     | ThemeSwitchProps                               | ✅    | -      |
-| proLayoutProps   | ProLayout组件对应的参数       | ProLayoutProps                                 | ❌    | -      |
-| onClickMenuItem  | 菜单点击返回                  | (item: MenuDataItem,isOpen?: boolean) => void; | ❌    | -      |
-| gatherMenuProps  | 使用应用集成菜单              | GatherMenuProps                                | ❌    | -      |
-| children         | 默认插槽                      | ReactNode                                      | ✅    | -      |
+| 属性               | 描述                          | 类型                                           | 必填 | 默认值 |
+| ------------------ | ----------------------------- | ---------------------------------------------- | ---- | ------ |
+| appCode            | 应用code                      | string                                         | ✅    | -      |
+| pathname           | 传递动态的 location.pathname  | string                                         | ✅    | -      |
+| IconFont           | 菜单启用ant iconfont 解决方案 | 上图示例                                       | ❌    | -      |
+| i18nProps          | I18nDropdown组件对应的参数    | I18nDropdownProps                              | ❌    | -      |
+| tenantProps        | TenantDropdown组件对应的参数  | TenantDropdownProps                            | ✅    | -      |
+| avatarProps        | AvatarDropdown组件对应的参数  | AvatarDropdownProps                            | ✅    | -      |
+| themeSwitchProps   | ThemeSwitch组件对应的参数     | ThemeSwitchProps                               | ✅    | -      |
+| proLayoutProps     | ProLayout组件对应的参数       | ProLayoutProps                                 | ❌    | -      |
+| onClickMenuItem    | 菜单点击返回                  | (item: MenuDataItem,isOpen?: boolean) => void; | ❌    | -      |
+| aggregateMenuProps | 使用应用集成菜单              | AggregateMenuProps                             | ❌    | -      |
+| children           | 默认插槽                      | ReactNode                                      | ✅    | -      |

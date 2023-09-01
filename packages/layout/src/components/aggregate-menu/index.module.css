@@ -1,9 +1,9 @@
-.customMenu {
+.aggregateMenu {
   margin-right: 8px;
   cursor: pointer;
 }
 
-.customMenuDrawer {
+.aggregateMenuDrawer {
 
   :global(.ant-drawer-header-title) {
     flex-direction: row-reverse;
@@ -15,17 +15,17 @@
 
 }
 
-.customMenuDrawerRow {
+.aggregateMenuDrawerRow {
   height: 100%;
   display: flex;
 }
 
-.customMenuDrawerMenu {
+.aggregateMenuDrawerMenu {
   height: 100%;
   border-right: 1px solid rgba(5, 5, 5, 0.06);
 }
 
-.customMenuDrawerAllMenu {
+.aggregateMenuDrawerAllMenu {
   height: calc(100% - 52px);
   padding: 16px;
   overflow-y: auto;
@@ -33,21 +33,28 @@
   column-gap: 10px;
 }
 
-.customMenuDrawerAllMenuColumn {
+.aggregateMenuDrawerAllMenuColumn {
   /* 瀑布流关键写法 */
   break-inside: avoid;
   margin-bottom: 16px;
 }
 
+.aggregateMenuDrawerAllAppTitle {
+  font-weight: bold;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 16px;
+  color: #ff6a00;
+}
 
-.customMenuDrawerAllMenuTitle {
+.aggregateMenuDrawerAllMenuTitle {
   font-weight: bold;
   height: 32px;
   line-height: 32px;
   padding: 0 16px;
 }
 
-.customMenuDrawerAllMenuItem {
+.aggregateMenuDrawerAllMenuItem {
   height: 32px;
   line-height: 32px;
   cursor: pointer;
@@ -64,6 +71,7 @@
 
   :global(.anticon-star.collect) {
     color: rgb(255, 106, 0);
+    display: inline-flex;
   }
 
   :global(.anticon-star) {
@@ -71,20 +79,27 @@
   }
 }
 
-.customMenuDrawerAllMenuItemName {
+.aggregateMenuDrawerAllMenuItemDir {
+  height: 32px;
+  line-height: 32px;
+  padding: 0 16px;
+  font-weight: bold;
+}
+
+.aggregateMenuDrawerAllMenuItemName {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   flex: auto;
 }
 
-.customMenuDrawerAllInput {
+.aggregateMenuDrawerAllInput {
   padding: 10px 0;
   margin: 0 16px;
   border-bottom: 1px solid rgba(5, 5, 5, 0.06);
 }
 
-.customMenuDrawerMenuItem {
+.aggregateMenuDrawerMenuItem {
   height: 40px;
   line-height: 40px;
   cursor: pointer;
@@ -94,13 +109,13 @@
   &:hover {
     background-color: #f1f1f1;
 
-    .customMenuDrawerMenuItemIcons {
+    .aggregateMenuDrawerMenuItemIcons {
       display: block;
     }
   }
 }
 
-.customMenuDrawerMenuItemIcons {
+.aggregateMenuDrawerMenuItemIcons {
   display: none;
 
   :global(.anticon) {
@@ -112,9 +127,19 @@
   }
 }
 
-.customMenuDrawerMenuItemName {
+.aggregateMenuDrawerMenuItemName {
   flex: auto;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
+}
+
+.aggregateMenuLatelys {
+  padding: 16px 16px 0 16px;
+
+}
+
+.aggregateMenuLatelysColumn {
+  column-count: 3;
+  column-gap: 10px;
 }

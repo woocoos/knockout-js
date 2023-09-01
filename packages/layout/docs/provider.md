@@ -1,5 +1,5 @@
 ---
-sidebar_label: 多语言
+sidebar_label: Provider
 ---
 
 本 Demo 演示用法
@@ -30,14 +30,16 @@ export default () => {
 
 ## Props
 
-
 | 属性     | 描述         | 类型            | 必填 | 默认值          |
 | -------- | ------------ | --------------- | ---- | --------------- |
 | locale   | 使用的多语言 | Locale          | ❌    | LocaleType.zhCN |
+| appCode  | 应用code     | string          | ❌    | -               |
+| tenantId | tenantId     | string          | ❌    | -               |
 | children | 子节点       | React.ReactNode | ✅    | -               |
 
 ## hook
 
-| 方法                            | 说明                             | 结果                 |
-| ------------------------------- | -------------------------------- | -------------------- |
-| useLocale(componentName:string) | 根据组件名称获取对应的多语言数据 | Locale.componentName |
+| 方法          | 说明                 | 结果                      |
+| ------------- | -------------------- | ------------------------- |
+| useAppCode()  | 获取上下文的appCode  | strign  &#124;  undefined |
+| useTenantId() | 获取上下文的tenantId | strign  &#124;  undefined |
