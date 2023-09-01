@@ -5,12 +5,14 @@ export interface ProviderProps {
   locale?: LocaleType;
   appCode?: string;
   tenantId?: string;
+  dark?: boolean;
   children?: React.ReactNode;
 }
 
 // 定义上下文
 export const Context = createContext<ProviderProps>({
   locale: LocaleType.zhCN,
+  dark: false
 });
 
 /**
@@ -39,4 +41,13 @@ export const useTenantId = () => {
 export const useAppCode = () => {
   const ctx = useContext<ProviderProps>(Context);
   return ctx.appCode
+}
+
+/**
+ * hook
+ * @returns
+ */
+export const useDark = () => {
+  const ctx = useContext<ProviderProps>(Context);
+  return ctx.dark ?? false
 }

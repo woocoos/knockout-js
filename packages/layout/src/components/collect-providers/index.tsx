@@ -48,7 +48,7 @@ export default (props: CollectProviderProps) => {
 
   return (
     <ProConfigProvider dark={props.dark}>
-      <Provider locale={props.locale} appCode={props.appCode} tenantId={props.tenantId}>
+      <Provider locale={props.locale} appCode={props.appCode} tenantId={props.tenantId} dark={props.dark}>
         <ConfigProvider locale={antLocale}>
           <LeavePrompt pathname={props.pathname}>
             <AliveScope>

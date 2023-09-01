@@ -9,7 +9,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { useLocale } from "../locale";
-import { useTenantId } from "../provider";
+import { useDark, useTenantId } from "../provider";
+import { useToken } from "@ant-design/pro-provider";
 
 const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
   userMenus(appCode: $appCode){
@@ -103,6 +104,7 @@ export default (props: AggregateMenuProps) => {
     [collects, setCollects] = useState<AppMenu[]>([]),
     [latelys, setLately] = useState<AppMenu[]>([]),
     locale = useLocale('AggregateMenu'),
+    isDark = useDark(),
     tenantId = useTenantId(),
     sensors = useSensors(
       useSensor(PointerSensor),
@@ -182,7 +184,7 @@ export default (props: AggregateMenuProps) => {
 
   return <>
     <Drawer
-      className={styles.aggregateMenuDrawer}
+      className={`${styles.aggregateMenuDrawer} ${isDark ? styles.aggregateMenuDark : ''}`}
       title={locale.title}
       placement="left"
       open={props.open}
