@@ -10,7 +10,6 @@ import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, v
 import { CSS } from '@dnd-kit/utilities';
 import { useLocale } from "../locale";
 import { useDark, useTenantId } from "../provider";
-import { useToken } from "@ant-design/pro-provider";
 
 const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
   userMenus(appCode: $appCode){
