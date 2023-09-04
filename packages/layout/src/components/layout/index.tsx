@@ -134,7 +134,10 @@ const Layout = (props: LayoutProps) => {
               appCode: props.appCode
             }, { instanceName: iceUrqlInstance.ucenter });
             if (result.data?.userMenus.length) {
-              const meunList = result.data.userMenus.map(item => {
+              const meunList = result.data.userMenus.sort((d1, d2) => {
+                const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
+                return d1.parentID < d2.parentID ? -1 : d1.parentID > d2.parentID ? 1 : d1Sort < d2Sort ? -1 : d1Sort > d2Sort ? 1 : 0;
+              }).map(item => {
                 return {
                   key: item.id,
                   name: item.name,

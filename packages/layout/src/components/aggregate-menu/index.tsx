@@ -134,7 +134,10 @@ export default (props: AggregateMenuProps) => {
           appCode: apps[i].code,
         }, { instanceName: iceUrqlInstance.ucenter });
         if (menuResult.data?.userMenus) {
-          const menu = menuResult.data.userMenus as AppMenu[];
+          const menu = menuResult.data.userMenus.sort((d1, d2) => {
+            const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
+            return d1.parentID < d2.parentID ? -1 : d1.parentID > d2.parentID ? 1 : d1Sort < d2Sort ? -1 : d1Sort > d2Sort ? 1 : 0;
+          }) as AppMenu[];
           newAll.push({
             app: apps[i],
             menu,
