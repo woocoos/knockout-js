@@ -12,16 +12,17 @@ import styles from "./layout/index.module.css";
 import { useLocation } from "@docusaurus/router";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { createFromIconfontCN } from "@ant-design/icons";
+import { adminxApi,iconFontScriptUrl } from "./assets/api";
 
 createUrqlInstance([
   {
     instanceName: "default",
-    url: "http://127.0.0.1:3001/mock-api-adminx/graphql/query",
+    url: adminxApi,
   },
 ]);
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_216310_94k60yc8fg.js",
+  scriptUrl: iconFontScriptUrl,
 });
 
 export default () => {
@@ -95,16 +96,17 @@ import styles from "./layout/index.module.css";
 import { useLocation } from "@docusaurus/router";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { createFromIconfontCN } from "@ant-design/icons";
+import { adminxApi,iconFontScriptUrl } from "./assets/api";
 
 createUrqlInstance([
   {
     instanceName: "default",
-    url: "http://127.0.0.1:3001/mock-api-adminx/graphql/query",
+    url: adminxApi,
   },
 ]);
 
 const IconFont = createFromIconfontCN({
-  scriptUrl: "//at.alicdn.com/t/font_216310_94k60yc8fg.js",
+  scriptUrl: iconFontScriptUrl,
 });
 
 export default () => {

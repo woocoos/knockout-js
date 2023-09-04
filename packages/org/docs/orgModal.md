@@ -10,11 +10,12 @@ import { useState } from "react";
 import { Button } from "antd";
 import { OrgKind } from "@knockout-js/api";
 import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+import { adminxApi } from "./assets/api";
 
 createUrqlInstance([
   {
     instanceName: 'default',
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+    url: adminxApi,
   }
 ])
 
