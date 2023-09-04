@@ -2,63 +2,17 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Spin, Upload, message } from "antd"
 import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
-import { files } from "@knockout-js/api";
+import { files as fileApi } from "@knockout-js/api";
 import { useAppCode, useTenantId } from "../provider";
-import { randomId } from "./util";
+import { UploadFileProps, randomId, formatFileSize } from ".";
+import { useLocale } from "../locale";
 
-
-export interface UploadFilesProps {
-  /**
-   * bucket
-   */
-  bucket?: string;
-  /**
-   * 应用code
-   */
-  appCode?: string;
-  /**
-   * tenantId
-   */
-  tenantId?: string;
-  /**
-   * 目录格式  xxx/ss
-   */
-  directory?: string;
-  /**
-   * 强制使用目录当前缀
-   */
-  forceDirectory?: boolean;
-  /**
-   * 文件 id
-   */
-  value?: string;
-  /**
-   * 限制文件大小
-   */
-  maxSize?: number;
-  /**
-   * 限制弹框选择
-   */
-  accept?: string;
-  /**
-   * 返回文件id
-   * @param value
-   * @returns
-   */
-  onChange?: (value: string) => void;
-  /**
-   * 返回文件path
-   * @param path
-   * @returns
-   */
-  onChangePath?: (path?: string) => void;
-}
-
-export default (props: UploadFilesProps) => {
+export default (props: UploadFileProps<string>) => {
   const
     bucket = props.bucket ?? 'local',
     appCode = props.appCode ?? useAppCode(),
     tenantId = props.tenantId ?? useTenantId(),
+    locale = useLocale("UploadFile"),
     [messageApi] = message.useMessage(),
     [loading, setLoading] = useState(false),
     [imgsrc, setImgsrc] = useState<string>();
@@ -88,7 +42,7 @@ export default (props: UploadFilesProps) => {
       setLoading(true);
       if (bucket === 'local') {
         try {
-          const result = await files.updateFiles({
+          const result = await fileApi.updateFiles({
             key,
             bucket,
             file,
@@ -102,20 +56,22 @@ export default (props: UploadFilesProps) => {
         }
       }
       setLoading(false)
-    }
-
-  useEffect(() => {
-    if (props.value) {
-      if (bucket === 'local') {
-        files.getFilesRaw(props.value, 'url').then(result => {
+    },
+    getValueFile = async () => {
+      if (props.value) {
+        if (bucket === 'local') {
+          const result = await fileApi.getFilesRaw(props.value, 'url');
           if (typeof result === 'string') {
             setImgsrc(result)
           }
-        })
+        }
+      } else {
+        setImgsrc(undefined)
       }
-    } else {
-      setImgsrc(undefined)
     }
+
+  useEffect(() => {
+    getValueFile()
   }, [props.value])
 
   return <div style={{ display: "inline-block" }}>
@@ -124,18 +80,16 @@ export default (props: UploadFilesProps) => {
         accept={props.accept}
         listType="picture-card"
         showUploadList={false}
-        beforeUpload={(file) => {
-          let isTrue = true;
-          const maxSize = props.maxSize || 1024 * 5000
+        beforeUpload={async (file) => {
+          const maxSize = props.maxSize || (1024 * 1024 * 5);
 
           if (file.size > maxSize) {
-            isTrue = false
-            messageApi.error('')
+            messageApi.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
+            return false;
           }
-          if (isTrue) {
-            updateFile(file)
-          }
-          return false
+
+          await updateFile(file);
+          return false;
         }}
       >
         {

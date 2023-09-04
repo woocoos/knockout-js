@@ -7,6 +7,7 @@ import { LeavePromptLocale } from '../leave-prompt';
 import { AvatarDropdownLocale } from '../avatar-dropdown';
 import { AggregateMenuLocale } from "../aggregate-menu";
 import { Context, ProviderProps } from "../provider";
+import { UploadFileLocale } from "../upload-file";
 
 export interface Locale {
   locale: string;
@@ -15,6 +16,7 @@ export interface Locale {
   AvatarDropdown: AvatarDropdownLocale;
   TenantDropdown: TenantDropdownLocale;
   AggregateMenu: AggregateMenuLocale;
+  UploadFile: UploadFileLocale;
 }
 
 export enum LocaleType {

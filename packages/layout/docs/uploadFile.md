@@ -1,10 +1,37 @@
 ---
 sidebar_label: 上传功能
 ---
-
 # 上传功能
 
-## 头像上传
+演示各种封装好的上转组件
+
+## 通用props
+
+| 属性           | 描述                        | 类型                                    | 必填 | 默认值 |
+| -------------- | --------------------------- | --------------------------------------- | ---- | ------ |
+| bucket         | 文件上传bucket              | string                                  | ❌    | local  |
+| appCode        | 应用code                    | string                                  | ❌    | -      |
+| tenantId       | tenantId                    | string                                  | ❌    | -      |
+| directory      | 自定义目录                  | string                                  | ❌    | -      |
+| forceDirectory | 强制目录当作key             | string                                  | ❌    | -      |
+| maxSize        | 文件大小限制 （字节为单位） | number                                  | ❌    | 5M     |
+| accept         | 接受上传的文件类型          | string                                  | ❌    | -      |
+| value          | 上传的id                    | string &#124; string[]                  | ❌    | -      |
+| onChange       | 返回上传的id                | (value: string &#124; string[]) => void | ❌    | -      |
+| onChangePath   | 返回上传的path              | (path: string &#124; string[]) => void  | ❌    | -      |
+
+根据组件是多选还是单选决定`value`是返回数组还是单个，同时`onChange`,`onChangePath`也是一样
+
+## key说明
+
+默认key生成规则：/${appCode}/${tenantId}/${directory}/随机数.xxx
+
+启用`forceDirectory`规则变为: /${directory}/随机数.xxx
+
+
+## UploadAvatar
+
+针对头像上传
 
 ```tsx preview
 import { UploadAvatar } from "@knockout-js/layout";
@@ -18,11 +45,39 @@ export default () => {
 
   return (
     <div>
+      <div>ID:{fileId}</div>
       <UploadAvatar value={fileId} onChange={setFileId} accept=".png,.jpg,.jpeg" />
     </div>
   );
 };
 ```
 
-## props
+## UploadMultiple
 
+多选上传
+
+```tsx preview
+import { UploadMultiple } from "@knockout-js/layout";
+import { useState } from "react";
+import { files } from "@knockout-js/api";
+
+files.setApiFilesPrefix('http://127.0.0.1:3002/mock-api-files')
+
+export default () => {
+  const [fileId,setFileId] = useState([])
+  const [keys,setKeys] = useState([])
+
+  return (
+    <div>
+      <div>ID:{fileId.join(',')}</div>
+      <div>KEYS:{keys.join(',')}</div>
+      <UploadMultiple 
+        value={fileId} 
+        onChange={setFileId} 
+        onChangePath={setKeys} 
+        accept=".png,.jpg,.jpeg" 
+      />
+    </div>
+  );
+};
+```

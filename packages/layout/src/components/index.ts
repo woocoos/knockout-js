@@ -11,6 +11,8 @@ export { default as Layout } from './layout';
 export { default as Modal, type ModalProps } from './modal';
 export { default as AggregateMenu, type AggregateMenuDataSource } from './aggregate-menu';
 export { default as UploadAvatar } from './upload-file/uploadAvatar';
+export { default as UploadMultiple } from './upload-file/uploadMultiple';
+
 export enum iceUrqlInstance {
   ucenter = "ucenter"
 }
