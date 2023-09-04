@@ -8,6 +8,9 @@ export type UploadFileLocale = {
   // 支持扩展名
   supportExtension: string;
   errSupportExtension: string;
+  fileUpload: string;
+  tempViewer: string;
+  tempDown: string;
 }
 
 export interface UploadFileProps<T> {
@@ -40,15 +43,15 @@ export interface UploadFileProps<T> {
    */
   accept?: string;
   /**
- * 文件 id
- */
+   * 文件 id
+   */
   value?: T;
   /**
    * 返回文件id
    * @param value
    * @returns
    */
-  onChange?: (value: T) => void;
+  onChange?: (value?: T) => void;
   /**
    * 返回文件path
    * @param path

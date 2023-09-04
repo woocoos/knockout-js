@@ -6,7 +6,10 @@ const locale: UploadFileLocale = {
   confirmDel: "Confirm deletion",
   clickOrDragUpload: "Click or drag the file to upload",
   supportExtension: "Support extension",
-  errSupportExtension:"Only the extension name is supported",
+  errSupportExtension: "Only the extension name is supported",
+  fileUpload: "File upload",
+  tempViewer: "Template preview",
+  tempDown: "Template download",
 };
 
 export default locale

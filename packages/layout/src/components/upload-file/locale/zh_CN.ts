@@ -6,7 +6,10 @@ const locale: UploadFileLocale = {
   confirmDel: "确认删除",
   clickOrDragUpload: "点击或拖拽文件上传",
   supportExtension: "支持扩展名",
-  errSupportExtension:"只支持扩展名",
+  errSupportExtension: "只支持扩展名",
+  fileUpload: "文件上传",
+  tempViewer: "模板预览",
+  tempDown: "模板下载",
 };
 
 export default locale
