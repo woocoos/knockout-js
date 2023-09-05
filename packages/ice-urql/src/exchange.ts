@@ -70,7 +70,7 @@ export function authExchange(handler: AuthExchangeOpts) {
             return false;
           }
         }
-        message.error(err.toString())
+        message.error(err.toString().replace('[Network] ', '').replace('[GraphQL] ', ''))
         return error?.(err) ?? false;
       },
       async refreshAuth() {
