@@ -20,7 +20,7 @@ export interface TenantDropdownProps {
   /**
    * 数据源
    */
-  dataSource?: Org[]
+  dataSource?: Org[];
   /**
    * value变更事件 (value: string) => void;
    */
@@ -70,7 +70,7 @@ export default (props: TenantDropdownProps) => {
     }, []);
 
   useEffect(() => {
-    if (document.hidden) {
+    if (document.hidden && (info && info.id != props.value)) {
       const tipStr = locale.switchTipTitle;
       document.title = tipStr;
       document.body.innerHTML = `<div style="width:370px;margin:40px auto 0 auto;">${tipStr}</div>`;

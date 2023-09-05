@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 import zhCN from "./zh_CN";
 import enUS from "./en_US";
 import { TenantDropdownLocale } from '../tenant-dropdown';
@@ -6,7 +6,7 @@ import { ThemeSwitchLocale } from '../theme-switch';
 import { LeavePromptLocale } from '../leave-prompt';
 import { AvatarDropdownLocale } from '../avatar-dropdown';
 import { AggregateMenuLocale } from "../aggregate-menu";
-import { Context, ProviderProps } from "../provider";
+import { Context, LocaleType, ProviderProps } from "../provider";
 import { UploadFileLocale } from "../upload-file";
 
 export interface Locale {
@@ -19,10 +19,7 @@ export interface Locale {
   UploadFile: UploadFileLocale;
 }
 
-export enum LocaleType {
-  zhCN = "zh-CN",
-  enUS = "en-US",
-}
+
 
 export type LocaleComponentName = Exclude<keyof Locale, 'locale'>;
 

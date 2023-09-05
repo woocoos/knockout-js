@@ -1,5 +1,9 @@
 import { createContext, useContext } from "react";
-import { LocaleType } from "../locale";
+
+export enum LocaleType {
+  zhCN = "zh-CN",
+  enUS = "en-US",
+}
 
 export interface ProviderProps {
   locale?: LocaleType;

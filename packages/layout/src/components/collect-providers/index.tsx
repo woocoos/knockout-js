@@ -1,8 +1,7 @@
 import { Locale } from "antd/es/locale";
-import { LocaleType } from "../locale"
 import { ReactNode, useEffect, useState } from "react";
 import { ProConfigProvider } from "@ant-design/pro-provider";
-import { Provider, LeavePrompt } from "..";
+import { Provider, LeavePrompt, LocaleType } from "..";
 import { ConfigProvider } from "antd";
 import { AliveScope } from "react-activation";
 import zhCN from 'antd/locale/zh_CN';
