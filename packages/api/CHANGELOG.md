@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.0.4-beta.1
+
+### Patch Changes
+
+- bate.1
+
 ## 0.0.4-beta.0
 
 ### Patch Changes
