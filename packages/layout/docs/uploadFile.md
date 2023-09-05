@@ -40,7 +40,7 @@ import { useState } from "react";
 import { files } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setApiFilesPrefix(fileApi)
+files.setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState()
@@ -71,7 +71,7 @@ import { useState } from "react";
 import { files } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setApiFilesPrefix(fileApi)
+files.setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState([])
@@ -111,7 +111,7 @@ import { useState } from "react";
 import { files } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setApiFilesPrefix(fileApi)
+files.setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState()
