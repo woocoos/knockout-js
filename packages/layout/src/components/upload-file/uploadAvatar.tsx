@@ -4,8 +4,9 @@ import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { files as fileApi } from "@knockout-js/api";
 import { useAppCode, useTenantId } from "../provider";
-import { UploadFileProps, randomId, formatFileSize } from ".";
+import { UploadFileProps } from ".";
 import { useLocale } from "../locale";
+import { formatFileSize, randomId } from "../_util";
 
 export default (props: UploadFileProps<string>) => {
   const

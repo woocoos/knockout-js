@@ -4,7 +4,7 @@ import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, FC, useCallback, useState } from 'react';
+import { ReactNode, FC, useState } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
@@ -14,6 +14,7 @@ import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
 import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
 import { BarsOutlined } from '@ant-design/icons';
+import { listFormatTreeData } from '../_util';
 
 export interface LayoutProps {
   /**
@@ -80,24 +81,6 @@ const Layout = (props: LayoutProps) => {
 
   const [locale, setLocale] = useState(LocaleType.zhCN);
 
-  // 根据列表格式化成菜单树结构
-  const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
-    if (!parentList) {
-      parentList = list.filter(item => item.parentId == '0');
-    }
-    parentList.forEach((pItem) => {
-      let children = list.filter(
-        (allItem) => allItem.parentId == pItem.key,
-      );
-      if (children && children.length) {
-        pItem.children = listFormatTree(list, children);
-      }
-    });
-    return parentList;
-  }, [])
-
-
-
   return (
     <CollectProviders
       locale={locale}
@@ -146,7 +129,7 @@ const Layout = (props: LayoutProps) => {
                 } as MenuDataItem
               })
 
-              return listFormatTree(meunList);
+              return listFormatTreeData(meunList);
             }
             return [];
           },

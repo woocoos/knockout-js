@@ -2,11 +2,12 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Modal, Spin, Typography, Upload, message } from "antd"
 import { RcFile, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
-import { UploadFileProps, formatFileSize, randomId } from ".";
+import { UploadFileProps } from ".";
 import { Files } from "@knockout-js/api/esm/files";
 import { useAppCode, useTenantId } from "../provider";
 import { useLocale } from "../locale";
 import { files as fileApi } from "@knockout-js/api";
+import { formatFileSize, randomId } from "../_util";
 
 let files: RcFile[] = [];
 let timeoutFn: NodeJS.Timeout | undefined = undefined;

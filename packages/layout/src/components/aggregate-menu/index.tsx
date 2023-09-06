@@ -10,6 +10,7 @@ import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, v
 import { CSS } from '@dnd-kit/utilities';
 import { useLocale } from "../locale";
 import { useDark, useTenantId } from "../provider";
+import { listFormatTreeData, treeFormatList } from "../_util";
 
 const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
   userMenus(appCode: $appCode){
@@ -119,7 +120,7 @@ export default (props: AggregateMenuProps) => {
       }, 1, { instanceName: iceUrqlInstance.ucenter }), apps: App[] = [];
       if (appsResult.data?.userRootOrgs) {
         appsResult.data.userRootOrgs.forEach(org => {
-          if (tenantId === org.id) {
+          if (tenantId == org.id) {
             org.apps.edges?.forEach(oApp => {
               if (oApp?.node && !apps.find(app => app.id === oApp.node?.id)) {
                 apps.push(oApp.node as App);
@@ -140,7 +141,7 @@ export default (props: AggregateMenuProps) => {
           }) as AppMenu[];
           newAll.push({
             app: apps[i],
-            menu,
+            menu: treeFormatList(listFormatTreeData(menu, undefined, { key: 'id', parentId: 'parentID' })),
           })
         }
       }
