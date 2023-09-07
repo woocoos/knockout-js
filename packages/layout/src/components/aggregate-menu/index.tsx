@@ -1,7 +1,7 @@
 import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-design/icons"
 import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
-import { Drawer, Empty, Input, Space } from "antd";
+import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
 import { gql, paging, query } from "@knockout-js/ice-urql/request";
 import { App, AppMenu, AppMenuKind, LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables, UserMenuListQuery, UserMenuListQueryVariables } from "@knockout-js/api";
 import { iceUrqlInstance } from "..";
@@ -11,6 +11,7 @@ import { CSS } from '@dnd-kit/utilities';
 import { useLocale } from "../locale";
 import { useDark, useTenantId } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
+import { OpenWin } from "../icons";
 
 const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
   userMenus(appCode: $appCode){
@@ -50,13 +51,17 @@ export interface AggregateMenuProps {
    */
   dataSource?: AggregateMenuDataSource;
   /**
+   * 弹框设置
+   */
+  drawerProps?: DrawerProps;
+  /**
    * 弹出开关变更
    */
   onChangeOpen?: (open: boolean) => void;
   /**
    * 选中菜单
    */
-  onClick?: (menuItem: AppMenu, app: App) => void;
+  onClick?: (menuItem: AppMenu, app: App, isOpen?: boolean) => void;
 }
 
 /**
@@ -68,7 +73,7 @@ export interface AggregateMenuProps {
 const DargItem = (props: {
   value: AppMenu;
   onDel: () => void;
-  onClick: () => void;
+  onClick: (isOpen?: boolean) => void;
 }) => {
   const id = `${props.value.id}-${props.value.appID}`;
   const { setNodeRef, listeners, attributes, transform, transition } = useSortable({ id });
@@ -89,7 +94,12 @@ const DargItem = (props: {
     <div className={styles.aggregateMenuDrawerMenuItemName}>{props.value.name}</div>
     <div className={styles.aggregateMenuDrawerMenuItemIcons}>
       <Space>
-        <CloseOutlined rev={undefined} onClick={() => {
+        <OpenWin className="anticon" onClick={(event) => {
+          event.stopPropagation();
+          props.onClick(true);
+        }} />
+        <CloseOutlined rev={undefined} onClick={(event) => {
+          event.stopPropagation();
           props.onDel();
         }} />
         <DragOutlined rev={undefined}  {...listeners} className="dragIcon" />
@@ -151,27 +161,36 @@ export default (props: AggregateMenuProps) => {
     checkCollect = useCallback((menuItem: AppMenu) => {
       return !!collects.find(item => item.id === menuItem.id && item.appID === menuItem.appID);
     }, [collects]),
+    onClickItem = (menuItem: AppMenu, isOpen?: boolean) => {
+      const allApp = all.find(allItem => allItem.app.id == menuItem.appID);
+      if (allApp) {
+        props.onClick?.(menuItem, allApp.app, isOpen);
+      }
+    },
     menuItemRender = (menuItem: AppMenu) => {
       return <div
         key={`${menuItem.id}-${menuItem.appID}`}
         className={styles.aggregateMenuDrawerAllMenuItem}
         onClick={() => {
-          const allApp = all.find(allItem => allItem.app.id == menuItem.appID);
-          if (allApp) {
-            props.onClick?.(menuItem, allApp.app);
-          }
+          onClickItem(menuItem)
         }}
       >
         <div className={styles.aggregateMenuDrawerAllMenuItemName}> {menuItem.name}</div>
-        <div>
-          <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={(event) => {
-            event.stopPropagation();
-            if (checkCollect(menuItem)) {
-              setCollects(collects.filter(c => !(c.id === menuItem.id && c.appID === menuItem.appID)));
-            } else {
-              setCollects([...collects, menuItem]);
-            }
-          }} />
+        <div className={styles.aggregateMenuDrawerAllMenuItemIcons}>
+          <Space>
+            <OpenWin className="anticon" onClick={(event) => {
+              event.stopPropagation();
+              onClickItem(menuItem, true)
+            }} />
+            <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={(event) => {
+              event.stopPropagation();
+              if (checkCollect(menuItem)) {
+                setCollects(collects.filter(c => !(c.id === menuItem.id && c.appID === menuItem.appID)));
+              } else {
+                setCollects([...collects, menuItem]);
+              }
+            }} />
+          </Space>
         </div>
       </div>
     }
@@ -187,17 +206,20 @@ export default (props: AggregateMenuProps) => {
 
   return <>
     <Drawer
-      className={`${styles.aggregateMenuDrawer} ${isDark ? styles.aggregateMenuDark : ''}`}
       title={locale.title}
+      maskClosable={false}
       placement="left"
-      open={props.open}
       width={1060}
+      {...props.drawerProps}
+      className={`${styles.aggregateMenuDrawer} ${isDark ? styles.aggregateMenuDark : ''}`}
+      open={props.open}
       onClose={() => {
         props.onChangeOpen?.(false);
       }}
     >
       <div className={styles.aggregateMenuDrawerRow}>
         <div style={{ width: 240 }} className={styles.aggregateMenuDrawerMenu}>
+          {/* 收藏 */}
           {collects.length ?
             <DndContext sensors={sensors}
               collisionDetection={closestCenter}
@@ -220,11 +242,8 @@ export default (props: AggregateMenuProps) => {
                     onDel={() => {
                       setCollects(collects.filter(c => !(c.id === item.id && c.appID === item.appID)));
                     }}
-                    onClick={() => {
-                      const allApp = all.find(allItem => allItem.app.id == item.appID);
-                      if (allApp) {
-                        props.onClick?.(item, allApp.app);
-                      }
+                    onClick={(isOpen) => {
+                      onClickItem(item, isOpen)
                     }}
                   />))
                 }
@@ -234,6 +253,7 @@ export default (props: AggregateMenuProps) => {
           }
         </div>
         <div style={{ width: 820 }}>
+          {/* 过滤 */}
           <div className={styles.aggregateMenuDrawerAllInput}>
             <Input
               bordered={false}
@@ -255,6 +275,7 @@ export default (props: AggregateMenuProps) => {
               }}
             />
           </div>
+          {/* 最近访问 */}
           {latelys.length ?
             <div className={styles.aggregateMenuLatelys}>
               <div className={styles.aggregateMenuDrawerAllMenuItemDir}>{locale.latelyTitle}</div>
@@ -265,6 +286,7 @@ export default (props: AggregateMenuProps) => {
               </div>
             </div> : <></>
           }
+          {/* all应用菜单 */}
           <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
             {filterList.map(item => (
               <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumn}>

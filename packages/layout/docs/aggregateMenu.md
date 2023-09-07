@@ -83,7 +83,6 @@ export default () => {
           }}
         />
       </Provider>
-      
     </div>
   );
 };
@@ -92,9 +91,10 @@ export default () => {
 
 ## props
 
-| 属性         | 描述             | 类型                                   | 必填 | 默认值 |
-| ------------ | ---------------- | -------------------------------------- | ---- | ------ |
-| open         | 打开弹出框       | boolean                                | ❌    | -      |
-| dataSource   | 数据源           | AggregateMenuDataSource                | ❌    | -      |
-| onChangeOpen | 弹出开关变更事件 | (open: boolean) => void;               | ❌    | -      |
-| onClick      | 选中菜单         | (menuItem: AppMenu, app: App) => void; | ❌    | -      |
+| 属性         | 描述             | 类型                                                    | 必填 | 默认值 |
+| ------------ | ---------------- | ------------------------------------------------------- | ---- | ------ |
+| open         | 打开弹出框       | boolean                                                 | ❌    | -      |
+| dataSource   | 数据源           | AggregateMenuDataSource                                 | ❌    | -      |
+| drawerProps  | ant组件的        | DrawerProps                                             | ❌    | -      |
+| onChangeOpen | 弹出开关变更事件 | (open: boolean) => void;                                | ❌    | -      |
+| onClick      | 选中菜单         | (menuItem: AppMenu, app: App, isOpen?:boolean) => void; | ❌    | -      |

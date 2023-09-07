@@ -25,6 +25,7 @@ export interface AuthExchangeOpts {
   };
   /**
    * 提前多久刷新token默认0
+   * 单位是毫秒
    */
   beforeRefreshTime?: number;
   /**
