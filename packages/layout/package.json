@@ -72,8 +72,8 @@
     "access": "public"
   },
   "repository": {
-    "type": "git",
-    "url": "git+https://github.com/woocoos/knockout-js.git"
+    "type": "http",
+    "url": "https://github.com/woocoos/knockout-js/tree/main/packages/layout"
   },
   "license": "MIT"
 }
