@@ -80,3 +80,22 @@ export const randomId = (len: number) => {
   for (; str.length < len; str += Math.random().toString(36).substring(2));
   return str.substring(0, len);
 }
+
+
+/**
+ * 解析env配置的app地址字符串
+ * @param evnStr appCode@deploy_address;
+ * @returns
+ */
+export const parseEnvAppAddress = (evnStr: string) => {
+  const address: Record<string, string> = {};
+  evnStr.split(';').forEach(str => {
+    if (str) {
+      const adds = str.split('@');
+      if (adds.length === 2) {
+        address[adds[0]] = adds[1];
+      }
+    }
+  })
+  return address;
+}

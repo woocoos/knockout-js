@@ -4,7 +4,7 @@ import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, FC, useState } from 'react';
+import { ReactNode, FC } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
@@ -21,6 +21,11 @@ export interface LayoutProps {
    * 应用code
    */
   appCode: string;
+  /**
+   * 语言
+   * 默认 LocaleType.zhCN
+   */
+  locale?: LocaleType;
   /**
    * 传递动态的 location.pathname
    */
@@ -48,7 +53,7 @@ export interface LayoutProps {
   /**
    * ThemeSwitch组件对应的参数
    */
-  themeSwitchProps: ThemeSwitchProps;
+  themeSwitchProps?: ThemeSwitchProps;
   /**
   * ProLayout组件对应的参数
   */
@@ -79,14 +84,13 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 
 const Layout = (props: LayoutProps) => {
 
-  const [locale, setLocale] = useState(LocaleType.zhCN);
 
   return (
     <CollectProviders
-      locale={locale}
+      locale={props.locale ?? LocaleType.zhCN}
       appCode={props.appCode}
       tenantId={props.tenantProps.value}
-      dark={props.themeSwitchProps.value}
+      dark={props.themeSwitchProps?.value ?? false}
       pathname={props.pathname}
     >
       <ProLayout
@@ -137,15 +141,18 @@ const Layout = (props: LayoutProps) => {
         location={{
           pathname: props.pathname
         }}
-        actionsRender={() => [
-          <I18nDropdown onChange={(value) => {
-            setLocale(value);
-            props.i18nProps?.onChange?.(value)
-          }} />,
-          <TenantDropdown {...props.tenantProps} />,
-          <AvatarDropdown {...props.avatarProps} />,
-          <ThemeSwitch {...props.themeSwitchProps} />,
-        ]}
+        actionsRender={() => {
+          const actions: ReactNode[] = [];
+          if (props.i18nProps) {
+            actions.push(<I18nDropdown {...props.i18nProps} />)
+          }
+          actions.push(<TenantDropdown {...props.tenantProps} />)
+          actions.push(<AvatarDropdown {...props.avatarProps} />)
+          if (props.themeSwitchProps) {
+            actions.push(<ThemeSwitch {...props.themeSwitchProps} />)
+          }
+          return actions;
+        }}
         menuItemRender={(item, defaultDom) => (item.path ? <>
           <a
             onClick={() => {
