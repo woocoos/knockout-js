@@ -20,55 +20,45 @@ createUrqlInstance([
 ]);
 
 export default () => {
-  const [open,setOpen] = useState(false),
-  dataSource = [
+  const [open,setOpen] = useState(false);
+ 
+  const menuData = (appId,max) => {
+    const data = [];
+    for(let i =0;i<max;i++){
+      data.push(
+         { id: `${appId}${i+1}`, name: `app${appId}-menu${i+1}`, route: `/${i}`, appID: appId,kind:AppMenuKind.Menu }
+      )
+    }
+    return data;
+  }
+
+  const dataSource = [
     {
       app: { id: '1', name: 'app1', code: 'app1' } as App,
-      menu: [
-        { id: '1', name: 'app1-menu1', route: '/0', appID: "1",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app1-menu2', route: '/1', appID: "1",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu: menuData(1,8)
     },
     {
       app: { id: '2', name: 'app2', code: 'app2' } as App,
-      menu: [
-        { id: '1', name: 'app2-menu1sdfsldjfklasjdfklsajdklfjalskdjfmenu1sdfsldjfklasjdfklsajdklfjalskdjf', route: '/1', appID: "2",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app2-menu2', route: '/2', appID: "2",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '3', name: 'app2-menu3', route: '/3', appID: "2",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu:menuData(2,4)
     },
     {
       app: { id: '3', name: 'app3', code: 'app3' } as App,
-      menu: [
-        { id: '1', name: 'app3-menu1', route: '/1', appID: "3",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app3-menu2', route: '/2', appID: "3",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '3', name: 'app3-menu3', route: '/3', appID: "3",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu:menuData(3,18)
     },
     {
       app: { id: '4', name: 'app4', code: 'app4' } as App,
-      menu: [
-        { id: '1', name: 'app4-menu1', route: '/1', appID: "4",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app4-menu2', route: '/2', appID: "4",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '3', name: 'app4-menu3', route: '/3', appID: "4",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '4', name: 'app4-menu4', route: '/4', appID: "4",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu:menuData(4,14)
     },
     {
       app: { id: '5', name: 'app5', code: 'app5' } as App,
-      menu: [
-        { id: '1', name: 'app5-menu1', route: '/0', appID: "5",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app5-menu2', route: '/1', appID: "5",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu: menuData(5,8)
     },
     {
       app: { id: '6', name: 'app6', code: 'app6' } as App,
-      menu: [
-        { id: '1', name: 'app6-menu1', route: '/0', appID: "6",kind:AppMenuKind.Menu } as AppMenu,
-        { id: '2', name: 'app6-menu2', route: '/1', appID: "6",kind:AppMenuKind.Menu } as AppMenu,
-      ]
+      menu:menuData(6,10)
     },
   ];
+
 
   return (
     <div >

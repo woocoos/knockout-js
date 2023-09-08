@@ -368,20 +368,22 @@ export default (props: AggregateMenuProps) => {
           }
           {/* all应用菜单 */}
           <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
-            {filterList.map(item => (
-              <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumn}>
-                <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
-                {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
-                  menuItemRender(menuItem)
-                  : <div
-                    key={`${menuItem.appID}-${menuItem.id}`}
-                    className={styles.aggregateMenuDrawerAllMenuItemDir}
-                  >
-                    {menuItem.name}
-                  </div>
-                ))}
-              </div>
-            ))}
+            <div className={styles.aggregateMenuDrawerAllMenuColumn}>
+              {filterList.map(item => (
+                <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>
+                  <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
+                  {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
+                    menuItemRender(menuItem)
+                    : <div
+                      key={`${menuItem.appID}-${menuItem.id}`}
+                      className={styles.aggregateMenuDrawerAllMenuItemDir}
+                    >
+                      {menuItem.name}
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
