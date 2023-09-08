@@ -154,7 +154,8 @@
 
 .aggregateMenuLatelys {
   padding: 16px 16px 0 16px;
-
+  height: 112px;
+  box-sizing: border-box;
 }
 
 .aggregateMenuLatelysColumn {

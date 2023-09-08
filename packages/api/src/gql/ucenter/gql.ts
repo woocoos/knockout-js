@@ -24,8 +24,11 @@ const documents = {
     "query apiUserIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on User{\n      id,displayName\n    }\n  }\n}": types.ApiUserIdListDocument,
     "query apiUserId($id:GID!){\n  node(id: $id){\n    ... on User{\n      id,displayName\n    }\n  }\n}": types.ApiUserIdDocument,
     "query apiUserPermissionList($where: AppActionWhereInput){\n  userPermissions(where: $where){\n    id,appID,name,kind,method\n  }\n}": types.ApiUserPermissionListDocument,
-    "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}": types.UserMenuListDocument,
+    "query layoutPkgUserMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,name,route,appID,parentID,displaySort,kind\n  }\n}": types.LayoutPkgUserMenuListDocument,
     "query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}": types.LayoutPkgUserRootOrgsDocument,
+    "query layoutPkgUserPreference{\n  orgUserPreference{\n    id,menuFavorite,menuRecent,\n  }\n}": types.LayoutPkgUserPreferenceDocument,
+    "mutation layoutPkgSaveUserPreference($input:OrgUserPreferenceInput!){\n  saveOrgUserPreference(input: $input){ id }\n}": types.LayoutPkgSaveUserPreferenceDocument,
+    "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}": types.UserMenuListDocument,
     "query userRootOrgs{\n  userRootOrgs{\n    id,parentID,kind,domain,code,name,status,path,displaySort,countryCode,timezone\n  }\n}": types.UserRootOrgsDocument,
     "query orgAppList($gid: GID!,$first: Int,$orderBy:AppOrder,$where:AppWhereInput){\n  node(id:$gid){\n    ... on Org{\n      id\n      apps(first:$first,orderBy: $orderBy,where: $where){\n        totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n        edges{\n          cursor,node{\n            id,name,code,kind,comments,status\n          }\n        }\n      }\n    }\n  }\n}": types.OrgAppListDocument,
     "query appList($first: Int,$orderBy:AppOrder,$where:AppWhereInput){\n  apps(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      cursor,node{\n        id,name,code,kind,comments,status\n      }\n    }\n  }\n}": types.AppListDocument,
@@ -100,11 +103,23 @@ export function gql(source: "query apiUserPermissionList($where: AppActionWhereI
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}"): (typeof documents)["query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}"];
+export function gql(source: "query layoutPkgUserMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,name,route,appID,parentID,displaySort,kind\n  }\n}"): (typeof documents)["query layoutPkgUserMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,name,route,appID,parentID,displaySort,kind\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}"): (typeof documents)["query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query layoutPkgUserPreference{\n  orgUserPreference{\n    id,menuFavorite,menuRecent,\n  }\n}"): (typeof documents)["query layoutPkgUserPreference{\n  orgUserPreference{\n    id,menuFavorite,menuRecent,\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "mutation layoutPkgSaveUserPreference($input:OrgUserPreferenceInput!){\n  saveOrgUserPreference(input: $input){ id }\n}"): (typeof documents)["mutation layoutPkgSaveUserPreference($input:OrgUserPreferenceInput!){\n  saveOrgUserPreference(input: $input){ id }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}"): (typeof documents)["query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -2,8 +2,8 @@ import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-
 import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
 import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
-import { gql, paging, query } from "@knockout-js/ice-urql/request";
-import { App, AppMenu, AppMenuKind, LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables, UserMenuListQuery, UserMenuListQueryVariables } from "@knockout-js/api";
+import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
+import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables, LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables } from "@knockout-js/api";
 import { iceUrqlInstance } from "..";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -13,7 +13,7 @@ import { useDark, useTenantId } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
 
-const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!){
+const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){
   userMenus(appCode: $appCode){
     id,name,route,appID,parentID,displaySort,kind
   }
@@ -27,6 +27,16 @@ const userOrgAppsQuery = gql(/* GraphQL */`query layoutPkgUserRootOrgs($first:In
       edges{ node{ id,name,code } }
     }
   }
+}`);
+
+const userPreferenceQuery = gql(/* GraphQL */`query layoutPkgUserPreference{
+  orgUserPreference{
+    id,menuFavorite,menuRecent,
+  }
+}`);
+
+const userPreferenceMut = gql(/* GraphQL */`mutation layoutPkgSaveUserPreference($input:OrgUserPreferenceInput!){
+  saveOrgUserPreference(input: $input){ id }
 }`);
 
 export type AggregateMenuLocale = {
@@ -141,7 +151,7 @@ export default (props: AggregateMenuProps) => {
       }
       const newAll: AggregateMenuDataSource = [];
       for (let i in apps) {
-        const menuResult = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
+        const menuResult = await query<LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables>(userMenuListQuery, {
           appCode: apps[i].code,
         }, { instanceName: iceUrqlInstance.ucenter });
         if (menuResult.data?.userMenus) {
@@ -157,13 +167,76 @@ export default (props: AggregateMenuProps) => {
       }
       setAll(newAll);
       setFilterList(newAll);
+      // 初始化收藏和初始化最近数据
+      const preferenceResult = await query<LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables>(userPreferenceQuery, {}, { instanceName: iceUrqlInstance.ucenter });
+      if (preferenceResult.data?.orgUserPreference?.id) {
+        const menuFavorite = preferenceResult.data.orgUserPreference.menuFavorite,
+          menuRecent = preferenceResult.data.orgUserPreference.menuRecent,
+          collectsList: AppMenu[] = [],
+          latelyList: AppMenu[] = [];
+        if (menuFavorite) {
+          menuFavorite.forEach(id => {
+            for (let i in newAll) {
+              const menuItem = newAll[i].menu.find(item => item.id == id);
+              if (menuItem) {
+                collectsList.push(menuItem);
+                break;
+              }
+            }
+
+          })
+        }
+        if (menuRecent) {
+          menuRecent.forEach(id => {
+            for (let i in newAll) {
+              const menuItem = newAll[i].menu.find(item => item.id == id);
+              if (menuItem) {
+                latelyList.push(menuItem);
+                break;
+              }
+            }
+
+          })
+        }
+        setCollects(collectsList);
+        setLately(latelyList);
+      }
     }, []),
+    requestFavorite = async (list: AppMenu[]) => {
+      // 异步存储收藏
+      await mutation<LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables>(userPreferenceMut, {
+        input: {
+          menuFavorite: list.map(item => item.id),
+        }
+      }, {
+        instanceName: iceUrqlInstance.ucenter
+      });
+    },
+    requestRecent = async (ids: string[]) => {
+      // 异步存储访问菜单记录
+      await mutation<LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables>(userPreferenceMut, {
+        input: {
+          menuRecent: ids,
+        }
+      }, {
+        instanceName: iceUrqlInstance.ucenter
+      });
+    },
     checkCollect = useCallback((menuItem: AppMenu) => {
       return !!collects.find(item => item.id === menuItem.id && item.appID === menuItem.appID);
     }, [collects]),
-    onClickItem = (menuItem: AppMenu, isOpen?: boolean) => {
+    onClickItem = async (menuItem: AppMenu, isOpen?: boolean) => {
       const allApp = all.find(allItem => allItem.app.id == menuItem.appID);
       if (allApp) {
+        const latelyList = [...latelys];
+        const oldIdx = latelyList.findIndex(lately => lately.id == menuItem.id);
+        if (oldIdx > -1) {
+          latelyList.splice(oldIdx, 1);
+        }
+        latelyList.unshift(menuItem);
+        latelyList.splice(6);
+        await requestRecent(latelyList.map(item => item.id));
+        setLately(latelyList);
         props.onClick?.(menuItem, allApp.app, isOpen);
       }
     },
@@ -182,13 +255,16 @@ export default (props: AggregateMenuProps) => {
               event.stopPropagation();
               onClickItem(menuItem, true)
             }} />
-            <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={(event) => {
+            <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={async (event) => {
               event.stopPropagation();
+              let collectList: AppMenu[] = [];
               if (checkCollect(menuItem)) {
-                setCollects(collects.filter(c => !(c.id === menuItem.id && c.appID === menuItem.appID)));
+                collectList = collects.filter(c => !(c.id === menuItem.id && c.appID === menuItem.appID))
               } else {
-                setCollects([...collects, menuItem]);
+                collectList = [...collects, menuItem]
               }
+              await requestFavorite(collectList)
+              setCollects(collectList);
             }} />
           </Space>
         </div>
@@ -229,7 +305,9 @@ export default (props: AggregateMenuProps) => {
                   setCollects((items) => {
                     const oldIndex = items.findIndex(oItem => `${oItem.id}-${oItem.appID}` == active.id);
                     const newIndex = items.findIndex(nItem => `${nItem.id}-${nItem.appID}` == over.id);
-                    return arrayMove(items, oldIndex, newIndex);
+                    const collectList = arrayMove(items, oldIndex, newIndex);
+                    requestFavorite(collectList);
+                    return collectList;
                   });
                 }
               }}
@@ -239,8 +317,10 @@ export default (props: AggregateMenuProps) => {
                   collects.map(item => (<DargItem
                     key={`c${item.id}-${item.appID}`}
                     value={item}
-                    onDel={() => {
-                      setCollects(collects.filter(c => !(c.id === item.id && c.appID === item.appID)));
+                    onDel={async () => {
+                      const collectList = collects.filter(c => !(c.id === item.id && c.appID === item.appID))
+                      await requestFavorite(collectList);
+                      setCollects(collectList);
                     }}
                     onClick={(isOpen) => {
                       onClickItem(item, isOpen)
