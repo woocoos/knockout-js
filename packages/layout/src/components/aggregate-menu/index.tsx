@@ -3,13 +3,13 @@ import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
 import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
 import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
-import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables, LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables } from "@knockout-js/api";
+import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables } from "@knockout-js/api";
 import { iceUrqlInstance } from "..";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
 import { useLocale } from "../locale";
-import { useDark, useTenantId } from "../provider";
+import { useDark } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
 
@@ -19,13 +19,9 @@ const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode
   }
 }`);
 
-const userOrgAppsQuery = gql(/* GraphQL */`query layoutPkgUserRootOrgs($first:Int){
-  userRootOrgs{
-    id,
-    apps(first: $first){
-      totalCount,
-      edges{ node{ id,name,code } }
-    }
+const userAppsQuery = gql(/* GraphQL */`query layoutPkgUserAppList{
+  userApps{
+    id,name,code
   }
 }`);
 
@@ -125,7 +121,6 @@ export default (props: AggregateMenuProps) => {
     [latelys, setLately] = useState<AppMenu[]>([]),
     locale = useLocale('AggregateMenu'),
     isDark = useDark(),
-    tenantId = useTenantId(),
     sensors = useSensors(
       useSensor(PointerSensor),
       useSensor(KeyboardSensor, {
@@ -135,18 +130,12 @@ export default (props: AggregateMenuProps) => {
 
   const
     request = useCallback(async () => {
-      const appsResult = await paging<LayoutPkgUserRootOrgsQuery, LayoutPkgUserRootOrgsQueryVariables>(userOrgAppsQuery, {
-        first: 30,
-      }, 1, { instanceName: iceUrqlInstance.ucenter }), apps: App[] = [];
-      if (appsResult.data?.userRootOrgs) {
-        appsResult.data.userRootOrgs.forEach(org => {
-          if (tenantId == org.id) {
-            org.apps.edges?.forEach(oApp => {
-              if (oApp?.node && !apps.find(app => app.id === oApp.node?.id)) {
-                apps.push(oApp.node as App);
-              }
-            })
-          }
+      const appsResult = await paging<LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables>(userAppsQuery, {}, 1, {
+        instanceName: iceUrqlInstance.ucenter
+      }), apps: App[] = [];
+      if (appsResult.data?.userApps) {
+        appsResult.data.userApps.forEach(app => {
+          apps.push(app as App)
         })
       }
       const newAll: AggregateMenuDataSource = [];

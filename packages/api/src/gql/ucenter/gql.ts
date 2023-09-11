@@ -25,7 +25,7 @@ const documents = {
     "query apiUserId($id:GID!){\n  node(id: $id){\n    ... on User{\n      id,displayName\n    }\n  }\n}": types.ApiUserIdDocument,
     "query apiUserPermissionList($where: AppActionWhereInput){\n  userPermissions(where: $where){\n    id,appID,name,kind,method\n  }\n}": types.ApiUserPermissionListDocument,
     "query layoutPkgUserMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,name,route,appID,parentID,displaySort,kind\n  }\n}": types.LayoutPkgUserMenuListDocument,
-    "query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}": types.LayoutPkgUserRootOrgsDocument,
+    "query layoutPkgUserAppList{\n  userApps{\n    id,name,code\n  }\n}": types.LayoutPkgUserAppListDocument,
     "query layoutPkgUserPreference{\n  orgUserPreference{\n    id,menuFavorite,menuRecent,\n  }\n}": types.LayoutPkgUserPreferenceDocument,
     "mutation layoutPkgSaveUserPreference($input:OrgUserPreferenceInput!){\n  saveOrgUserPreference(input: $input){ id }\n}": types.LayoutPkgSaveUserPreferenceDocument,
     "query userMenuList($appCode:String!){\n  userMenus(appCode: $appCode){\n    id,parentID,kind,name,comments,displaySort,icon,route\n  }\n}": types.UserMenuListDocument,
@@ -107,7 +107,7 @@ export function gql(source: "query layoutPkgUserMenuList($appCode:String!){\n  u
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}"): (typeof documents)["query layoutPkgUserRootOrgs($first:Int){\n  userRootOrgs{\n    id,\n    apps(first: $first){\n      totalCount,\n      edges{ node{ id,name,code } }\n    }\n  }\n}"];
+export function gql(source: "query layoutPkgUserAppList{\n  userApps{\n    id,name,code\n  }\n}"): (typeof documents)["query layoutPkgUserAppList{\n  userApps{\n    id,name,code\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
