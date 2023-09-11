@@ -18,7 +18,10 @@ export const dataLoader = defineDataLoader(async () => {
       token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE2OTEzOTcwMDB9.OxViESAOpW8J1pqMVCE0ObOg7nu2-um9SCXn7gR2bdY',
       tenantId: '1',
       refreshToken: 'refreshToken',
-      user: null,
+      user: {
+        id: "1",
+        displayName: 'test name',
+      },
     }
   }
 });

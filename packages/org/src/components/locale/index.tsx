@@ -1,7 +1,7 @@
-import { createContext, useContext } from "react";
+import { useContext } from "react";
 import zhCN from "./zh_CN";
 import enUS from "./en_US";
-import { BasicContext, LocaleType, BasicProviderProps } from "@knockout-js/layout"
+import { Context, LocaleType, ProviderProps } from "@knockout-js/layout"
 import { AppSelectLocale } from "../app-select/index";
 import { OrgModalLocale } from "../org-modal";
 import { OrgSelectLocale } from "../org-select";
@@ -31,7 +31,7 @@ export type LocaleComponentName = Exclude<keyof Locale, 'locale'>;
  * @returns
  */
 export const useLocale = <C extends LocaleComponentName>(componentName: C) => {
-  const ctx = useContext<BasicProviderProps>(BasicContext);
+  const ctx = useContext<ProviderProps>(Context);
   if (ctx.locale === LocaleType.enUS) {
     return { ...enUS[componentName] }
   }

@@ -9,11 +9,12 @@ import { UserModal } from "@knockout-js/org";
 import { useState } from "react";
 import { Button } from "antd";
 import { createUrqlInstance } from '@knockout-js/ice-urql/request';
+import { adminxApi } from "./assets/api";
 
 createUrqlInstance([
   {
     instanceName: 'default',
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+    url: adminxApi,
   }
 ])
 
@@ -30,6 +31,7 @@ export default () => {
       </Button>
       <UserModal
         open={open}
+        title="用户列表"
         onClose={(data) => {
           console.log(data);
           setOpen(false);

@@ -25,6 +25,7 @@ export interface AuthExchangeOpts {
   };
   /**
    * 提前多久刷新token默认0
+   * 单位是毫秒
    */
   beforeRefreshTime?: number;
   /**
@@ -70,7 +71,7 @@ export function authExchange(handler: AuthExchangeOpts) {
             return false;
           }
         }
-        message.error(err.toString())
+        message.error(err.toString().replace('[Network] ', '').replace('[GraphQL] ', ''))
         return error?.(err) ?? false;
       },
       async refreshAuth() {

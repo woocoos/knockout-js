@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/org",
-  "version": "0.0.3",
+  "version": "0.0.4-beta.1",
   "description": "Knockout组织相关组件",
   "files": [
     "esm",
@@ -41,7 +41,7 @@
     "component"
   ],
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
+    "@ant-design/icons": "^5.2.5",
     "@ant-design/pro-table": "^3.8.2",
     "@ice/jsx-runtime": "^0.2.0",
     "@knockout-js/api": "workspace:^",
@@ -62,6 +62,10 @@
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "http",
+    "url": "https://github.com/woocoos/knockout-js/tree/main/packages/org"
   },
   "license": "MIT"
 }

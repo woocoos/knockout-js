@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/layout",
-  "version": "0.0.3",
+  "version": "0.0.4-beta.1",
   "description": "组件功能描述",
   "files": [
     "esm",
@@ -41,17 +41,21 @@
     "component"
   ],
   "dependencies": {
-    "@ant-design/icons": "^5.1.4",
+    "@ant-design/icons": "^5.2.5",
     "@ant-design/pro-layout": "^7.16.6",
     "@ant-design/pro-provider": "^2.12.1",
     "@ant-design/pro-table": "^3.8.2",
+    "@dnd-kit/core": "^6.0.8",
+    "@dnd-kit/sortable": "^7.0.2",
+    "@dnd-kit/utilities": "^3.2.1",
     "@ice/jsx-runtime": "^0.2.0",
     "@ice/runtime": "^1.2.4",
     "@knockout-js/api": "workspace:^",
     "@knockout-js/ice-urql": "workspace:^",
     "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
-    "react-activation": "^0.12.4"
+    "react-activation": "^0.12.4",
+    "react-draggable": "^4.4.5"
   },
   "devDependencies": {
     "@ice/pkg": "^1.5.0",
@@ -66,6 +70,10 @@
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "http",
+    "url": "https://github.com/woocoos/knockout-js/tree/main/packages/layout"
   },
   "license": "MIT"
 }

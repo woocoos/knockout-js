@@ -7,7 +7,7 @@ sidebar_label: 多语言
 ```tsx preview
 import { useState } from "react";
 import { OrgSelect } from "@knockout-js/org";
-import { BasicProvider, LocaleType } from "@knockout-js/layout";
+import { Provider, LocaleType } from "@knockout-js/layout";
 
 export default () => {
   const [org, setOrg] = useState();
@@ -19,9 +19,9 @@ export default () => {
       </div>
       <div>
         英文
-        <BasicProvider locale={LocaleType.enUS}>
+        <Provider locale={LocaleType.enUS}>
           <OrgSelect value={org} onChange={setOrg}/>
-        </BasicProvider>
+        </Provider>
       </div>
     </>
   );
@@ -30,13 +30,14 @@ export default () => {
 
 ## Props
 
-| 属性       | 描述     | 类型              | 必填 | 默认值 |
-|----------|--------|-----------------|----|-----|
-| locale   | 使用的多语言 | Locale          | ❌  | -   |
-| children | 子节点    | React.ReactNode | ✅  | -   |
+
+| 属性     | 描述         | 类型            | 必填 | 默认值          |
+| -------- | ------------ | --------------- | ---- | --------------- |
+| locale   | 使用的多语言 | Locale          | ❌    | LocaleType.zhCN |
+| children | 子节点       | React.ReactNode | ✅    | -               |
 
 ## hook
 
-| 方法                              | 说明               | 结果                   |
-|---------------------------------|------------------|----------------------|
+| 方法                            | 说明                             | 结果                 |
+| ------------------------------- | -------------------------------- | -------------------- |
 | useLocale(componentName:string) | 根据组件名称获取对应的多语言数据 | Locale.componentName |

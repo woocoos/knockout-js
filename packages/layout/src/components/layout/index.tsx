@@ -4,15 +4,17 @@ import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, useCallback, useState } from 'react';
+import { ReactNode, FC } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
-import { LocaleType } from '../locale';
-import { CollectProviders } from '..';
+import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
+import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
+import { BarsOutlined } from '@ant-design/icons';
+import { listFormatTreeData } from '../_util';
 
 export interface LayoutProps {
   /**
@@ -20,13 +22,22 @@ export interface LayoutProps {
    */
   appCode: string;
   /**
+   * 语言
+   * 默认 LocaleType.zhCN
+   */
+  locale?: LocaleType;
+  /**
    * 传递动态的 location.pathname
    */
   pathname: string;
   /**
    * 菜单启用iconfont
    */
-  IconFont?: React.FC<IconFontProps<string>>;
+  IconFont?: FC<IconFontProps<string>>;
+  /**
+   * 聚合菜单
+   */
+  aggregateMenuProps?: AggregateMenuProps;
   /**
    * I18nDropdown组件对应的参数
    */
@@ -42,7 +53,7 @@ export interface LayoutProps {
   /**
    * ThemeSwitch组件对应的参数
    */
-  themeSwitchProps: ThemeSwitchProps;
+  themeSwitchProps?: ThemeSwitchProps;
   /**
   * ProLayout组件对应的参数
   */
@@ -50,11 +61,13 @@ export interface LayoutProps {
   /**
    * 菜单点击返回 (item: MenuDataItem,isOpen?: boolean) => void;
    */
-  onClickMenuItem?: (item: MenuDataItem & {
-    isUrl: boolean;
-    onClick: () => void;
-  },
-    isOpen?: boolean) => void;
+  onClickMenuItem?: (
+    item: MenuDataItem & {
+      isUrl: boolean;
+      onClick: () => void;
+    },
+    isOpen?: boolean
+  ) => void;
   /**
    * 默认插槽
    */
@@ -71,36 +84,35 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 
 const Layout = (props: LayoutProps) => {
 
-  const [locale, setLocale] = useState(LocaleType.zhCN);
-
-  // 根据列表格式化成菜单树结构
-  const listFormatTree = useCallback((list: MenuDataItem[], parentList?: MenuDataItem[]) => {
-    if (!parentList) {
-      parentList = list.filter(item => item.parentId == '0');
-    }
-    parentList.forEach((pItem) => {
-      let children = list.filter(
-        (allItem) => allItem.parentId == pItem.key,
-      );
-      if (children && children.length) {
-        pItem.children = listFormatTree(list, children);
-      }
-    });
-    return parentList;
-  }, [])
 
   return (
     <CollectProviders
-      locale={locale}
-      dark={props.themeSwitchProps.value}
+      locale={props.locale ?? LocaleType.zhCN}
+      appCode={props.appCode}
+      tenantId={props.tenantProps.value}
+      dark={props.themeSwitchProps?.value ?? false}
       pathname={props.pathname}
     >
       <ProLayout
         className={styles.layout}
+        headerTitleRender={(logo, title) => {
+          return <>
+            {typeof props.aggregateMenuProps?.open === 'boolean' ? <BarsOutlined
+              rev={undefined}
+              style={{ fontSize: 20, marginRight: 10 }}
+              onClick={() => {
+                props.aggregateMenuProps?.onChangeOpen?.(true);
+              }}
+            /> : <></>}
+            {logo}
+            {title}
+          </>
+        }}
         title='adminx'
         logo={<img src={logoBase64} alt="logo" />}
         layout="mix"
         fixSiderbar
+        suppressSiderWhenMenuEmpty
         menu={{
           locale: true,
           request: async () => {
@@ -108,7 +120,10 @@ const Layout = (props: LayoutProps) => {
               appCode: props.appCode
             }, { instanceName: iceUrqlInstance.ucenter });
             if (result.data?.userMenus.length) {
-              const meunList = result.data.userMenus.map(item => {
+              const meunList = result.data.userMenus.sort((d1, d2) => {
+                const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
+                return d1.parentID < d2.parentID ? -1 : d1.parentID > d2.parentID ? 1 : d1Sort < d2Sort ? -1 : d1Sort > d2Sort ? 1 : 0;
+              }).map(item => {
                 return {
                   key: item.id,
                   name: item.name,
@@ -118,7 +133,7 @@ const Layout = (props: LayoutProps) => {
                 } as MenuDataItem
               })
 
-              return listFormatTree(meunList);
+              return listFormatTreeData(meunList);
             }
             return [];
           },
@@ -126,15 +141,18 @@ const Layout = (props: LayoutProps) => {
         location={{
           pathname: props.pathname
         }}
-        actionsRender={() => [
-          <I18nDropdown onChange={(value) => {
-            setLocale(value);
-            props.i18nProps?.onChange?.(value)
-          }} />,
-          <TenantDropdown {...props.tenantProps} />,
-          <AvatarDropdown {...props.avatarProps} />,
-          <ThemeSwitch {...props.themeSwitchProps} />,
-        ]}
+        actionsRender={() => {
+          const actions: ReactNode[] = [];
+          if (props.i18nProps) {
+            actions.push(<I18nDropdown {...props.i18nProps} />)
+          }
+          actions.push(<TenantDropdown {...props.tenantProps} />)
+          actions.push(<AvatarDropdown {...props.avatarProps} />)
+          if (props.themeSwitchProps) {
+            actions.push(<ThemeSwitch {...props.themeSwitchProps} />)
+          }
+          return actions;
+        }}
         menuItemRender={(item, defaultDom) => (item.path ? <>
           <a
             onClick={() => {
@@ -153,6 +171,9 @@ const Layout = (props: LayoutProps) => {
       >
         {props.children}
       </ProLayout>
+      <AggregateMenu
+        {...props.aggregateMenuProps}
+      />
     </CollectProviders>
   )
 }

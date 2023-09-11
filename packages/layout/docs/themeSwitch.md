@@ -5,7 +5,7 @@ sidebar_label: ThemeSwitch
 本 Demo 演示用法。
 
 ```tsx preview
-import { ThemeSwitch, BasicProvider, LocaleType } from "@knockout-js/layout";
+import { ThemeSwitch, Provider, LocaleType } from "@knockout-js/layout";
 import { useState } from "react";
 
 export default () => {
@@ -20,9 +20,9 @@ export default () => {
       </div>
       <div>
         英文：
-        <BasicProvider locale={LocaleType.enUS}>
+        <Provider locale={LocaleType.enUS}>
           <ThemeSwitch value={theme} onChange={setTheme} />
-        </BasicProvider>
+        </Provider>
       </div>
     </div>
   );

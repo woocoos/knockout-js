@@ -1,25 +1,49 @@
 import { Outlet, useLocation } from '@ice/runtime';
-import { Layout, LocaleType } from '@knockout-js/layout';
+import { Layout } from '@knockout-js/layout';
 import { history } from 'ice';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import defaultAvatar from '@/assets/images/default-avatar.png';
 import { Org } from '@knockout-js/api';
+import { monitorKeyChange } from '@/pkg/localStore';
+import store from '@/store';
 
 export default () => {
   const location = useLocation(),
-    [tenantId, setTenantId] = useState('1'),
-    [darkMode, setDarkMode] = useState(false),
-    [user] = useState<{
-      id: string,
-      displayName: string,
-    }>({
-      id: '1',
-      displayName: 'admin',
-    }),
-    [, setLocale] = useState<LocaleType>(LocaleType.zhCN),
+    [userState, userDispatcher] = store.useModel('user'),
+    [appState, appDispatcher] = store.useModel('app'),
     tenantList = [
       { id: '1', name: 'tenant 1' },
+      { id: '2', name: 'tenant 2' },
     ]
+
+  useEffect(() => {
+    monitorKeyChange([
+      {
+        key: 'tenantId',
+        onChange(value) {
+          userDispatcher.updateTenantId(value);
+        },
+      },
+      {
+        key: 'token',
+        onChange(value) {
+          userDispatcher.updateToken(value);
+        },
+      },
+      {
+        key: 'user',
+        onChange(value) {
+          userDispatcher.updateUser(value);
+        },
+      },
+      {
+        key: 'locale',
+        onChange(value) {
+          appDispatcher.updateLocale(value);
+        },
+      },
+    ]);
+  }, []);
 
   const userMenuList = async () => {
     return []
@@ -37,25 +61,25 @@ export default () => {
         }
       }}
       tenantProps={{
-        value: tenantId,
+        value: userState.tenantId,
         dataSource: tenantList as Org[],
         onChange: (value) => {
-          setTenantId(value);
+          userDispatcher.updateTenantId(value);
         },
       }}
       i18nProps={{
         onChange: (value) => {
-          setLocale(value);
+          appDispatcher.updateLocale(value);
         },
       }}
       avatarProps={{
         avatar: defaultAvatar,
-        name: user?.displayName,
+        name: userState.user?.displayName,
       }}
       themeSwitchProps={{
-        value: darkMode,
+        value: appState.darkMode,
         onChange: (value) => {
-          setDarkMode(value);
+          appDispatcher.updateDarkMode(value);
         },
       }}
       proLayoutProps={{
