@@ -12,9 +12,9 @@
 .screenfulModal {
   max-width: 100vw;
   padding-bottom: 0;
+}
 
-  :global(.ant-modal-body) {
-    height: calc(100vh - 116px);
-    overflow: auto;
-  }
+.screenfulModal :global(.ant-modal-body) {
+  height: calc(100vh - 116px);
+  overflow: auto;
 }

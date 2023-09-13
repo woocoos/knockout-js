@@ -1,23 +1,20 @@
 .demoLayout {
   position: relative;
   height: 400px;
+}
 
+.demoLayout :global(.ant-pro-layout>div) {
+  position: absolute;
+}
 
-  :global(.ant-pro-layout>div) {
-    position: absolute;
+.demoLayout :global(.ant-pro-layout .ant-layout-header.ant-pro-layout-header) {
+  position: absolute;
+}
 
-  }
+.demoLayout :global(.ant-pro-layout .ant-pro-sider.ant-pro-sider-fixed) {
+  position: absolute;
+}
 
-  :global(.ant-pro-layout .ant-layout-header.ant-pro-layout-header) {
-    position: absolute;
-  }
-
-  :global(.ant-pro-layout .ant-pro-sider.ant-pro-sider-fixed) {
-    position: absolute;
-  }
-
-  :global(.ant-pro-layout .ant-pro-layout-container) {
-    position: unset !important;
-  }
-
+.demoLayout :global(.ant-pro-layout .ant-pro-layout-container) {
+  position: unset !important;
 }

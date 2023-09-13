@@ -6,8 +6,8 @@
 
 .delText {
   color: #ff4d4f;
+}
 
-  &:hover {
-    color: #ff7875;
-  }
+.delText:hover {
+  color: #ff7875;
 }

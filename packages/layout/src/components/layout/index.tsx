@@ -171,9 +171,11 @@ const Layout = (props: LayoutProps) => {
       >
         {props.children}
       </ProLayout>
-      <AggregateMenu
-        {...props.aggregateMenuProps}
-      />
+      {
+        props.aggregateMenuProps ? <AggregateMenu
+          {...props.aggregateMenuProps}
+        /> : <></>
+      }
     </CollectProviders>
   )
 }
