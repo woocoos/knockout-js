@@ -8,6 +8,8 @@ export default defineConfig({
         title: '@knockout-js',
         path: 'packages',
         navBarTitle: 'knockout-js',
+        favicon: "https://qlcdn.oss-cn-shenzhen.aliyuncs.com/cdn/woocoos/favicon.ico",
+        navBarLogo: "https://qlcdn.oss-cn-shenzhen.aliyuncs.com/cdn/woocoos/woocoo.png",
         sidebarItemsGenerator: (args: any) => {
           // The index.md doc should not be the category, so we rewrite the default isCategoryIndex function.
           function isCategoryIndex({ fileName, directories }: any) {
@@ -33,6 +35,8 @@ export default defineConfig({
         exclude: ['**/node_modules/**'],
         onBrokenLinks: 'warn',
         pageRouteBasePath: '/',
+        url: 'https://woocoos.github.io',
+        baseUrl: "/knockout-js/",
         remarkPlugins: [
           "require('@ice/remark-react-docgen-docusaurus')"
         ]
