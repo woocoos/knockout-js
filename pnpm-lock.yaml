@@ -204,10 +204,13 @@ importers:
         version: 0.5.1
       '@urql/exchange-auth':
         specifier: ^2.1.6
-        version: 2.1.6
+        version: 2.1.6(graphql@16.6.0)
       antd:
         specifier: ^5.6.3
         version: 5.6.3(react-dom@18.2.0)(react@18.2.0)
+      graphql-ws:
+        specifier: ^5.14.0
+        version: 5.14.0(graphql@16.6.0)
       jwt-decode:
         specifier: ^3.1.2
         version: 3.1.2
@@ -216,7 +219,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       urql:
         specifier: ^4.0.5
-        version: 4.0.5(react@18.2.0)
+        version: 4.0.5(graphql@16.6.0)(react@18.2.0)
     devDependencies:
       '@types/react':
         specifier: ^18.0.0
@@ -340,13 +343,15 @@ importers:
 
 packages:
 
-  /@0no-co/graphql.web@1.0.4:
+  /@0no-co/graphql.web@1.0.4(graphql@16.6.0):
     resolution: {integrity: sha512-W3ezhHGfO0MS1PtGloaTpg0PbaT8aZSmmaerL7idtU5F7oCI+uu25k+MsMS31BVFlp4aMkHSrNRxiD72IlK8TA==}
     peerDependencies:
       graphql: ^14.0.0 || ^15.0.0 || ^16.0.0
     peerDependenciesMeta:
       graphql:
         optional: true
+    dependencies:
+      graphql: 16.6.0
     dev: false
 
   /@aashutoshrathi/word-wrap@1.2.6:
@@ -6726,19 +6731,19 @@ packages:
   /@uni/env@1.1.1:
     resolution: {integrity: sha512-oQGRQg3cFVb6ByppV0WVue/BE98cw0xvAniX9L0wQtzU94RvZg9/GpkFIDwrlgcvzXlTgUPTTMG9B/riiiFQyQ==}
 
-  /@urql/core@4.1.1:
+  /@urql/core@4.1.1(graphql@16.6.0):
     resolution: {integrity: sha512-iIoAy6BY+BUZZ7KIpnMT7C9q+ULf5ZCVxGe3/i7WZSJBrQa2h1QkIMhL+8fAKmOn9gt83jSIv5drWWnhZ9izEA==}
     dependencies:
-      '@0no-co/graphql.web': 1.0.4
+      '@0no-co/graphql.web': 1.0.4(graphql@16.6.0)
       wonka: 6.3.4
     transitivePeerDependencies:
       - graphql
     dev: false
 
-  /@urql/exchange-auth@2.1.6:
+  /@urql/exchange-auth@2.1.6(graphql@16.6.0):
     resolution: {integrity: sha512-snOlt7p5kYq0KnPDuXkKe2qW3/BucQZOElvTeo3svLQuk9JiNJVnm6ffQ6QGiGO+G3AtMrctnno1+X44fLtDuQ==}
     dependencies:
-      '@urql/core': 4.1.1
+      '@urql/core': 4.1.1(graphql@16.6.0)
       wonka: 6.3.4
     transitivePeerDependencies:
       - graphql
@@ -10586,7 +10591,6 @@ packages:
       graphql: '>=0.11 <=16'
     dependencies:
       graphql: 16.6.0
-    dev: true
 
   /graphql@16.6.0:
     resolution: {integrity: sha512-KPIBPDlW7NxrbT/eh4qPXz5FiFdL5UbaA0XUNz2Rp3Z3hqBSkbj0GVjwFDztsWVauZUWsbKHgMg++sk8UX0bkw==}
@@ -17493,12 +17497,12 @@ packages:
     resolution: {integrity: sha512-WHN8KDQblxd32odxeIgo83rdVDE2bvdkb86it7bMhYZwWKJz0+O0RK/eZiHYnM+zgt/U7hAHOlCQGfjjvSkw2g==}
     dev: true
 
-  /urql@4.0.5(react@18.2.0):
+  /urql@4.0.5(graphql@16.6.0)(react@18.2.0):
     resolution: {integrity: sha512-VicPBQXWicSbE+0oPzU2HMyDa//76FmwyQ7LayaYQxX97nhvMLs2ZWQdUmEzQQqvmw4YFaI0wPz1Qisp+PrZIQ==}
     peerDependencies:
       react: '>= 16.8.0'
     dependencies:
-      '@urql/core': 4.1.1
+      '@urql/core': 4.1.1(graphql@16.6.0)
       react: 18.2.0
       wonka: 6.3.4
     transitivePeerDependencies:

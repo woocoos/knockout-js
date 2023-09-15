@@ -9,10 +9,11 @@ import {
   createClient,
   ClientOptions,
   mapExchange,
-  gql as urqlGql
+  gql as urqlGql,
+  subscriptionExchange
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
-import { authExchange } from './exchange.js';
+import { authExchange, subExchange } from './exchange.js';
 
 export const gql = urqlGql;
 
@@ -44,8 +45,10 @@ function createDefaultClient(config: CustomClientOptions) {
       if (config.exchangeOpt.mapOpts) {
         defaultOpt.exchanges.push(mapExchange(config.exchangeOpt.mapOpts))
       }
+      if (config.exchangeOpt.subOpts) {
+        defaultOpt.exchanges.push(subExchange(config.exchangeOpt.subOpts))
+      }
     }
-
     defaultOpt.exchanges.push(fetchExchange)
   }
   return createClient(defaultOpt)
