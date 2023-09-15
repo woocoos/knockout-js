@@ -4,7 +4,6 @@ import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
-import { userPermissions } from '@knockout-js/api';
 
 const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',
   ICE_DEV_TID = process.env.ICE_DEV_TID ?? '',
@@ -84,17 +83,6 @@ export const urqlConfig = defineUrqlConfig([
 export const authConfig = defineAuthConfig(async (appData) => {
   const { user } = appData,
     initialAuth = {};
-  // 判断路由权限
-  // if (user.token) {
-  //   const result = await userPermissions("test");
-  //   if (result) {
-  //     result.forEach(item => {
-  //       if (item) {
-  //         initialAuth[item.name] = true;
-  //       }
-  //     });
-  //   }
-  // }
   return {
     initialAuth,
   };

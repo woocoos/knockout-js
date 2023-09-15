@@ -10,7 +10,7 @@ import {
   ClientOptions,
   mapExchange,
   gql as urqlGql,
-  subscriptionExchange
+  OperationResultSource,
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
 import { authExchange, subExchange } from './exchange.js';
@@ -192,7 +192,7 @@ export async function mutation<Data = any, Variables extends AnyVariables = AnyV
  * @param context
  * @returns
  */
-export async function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(
+export function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
   context?: Partial<OperationContext> & {
@@ -201,10 +201,10 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
 ) {
   const urqlInstance = getInstance(context?.instanceName);
 
-  return await urqlInstance.client.subscription(query, variables, {
+  return urqlInstance.client.subscription(query, variables, {
     url: urqlInstance.config.url,
     ...context
-  }).toPromise();
+  })
 }
 
 

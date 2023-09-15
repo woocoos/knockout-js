@@ -4,7 +4,7 @@ import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchan
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
-import { Client, createClient as wsClient } from 'graphql-ws';
+import { createClient as wsClient } from 'graphql-ws';
 
 export interface AuthExchangeOpts {
   store: {
@@ -147,7 +147,7 @@ export function subExchange(handler: SubExchangeOpts): Exchange {
   return urqlSubscriptionExchange({
     forwardSubscription(request) {
       const { token } = store.getState();
-      if (cacheToken !== token) {
+      if (cacheToken && cacheToken !== token) {
         wsc = createClient();
       }
       const input = { ...request, query: request.query || '' };
