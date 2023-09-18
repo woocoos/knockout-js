@@ -1,3 +1,10 @@
+import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 /**
  * 列表数据格式化成树结构
  * @param allList
@@ -99,3 +106,39 @@ export const parseEnvAppAddress = (evnStr: string) => {
   })
   return address;
 }
+
+
+
+/**
+ * 格式化日期
+ * @param date
+ * @param format  YYYY-MM-DD HH:mm:ss
+ * @param tz  时区
+ * @param isTzSet  true将当前时间设置成这个时区，false 将当前时间根据时区转换
+ * 例子 isTzSet=true
+ *      dayjs.tz("2022-07-07 16:30:00", "America/New_York").format("YYYY-MM-DDTHH:mm:ssZ")
+ *      = "2022-07-07T16:30:00-04:00"
+ * 例子 isTzSet=false
+ *      dayjs("2022-07-07T20:30:00Z").tz("America/New_York").format("YYYY-MM-DD HH:mm:ss")
+ *      = "2022-07-07 16:30:00"
+ * @returns
+ */
+export const getDate = (
+  date: dayjs.ConfigType,
+  format = 'YYYY-MM-DD',
+  tz?: string,
+  isTzSet?: boolean,
+) => {
+  if (date) {
+    if (tz) {
+      if (isTzSet) {
+        return dayjs.tz(date, tz).format(format);
+      } else {
+        return dayjs(date).tz(tz).format(format);
+      }
+    }
+    return dayjs(date).format(format);
+  } else {
+    return null
+  }
+};

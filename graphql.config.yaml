@@ -5,22 +5,13 @@ projects:
       - "packages/api/script/generated/ucenter.graphql"
       - "packages/org/src/**/*.ts"
       - "packages/layout/src/**/*.ts"
-    extensions:
-      endpoints:
-        default:
-          url: ${GQLGEN_UCENTER_ENDPOINT}
-          headers:
-            Authorization: bearer ${GQLGEN_TOKEN}
-            X-Tenant-ID: ${GQLGEN_TENANT_ID}
+  msgcenter:
+    schema: "packages/api/script/generated/msgcenter.graphql"
+    documents:
+      - "packages/api/script/generated/msgcenter.graphql"
+      - "packages/layout/src/**/*.ts"
   test:
     schema: "https://trygql.formidable.dev/graphql/basic-pokedex"
     documents:
       - "examples/with-urql/src/**/*.tsx"
       - "examples/with-urql/src/**/*.ts"
-    extensions:
-      endpoints:
-        default:
-          url: ${GQLGEN_UCENTER_ENDPOINT}
-          headers:
-            Authorization: bearer ${GQLGEN_TOKEN}
-            X-Tenant-ID: ${GQLGEN_TENANT_ID}

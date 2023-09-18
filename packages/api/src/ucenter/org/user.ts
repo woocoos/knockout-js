@@ -1,6 +1,8 @@
-import { UserOrder, UserWhereInput, gid, gql } from '../..';
+import { UserOrder, UserWhereInput } from '../../gql/ucenter/graphql';
+import { gid } from '../..';
 import { paging } from '@knockout-js/ice-urql/request';
 import { instanceName } from '..';
+import { gql } from '../../gql/ucenter';
 
 const orgUserListQuery = gql(/* GraphQL */`query apiOrgUserList($gid: GID!,$first: Int,$orderBy:UserOrder,$where:UserWhereInput){
   node(id:$gid){

@@ -275,6 +275,9 @@ importers:
       antd:
         specifier: ^5.6.3
         version: 5.6.3(react-dom@18.2.0)(react@18.2.0)
+      dayjs:
+        specifier: ^1.11.9
+        version: 1.11.9
       react-activation:
         specifier: ^0.12.4
         version: 0.12.4(prop-types@15.8.1)(react@18.2.0)

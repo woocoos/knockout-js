@@ -228,5 +228,7 @@ instanceName不传入默认取default
 ```ts
 import { subscription } from "@knockout-js/ice-urql/request";
 
-subscription('', {}, { instanceName: 'ucenter'} );
+subscription('', {}, { instanceName: 'ucenter'} ).subscribe((result) => {
+  // 订阅消息后收到的推送
+});
 ```

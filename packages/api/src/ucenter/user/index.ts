@@ -1,6 +1,8 @@
 import { query } from '@knockout-js/ice-urql/request';
 import { instanceName } from '..';
-import { AppActionKind, AppActionMethod, User, gid, gql } from '../..';
+import { gid } from '../..';
+import { AppActionKind, AppActionMethod, User } from '../../gql/ucenter/graphql';
+import { gql } from '../../gql/ucenter';
 
 const userIdListQuery = gql(/* GraphQL */`query apiUserIdList($ids:[GID!]!){
   nodes(ids: $ids){

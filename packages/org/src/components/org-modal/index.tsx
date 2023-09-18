@@ -1,17 +1,7 @@
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import {
-  AppOrgListQuery,
-  AppOrgListQueryVariables,
-  OrderDirection,
-  Org,
-  OrgKind,
-  OrgListQuery,
-  OrgListQueryVariables,
-  OrgOrderField,
-  OrgWhereInput,
-  gid
-} from "@knockout-js/api";
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/esm/gql/ucenter/graphql";
+import { gid } from "@knockout-js/api";
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '../';

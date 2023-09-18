@@ -1,6 +1,8 @@
 import { query } from '@knockout-js/ice-urql/request';
-import { gql, Org, gid } from '../..';
+import { gid } from '../..';
 import { instanceName } from '..';
+import { gql } from '../../gql/ucenter';
+import { Org } from '../../gql/ucenter/graphql';
 
 const orgIdListQuery = gql(/* GraphQL */`query apiOrgIdList($ids:[GID!]!){
   nodes(ids: $ids){

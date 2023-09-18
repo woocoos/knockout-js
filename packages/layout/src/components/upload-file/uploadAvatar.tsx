@@ -2,11 +2,11 @@ import { PlusOutlined } from "@ant-design/icons";
 import { Spin, Upload, message } from "antd"
 import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
-import { files as fileApi } from "@knockout-js/api";
 import { useAppCode, useTenantId } from "../provider";
 import { UploadFileProps } from ".";
 import { useLocale } from "../locale";
 import { formatFileSize, randomId } from "../_util";
+import { getFilesRaw, updateFiles } from "@knockout-js/api";
 
 export default (props: UploadFileProps<string>) => {
   const
@@ -43,7 +43,7 @@ export default (props: UploadFileProps<string>) => {
       setLoading(true);
       if (bucket === 'local') {
         try {
-          const result = await fileApi.updateFiles({
+          const result = await updateFiles({
             key,
             bucket,
             file,
@@ -61,7 +61,7 @@ export default (props: UploadFileProps<string>) => {
     getValueFile = async () => {
       if (props.value) {
         if (bucket === 'local') {
-          const result = await fileApi.getFilesRaw(props.value, 'url');
+          const result = await getFilesRaw(props.value, 'url');
           if (typeof result === 'string') {
             setImgsrc(result)
           }

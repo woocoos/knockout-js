@@ -2,10 +2,11 @@ import { MenuDataItem, ProLayout, ProLayoutProps } from '@ant-design/pro-layout'
 import I18nDropdown, { I18nDropdownProps } from '../i18n-dropdown';
 import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
+import MsgDropdown, { MsgDropdownProps } from '../msg-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
 import { ReactNode, FC } from 'react';
-import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
+import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
@@ -50,6 +51,10 @@ export interface LayoutProps {
    * AvatarDropdown组件对应的参数
    */
   avatarProps: AvatarDropdownProps;
+  /**
+   * MsgDropdown组件对应的参数
+   */
+  msgProps?: MsgDropdownProps;
   /**
    * ThemeSwitch组件对应的参数
    */
@@ -145,6 +150,9 @@ const Layout = (props: LayoutProps) => {
           const actions: ReactNode[] = [];
           if (props.i18nProps) {
             actions.push(<I18nDropdown {...props.i18nProps} />)
+          }
+          if (props.msgProps) {
+            actions.push(<MsgDropdown {...props.msgProps} />)
           }
           actions.push(<TenantDropdown {...props.tenantProps} />)
           actions.push(<AvatarDropdown {...props.avatarProps} />)

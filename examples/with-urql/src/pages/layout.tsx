@@ -3,9 +3,9 @@ import { Layout } from '@knockout-js/layout';
 import { history } from 'ice';
 import { useEffect } from 'react';
 import defaultAvatar from '@/assets/images/default-avatar.png';
-import { Org } from '@knockout-js/api';
 import { monitorKeyChange } from '@/pkg/localStore';
 import store from '@/store';
+import { Org } from '@knockout-js/api/esm/gql/ucenter/graphql';
 
 export default () => {
   const location = useLocation(),

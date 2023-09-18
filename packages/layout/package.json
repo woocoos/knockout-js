@@ -54,6 +54,7 @@
     "@knockout-js/ice-urql": "workspace:^",
     "@swc/helpers": "^0.5.1",
     "antd": "^5.6.3",
+    "dayjs": "^1.11.9",
     "react-activation": "^0.12.4",
     "react-draggable": "^4.4.5"
   },

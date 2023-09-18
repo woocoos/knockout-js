@@ -1,6 +1,8 @@
-import { App, gid, gql } from "../..";
+import { gid } from "../..";
 import { query } from "@knockout-js/ice-urql/request";
 import { instanceName } from "..";
+import { gql } from "../../gql/ucenter";
+import { App } from "../../gql/ucenter/graphql";
 
 
 const appIdListQuery = gql(/* GraphQL */`query apiAppIdList($ids:[GID!]!){

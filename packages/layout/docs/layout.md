@@ -55,6 +55,14 @@ export default () => {
           value: theme,
           onChange: setTheme,
         }}
+        msgProps={{
+          onItemClick:(data) => {
+            console.log('msg-item',data)
+          },
+          onListClick:() => {
+            console.log('更多消息')
+          }
+        }}
         proLayoutProps={{
           menu: {
             request: async () => {
@@ -163,6 +171,7 @@ export default () => {
 | aggregateMenuProps | 使用应用集成菜单              | AggregateMenuProps                             | ❌    | -               |
 | i18nProps          | I18nDropdown组件对应的参数    | I18nDropdownProps                              | ❌    | -               |
 | tenantProps        | TenantDropdown组件对应的参数  | TenantDropdownProps                            | ✅    | -               |
+| msgProps           | MsgDropdown组件对应的参数     | MsgDropdownProps                               | ❌    | -               |
 | avatarProps        | AvatarDropdown组件对应的参数  | AvatarDropdownProps                            | ✅    | -               |
 | themeSwitchProps   | ThemeSwitch组件对应的参数     | ThemeSwitchProps                               | ❌    | -               |
 | proLayoutProps     | ProLayout组件对应的参数       | ProLayoutProps                                 | ❌    | -               |

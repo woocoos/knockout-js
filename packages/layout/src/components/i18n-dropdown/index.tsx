@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext } from 'react';
-import { Dropdown, MenuProps } from 'antd';
+import { Dropdown } from 'antd';
 import styles from './index.module.css';
 import { Context, ProviderProps, LocaleType } from '..';
 

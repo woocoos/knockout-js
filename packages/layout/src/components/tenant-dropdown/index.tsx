@@ -2,7 +2,7 @@ import { Dropdown, MenuProps, Modal } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import { useLocale } from '../locale';
-import { Org, UserRootOrgsQuery, UserRootOrgsQueryVariables } from '@knockout-js/api';
+import { Org, UserRootOrgsQuery, UserRootOrgsQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
 import { gql, query } from '@knockout-js/ice-urql/request';
 import { iceUrqlInstance } from '..';
 

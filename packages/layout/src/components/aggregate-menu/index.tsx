@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
 import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
 import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
-import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables } from "@knockout-js/api";
 import { iceUrqlInstance } from "..";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -12,6 +11,7 @@ import { useLocale } from "../locale";
 import { useDark } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
+import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/esm/gql/ucenter/graphql";
 
 const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){
   userMenus(appCode: $appCode){

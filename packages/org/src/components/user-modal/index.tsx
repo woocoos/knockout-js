@@ -1,4 +1,5 @@
-import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput, gid } from "@knockout-js/api";
+import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput } from "@knockout-js/api/esm/gql/ucenter/graphql";
+import { gid } from "@knockout-js/api";
 import { useLocale } from "../locale";
 import { useState } from "react";
 import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";

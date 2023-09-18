@@ -1,6 +1,8 @@
-import { OrgRole, OrgRoleOrder, OrgRoleWhereInput, gid, gql } from '../..';
+import { OrgRole, OrgRoleOrder, OrgRoleWhereInput } from '../../gql/ucenter/graphql';
+import { gid } from '../..';
 import { paging, query } from '@knockout-js/ice-urql/request';
 import { instanceName } from '..';
+import { gql } from '../../gql/ucenter';
 
 const orgGroupListQuery = gql(/* GraphQL */`query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){
   orgGroups(first:$first,orderBy: $orderBy,where: $where){

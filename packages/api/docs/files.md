@@ -1,12 +1,16 @@
+---
+sidebar_position: 1
+---
+
 # file 接口
 
 ## 启用
 
 ```tsx title=app.ts
-import { files } from "@knockout-js/api";
+import { setFilesApi } from "@knockout-js/api";
 
 // 配置好文件处理对应的api地址;
-files.setFilesApi("http://xxxxxxx")
+setFilesApi("http://xxxxxxx")
 ```
 
 ## Files 对象
@@ -31,17 +35,16 @@ type Files = {
 
 ## api
 
-现提供的所有api,目前所有api都放于`@knockout-js/api`的 `files` 内, `@knockout-js/layout`中也会提供相关的上传组件功能提供给ui使用
 
 ### setFilesApi
 
 设置api地址支持
 
 ```tsx
-import { files } from "@knockout-js/api";
+import { setFilesApi } from "@knockout-js/api";
 
 // 配置好文件处理对应的api地址
-files.setFilesApi("")
+setFilesApi("")
 ```
 
 ### updateFiles
@@ -49,9 +52,9 @@ files.setFilesApi("")
 上传,成功后返回id
 
 ```tsx
-import { files } from "@knockout-js/api";
+import { updateFiles } from "@knockout-js/api";
 
-const id = files.updateFiles({
+const id = updateFiles({
   key:string;
   bucket:string;
   file:File;
@@ -63,9 +66,9 @@ const id = files.updateFiles({
 根据ID获取[Files对象](#files-对象)
 
 ```tsx
-import { files } from "@knockout-js/api";
+import { getFiles } from "@knockout-js/api";
 
-const data = files.getFiles("id")
+const data = getFiles("id")
 ```
 
 ### delFiles
@@ -73,10 +76,10 @@ const data = files.getFiles("id")
 根据ID删除[Files对象](#files-对象)
 
 ```tsx
-import { files } from "@knockout-js/api";
+import { delFiles } from "@knockout-js/api";
 
 // 无异常为成功
-files.delFiles("id")
+delFiles("id")
 ```
 
 ### getFilesRaw
@@ -86,7 +89,7 @@ files.delFiles("id")
 参数：type可为url或者不填
 
 ```tsx
-import { files } from "@knockout-js/api";
+import { getFilesRaw } from "@knockout-js/api";
 
-files.getFilesRaw("id",type)
+getFilesRaw("id",type)
 ```
