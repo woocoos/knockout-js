@@ -10,7 +10,7 @@ import { useLocale } from "../locale";
 import { useDark } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
-import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/esm/gql/ucenter/graphql";
+import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/ucenter";
 import { instanceName } from "@knockout-js/api";
 
 const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){

@@ -2,7 +2,7 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import UserModal from '../user-modal';
-import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType, UserWhereInput, } from '@knockout-js/api/esm/gql/ucenter/graphql';
+import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType, UserWhereInput, } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';

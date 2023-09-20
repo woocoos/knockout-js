@@ -6,7 +6,7 @@ import MsgDropdown, { MsgDropdownProps, MsgDropdownRef } from '../msg-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
 import { ReactNode, FC, Ref } from 'react';
-import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
+import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/ucenter';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
 import { OpenWin } from '../icons';

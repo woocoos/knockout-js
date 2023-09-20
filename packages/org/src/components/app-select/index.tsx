@@ -1,7 +1,7 @@
 import { AutoComplete, Input, ModalProps } from 'antd';
 import ModalApp from '../app-modal';
 import { useCallback, useEffect, useState } from 'react';
-import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
+import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { SearchProps } from 'antd/es/input';

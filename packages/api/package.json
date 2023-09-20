@@ -6,7 +6,8 @@
     "esm",
     "cjs",
     "es2017",
-    "dist"
+    "dist",
+    "*.d.ts"
   ],
   "main": "esm/index.js",
   "module": "esm/index.js",
@@ -21,6 +22,16 @@
         "types": "./esm/index.d.ts",
         "default": "./esm/index.js"
       }
+    },
+    "./ucenter": {
+      "types": "./esm/gql/ucenter/graphql.d.ts",
+      "import": "./esm/gql/ucenter/graphql.js",
+      "default": "./esm/gql/ucenter/graphql.js"
+    },
+    "./msgcenter": {
+      "types": "./esm/gql/msgcenter/graphql.d.ts",
+      "import": "./esm/gql/msgcenter/graphql.js",
+      "default": "./esm/gql/msgcenter/graphql.js"
     },
     "./*": "./*"
   },

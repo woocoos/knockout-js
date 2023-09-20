@@ -1,4 +1,4 @@
-import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput } from "@knockout-js/api/esm/gql/ucenter/graphql";
+import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput } from "@knockout-js/api/ucenter";
 import { gid, instanceName } from "@knockout-js/api";
 import { useLocale } from "../locale";
 import { useState } from "react";

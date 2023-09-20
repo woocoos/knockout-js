@@ -2,7 +2,7 @@ import { Badge, Dropdown, List } from 'antd';
 import styles from './index.module.css';
 import { useEffect, useState, forwardRef, useImperativeHandle, ForwardedRef } from 'react';
 import { BellOutlined } from '@ant-design/icons';
-import { LayoutPkgUserMsgInternalToListQuery, LayoutPkgUserMsgInternalToListQueryVariables, LayoutPkgUserUnreadMsgInternalsQuery, LayoutPkgUserUnreadMsgInternalsQueryVariables, MsgInternalTo, MsgInternalToOrderField, OrderDirection } from '@knockout-js/api/esm/gql/msgcenter/graphql';
+import { LayoutPkgUserMsgInternalToListQuery, LayoutPkgUserMsgInternalToListQueryVariables, LayoutPkgUserUnreadMsgInternalsQuery, LayoutPkgUserUnreadMsgInternalsQueryVariables, MsgInternalTo, MsgInternalToOrderField, OrderDirection } from '@knockout-js/api/msgcenter';
 import { getDate } from '../_util';
 import { useLocale } from '../locale';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
