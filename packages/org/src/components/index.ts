@@ -5,6 +5,3 @@ export { default as AppModal } from './app-modal';
 export { default as UserSelect } from './user-select';
 export { default as UserModal } from './user-modal';
 export * from './locale';
-export enum iceUrqlInstance {
-  ucenter = "ucenter"
-}

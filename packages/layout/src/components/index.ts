@@ -16,7 +16,3 @@ export { default as UploadMultiple } from './upload-file/uploadMultiple';
 export { default as UploadTemp } from './upload-file/uploadTemp';
 
 export * as util from './_util';
-
-export enum iceUrqlInstance {
-  ucenter = "ucenter"
-}

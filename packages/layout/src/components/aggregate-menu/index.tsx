@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from "react"
 import styles from "./index.module.css"
 import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
 import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
-import { iceUrqlInstance } from "..";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core";
 import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
@@ -12,6 +11,7 @@ import { useDark } from "../provider";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
 import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/esm/gql/ucenter/graphql";
+import { instanceName } from "@knockout-js/api";
 
 const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){
   userMenus(appCode: $appCode){
@@ -131,7 +131,7 @@ export default (props: AggregateMenuProps) => {
   const
     request = useCallback(async () => {
       const appsResult = await paging<LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables>(userAppsQuery, {}, 1, {
-        instanceName: iceUrqlInstance.ucenter
+        instanceName: instanceName.UCENTER,
       }), apps: App[] = [];
       if (appsResult.data?.userApps) {
         appsResult.data.userApps.forEach(app => {
@@ -142,7 +142,7 @@ export default (props: AggregateMenuProps) => {
       for (let i in apps) {
         const menuResult = await query<LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables>(userMenuListQuery, {
           appCode: apps[i].code,
-        }, { instanceName: iceUrqlInstance.ucenter });
+        }, { instanceName: instanceName.UCENTER });
         if (menuResult.data?.userMenus) {
           const menu = menuResult.data.userMenus.sort((d1, d2) => {
             const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
@@ -157,7 +157,9 @@ export default (props: AggregateMenuProps) => {
       setAll(newAll);
       setFilterList(newAll);
       // 初始化收藏和初始化最近数据
-      const preferenceResult = await query<LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables>(userPreferenceQuery, {}, { instanceName: iceUrqlInstance.ucenter });
+      const preferenceResult = await query<LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables>(userPreferenceQuery, {}, {
+        instanceName: instanceName.UCENTER
+      });
       if (preferenceResult.data?.orgUserPreference?.id) {
         const menuFavorite = preferenceResult.data.orgUserPreference.menuFavorite,
           menuRecent = preferenceResult.data.orgUserPreference.menuRecent,
@@ -198,7 +200,7 @@ export default (props: AggregateMenuProps) => {
           menuFavorite: list.map(item => item.id),
         }
       }, {
-        instanceName: iceUrqlInstance.ucenter
+        instanceName: instanceName.UCENTER,
       });
     },
     requestRecent = async (ids: string[]) => {
@@ -208,7 +210,7 @@ export default (props: AggregateMenuProps) => {
           menuRecent: ids,
         }
       }, {
-        instanceName: iceUrqlInstance.ucenter
+        instanceName: instanceName.UCENTER,
       });
     },
     checkCollect = useCallback((menuItem: AppMenu) => {

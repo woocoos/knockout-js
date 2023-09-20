@@ -2,6 +2,11 @@ import CryptoJS from 'crypto-js';
 export * from './ucenter/index';
 export * from './files';
 
+export enum instanceName {
+  UCENTER = 'ucenter',
+  MSGCENTER = 'msgcenter',
+}
+
 /**
  * get global id by type and id, it is used for relay node query.
  * @param type graphql schema type

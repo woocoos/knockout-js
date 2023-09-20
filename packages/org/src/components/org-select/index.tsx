@@ -3,11 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from '../org-modal';
 import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
-import { gid } from '@knockout-js/api';
+import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '..';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
 
@@ -134,7 +133,7 @@ const OrgSelect = (props: OrgSelectProps) => {
       } else {
         query<OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables>(orgInfoQuery, {
           gid: gid('org', props.value),
-        }, { instanceName: iceUrqlInstance.ucenter }).then(result => {
+        }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'Org') {
             setInfo(result.data.node as Org);
             setKeyword(result.data.node.name);
@@ -182,7 +181,7 @@ const OrgSelect = (props: OrgSelectProps) => {
               if (props.appId) {
                 const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
                   gid: gid('app', props.appId), first, where, orderBy,
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.node?.__typename === 'App') {
                   result.data.node.orgs.edges?.forEach(item => {
                     if (item?.node) {
@@ -197,7 +196,7 @@ const OrgSelect = (props: OrgSelectProps) => {
               } else {
                 const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
                   first, where, orderBy,
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.organizations.totalCount) {
                   result.data.organizations.edges?.forEach(item => {
                     if (item?.node) {

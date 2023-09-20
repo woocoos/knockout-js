@@ -1,6 +1,5 @@
-import { gid } from "../..";
+import { gid, instanceName } from "../..";
 import { query } from "@knockout-js/ice-urql/request";
-import { instanceName } from "..";
 import { gql } from "../../gql/ucenter";
 import { App } from "../../gql/ucenter/graphql";
 
@@ -29,7 +28,7 @@ export async function getApps(appIds: (string | number)[]) {
   const result = await query(appIdListQuery, {
     ids: appIds.map(id => gid('app', id))
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   }), list: App[] = [];
 
@@ -50,7 +49,7 @@ export async function getApp(appId: (string | number)) {
   const result = await query(appIdQuery, {
     id: gid('app', appId)
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   })
 

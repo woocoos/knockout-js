@@ -206,6 +206,7 @@ input MatcherInput {
 """SubscriptionAction is a generic type for all subscription actions"""
 type Message {
   content: String!
+  extras: MapString!
   format: String!
   sendAt: Time!
   title: String!
@@ -768,6 +769,8 @@ type MsgInternal implements Node {
   createdBy: Int!
   """内容类型: html,txt"""
   format: String!
+  """消息已读的用户数"""
+  hasReadCounts: Int!
   id: ID!
   msgInternalTo: [MsgInternalTo!]
   """消息跳转"""
@@ -775,6 +778,8 @@ type MsgInternal implements Node {
   """标题"""
   subject: String!
   tenantID: Int!
+  """消息发送的用户数"""
+  toSendCounts: Int!
   updatedAt: Time
   updatedBy: Int
 }
@@ -842,6 +847,19 @@ type MsgInternalToEdge {
   cursor: Cursor!
   """The item at the end of the edge."""
   node: MsgInternalTo
+}
+
+"""Ordering options for MsgInternalTo connections"""
+input MsgInternalToOrder {
+  """The ordering direction."""
+  direction: OrderDirection! = ASC
+  """The field by which to order MsgInternalTos."""
+  field: MsgInternalToOrderField!
+}
+
+"""Properties by which MsgInternalTo connections can be ordered."""
+enum MsgInternalToOrderField {
+  createdAt
 }
 
 """
@@ -1698,9 +1716,13 @@ type Mutation {
   """ 启用消息模板 """
   enableMsgTemplate(id: ID!): MsgTemplate!
   """ 删除站内信消息 """
-  markMessageDeleted(ids: [ID!]!): Boolean!
+  markMsgInternalToDeleted(ids: [ID!]!): Boolean!
   """ 设置站内信消息已读未读 """
-  markMessageReaOrUnRead(ids: [ID!]!, read: Boolean!): Boolean!
+  markMsgInternalToReadOrUnRead(ids: [ID!]!, read: Boolean!): Boolean!
+  """ 测试邮件模板 """
+  testSendEmailTpl(annotations: MapString, email: String!, labels: MapString, tplID: ID!): Boolean!
+  """ 测试站内信模板 """
+  testSendMessageTpl(annotations: MapString, labels: MapString, tplID: ID!, userID: ID!): Boolean!
   """ 更新消息通道 """
   updateMsgChannel(id: ID!, input: UpdateMsgChannelInput!): MsgChannel!
   """ 更新消息事件 """
@@ -1974,11 +1996,28 @@ type PageInfo {
 
 type Query {
   """消息列表"""
-  msgAlerts(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: MsgAlertOrder, where: MsgAlertWhereInput): MsgAlertConnection
+  msgAlerts(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: MsgAlertOrder, where: MsgAlertWhereInput): MsgAlertConnection!
   """ 消息通道列表 """
   msgChannels(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: MsgChannelOrder, where: MsgChannelWhereInput): MsgChannelConnection!
   """ 消息事件列表 """
   msgEvents(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: MsgEventOrder, where: MsgEventWhereInput): MsgEventConnection!
+  """站内信明细查询"""
+  msgInternalTos(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """Returns the first _n_ elements from the list."""
+    first: Int
+    """Returns the last _n_ elements from the list."""
+    last: Int
+    """Ordering options for MsgInternalTos returned from the connection."""
+    orderBy: MsgInternalToOrder
+    """Filtering options for MsgInternalTos returned from the connection."""
+    where: MsgInternalToWhereInput
+  ): MsgInternalToConnection!
   """站内信查询"""
   msgInternals(
     """Returns the elements in the list that come after the specified cursor."""
@@ -2014,6 +2053,14 @@ type Query {
   ): [Node]!
   """ 静默消息 """
   silences(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: SilenceOrder, where: SilenceWhereInput): SilenceConnection!
+  """获取用户的站内信"""
+  userMsgInternalTos(after: Cursor, before: Cursor, first: Int, last: Int, orderBy: MsgInternalToOrder, where: MsgInternalToWhereInput): MsgInternalToConnection!
+  """用户订阅的消息分类"""
+  userSubMsgCategory: [String!]!
+  """用户站内信总未读数"""
+  userUnreadMsgInternals: Int!
+  """消息分类站内信未读数"""
+  userUnreadMsgInternalsFromMsgCategory(categories: [String!]!): [Int!]!
 }
 
 type Receiver {

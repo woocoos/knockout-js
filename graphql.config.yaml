@@ -3,13 +3,17 @@ projects:
     schema: "packages/api/script/generated/ucenter.graphql"
     documents:
       - "packages/api/script/generated/ucenter.graphql"
+      - "packages/api/src/ucenter/**/*.ts"
       - "packages/org/src/**/*.ts"
-      - "packages/layout/src/**/*.ts"
+      - "packages/layout/src/components/aggregate-menu/*.tsx"
+      - "packages/layout/src/components/layout/*.tsx"
+      - "packages/layout/src/components/tenant-dropdown/*.tsx"
   msgcenter:
     schema: "packages/api/script/generated/msgcenter.graphql"
     documents:
       - "packages/api/script/generated/msgcenter.graphql"
-      - "packages/layout/src/**/*.ts"
+      - "packages/api/src/msgcenter/**/*.ts"
+      - "packages/layout/src/components/msg-dropdown/*.tsx"
   test:
     schema: "https://trygql.formidable.dev/graphql/basic-pokedex"
     documents:

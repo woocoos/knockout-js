@@ -3,11 +3,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import UserModal from '../user-modal';
 import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType, UserWhereInput, } from '@knockout-js/api/esm/gql/ucenter/graphql';
-import { gid } from '@knockout-js/api';
+import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '..';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
 
@@ -144,7 +143,7 @@ const OrgSelect = (props: UserSelectProps) => {
       } else {
         query<OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables>(userInfoQuery, {
           gid: gid('user', props.value),
-        }, { instanceName: iceUrqlInstance.ucenter }).then(result => {
+        }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'User') {
             setInfo(result.data.node as User);
             setKeyword(result.data.node.displayName);
@@ -190,7 +189,7 @@ const OrgSelect = (props: UserSelectProps) => {
                   roleId: props.orgRoleId,
                   first,
                   where,
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.orgRoleUsers.totalCount) {
                   result.data.orgRoleUsers.edges?.forEach(item => {
                     if (item?.node) {
@@ -207,7 +206,7 @@ const OrgSelect = (props: UserSelectProps) => {
                   gid: gid('org', props.orgId),
                   first,
                   where,
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.node?.__typename === 'Org') {
                   result.data.node.users.edges?.forEach(item => {
                     if (item?.node) {
@@ -223,7 +222,7 @@ const OrgSelect = (props: UserSelectProps) => {
                 const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
                   first,
                   where,
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.users.totalCount) {
                   result.data.users.edges?.forEach(item => {
                     if (item?.node) {

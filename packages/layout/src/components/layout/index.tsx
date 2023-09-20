@@ -9,13 +9,13 @@ import { ReactNode, FC } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/esm/gql/ucenter/graphql';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '..';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
 import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
 import { BarsOutlined } from '@ant-design/icons';
 import { listFormatTreeData } from '../_util';
+import { instanceName } from '@knockout-js/api';
 
 export interface LayoutProps {
   /**
@@ -123,7 +123,7 @@ const Layout = (props: LayoutProps) => {
           request: async () => {
             const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
               appCode: props.appCode
-            }, { instanceName: iceUrqlInstance.ucenter });
+            }, { instanceName: instanceName.UCENTER });
             if (result.data?.userMenus.length) {
               const meunList = result.data.userMenus.sort((d1, d2) => {
                 const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;

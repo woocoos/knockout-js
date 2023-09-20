@@ -1,6 +1,5 @@
 import { query } from '@knockout-js/ice-urql/request';
-import { gid } from '../..';
-import { instanceName } from '..';
+import { gid, instanceName } from '../..';
 import { gql } from '../../gql/ucenter';
 import { Org } from '../../gql/ucenter/graphql';
 
@@ -29,7 +28,7 @@ export async function getOrgs(orgIds: (string | number)[]) {
   const result = await query(orgIdListQuery, {
     ids: orgIds.map(id => gid('org', id))
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   }), list: Org[] = [];
 
@@ -50,7 +49,7 @@ export async function getOrg(orgId: (string | number)) {
   const result = await query(orgIdQuery, {
     id: gid('org', orgId)
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   });
 

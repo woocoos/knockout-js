@@ -14,7 +14,7 @@
 
 .list {
   background-color: #ffffff;
-  max-width: 380px;
+  width: 380px;
 }
 
 .list :global(.ant-list-item) {

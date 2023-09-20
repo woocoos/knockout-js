@@ -1,4 +1,5 @@
 /* eslint-disable */
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
@@ -212,6 +213,7 @@ export type MatcherInput = {
 export type Message = {
   __typename?: 'Message';
   content: Scalars['String']['output'];
+  extras: Scalars['MapString']['output'];
   format: Scalars['String']['output'];
   sendAt: Scalars['Time']['output'];
   title: Scalars['String']['output'];
@@ -785,6 +787,8 @@ export type MsgInternal = Node & {
   createdBy: Scalars['Int']['output'];
   /** 内容类型: html,txt */
   format: Scalars['String']['output'];
+  /** 消息已读的用户数 */
+  hasReadCounts: Scalars['Int']['output'];
   id: Scalars['ID']['output'];
   msgInternalTo?: Maybe<Array<MsgInternalTo>>;
   /** 消息跳转 */
@@ -792,6 +796,8 @@ export type MsgInternal = Node & {
   /** 标题 */
   subject: Scalars['String']['output'];
   tenantID: Scalars['Int']['output'];
+  /** 消息发送的用户数 */
+  toSendCounts: Scalars['Int']['output'];
   updatedAt?: Maybe<Scalars['Time']['output']>;
   updatedBy?: Maybe<Scalars['Int']['output']>;
 };
@@ -865,6 +871,19 @@ export type MsgInternalToEdge = {
   /** The item at the end of the edge. */
   node?: Maybe<MsgInternalTo>;
 };
+
+/** Ordering options for MsgInternalTo connections */
+export type MsgInternalToOrder = {
+  /** The ordering direction. */
+  direction?: OrderDirection;
+  /** The field by which to order MsgInternalTos. */
+  field: MsgInternalToOrderField;
+};
+
+/** Properties by which MsgInternalTo connections can be ordered. */
+export enum MsgInternalToOrderField {
+  CreatedAt = 'createdAt'
+}
 
 /**
  * MsgInternalToWhereInput is used for filtering MsgInternalTo objects.
@@ -1728,9 +1747,13 @@ export type Mutation = {
   /**  启用消息模板  */
   enableMsgTemplate: MsgTemplate;
   /**  删除站内信消息  */
-  markMessageDeleted: Scalars['Boolean']['output'];
+  markMsgInternalToDeleted: Scalars['Boolean']['output'];
   /**  设置站内信消息已读未读  */
-  markMessageReaOrUnRead: Scalars['Boolean']['output'];
+  markMsgInternalToReadOrUnRead: Scalars['Boolean']['output'];
+  /**  测试邮件模板  */
+  testSendEmailTpl: Scalars['Boolean']['output'];
+  /**  测试站内信模板  */
+  testSendMessageTpl: Scalars['Boolean']['output'];
   /**  更新消息通道  */
   updateMsgChannel: MsgChannel;
   /**  更新消息事件  */
@@ -1834,14 +1857,30 @@ export type MutationEnableMsgTemplateArgs = {
 };
 
 
-export type MutationMarkMessageDeletedArgs = {
+export type MutationMarkMsgInternalToDeletedArgs = {
   ids: Array<Scalars['ID']['input']>;
 };
 
 
-export type MutationMarkMessageReaOrUnReadArgs = {
+export type MutationMarkMsgInternalToReadOrUnReadArgs = {
   ids: Array<Scalars['ID']['input']>;
   read: Scalars['Boolean']['input'];
+};
+
+
+export type MutationTestSendEmailTplArgs = {
+  annotations?: InputMaybe<Scalars['MapString']['input']>;
+  email: Scalars['String']['input'];
+  labels?: InputMaybe<Scalars['MapString']['input']>;
+  tplID: Scalars['ID']['input'];
+};
+
+
+export type MutationTestSendMessageTplArgs = {
+  annotations?: InputMaybe<Scalars['MapString']['input']>;
+  labels?: InputMaybe<Scalars['MapString']['input']>;
+  tplID: Scalars['ID']['input'];
+  userID: Scalars['ID']['input'];
 };
 
 
@@ -2139,11 +2178,13 @@ export type PageInfo = {
 export type Query = {
   __typename?: 'Query';
   /** 消息列表 */
-  msgAlerts?: Maybe<MsgAlertConnection>;
+  msgAlerts: MsgAlertConnection;
   /**  消息通道列表  */
   msgChannels: MsgChannelConnection;
   /**  消息事件列表  */
   msgEvents: MsgEventConnection;
+  /** 站内信明细查询 */
+  msgInternalTos: MsgInternalToConnection;
   /** 站内信查询 */
   msgInternals: MsgInternalConnection;
   /**  消息模板列表  */
@@ -2158,6 +2199,14 @@ export type Query = {
   nodes: Array<Maybe<Node>>;
   /**  静默消息  */
   silences: SilenceConnection;
+  /** 获取用户的站内信 */
+  userMsgInternalTos: MsgInternalToConnection;
+  /** 用户订阅的消息分类 */
+  userSubMsgCategory: Array<Scalars['String']['output']>;
+  /** 用户站内信总未读数 */
+  userUnreadMsgInternals: Scalars['Int']['output'];
+  /** 消息分类站内信未读数 */
+  userUnreadMsgInternalsFromMsgCategory: Array<Scalars['Int']['output']>;
 };
 
 
@@ -2188,6 +2237,16 @@ export type QueryMsgEventsArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<MsgEventOrder>;
   where?: InputMaybe<MsgEventWhereInput>;
+};
+
+
+export type QueryMsgInternalTosArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<MsgInternalToOrder>;
+  where?: InputMaybe<MsgInternalToWhereInput>;
 };
 
 
@@ -2244,6 +2303,21 @@ export type QuerySilencesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<SilenceOrder>;
   where?: InputMaybe<SilenceWhereInput>;
+};
+
+
+export type QueryUserMsgInternalTosArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<MsgInternalToOrder>;
+  where?: InputMaybe<MsgInternalToWhereInput>;
+};
+
+
+export type QueryUserUnreadMsgInternalsFromMsgCategoryArgs = {
+  categories: Array<Scalars['String']['input']>;
 };
 
 export type Receiver = {
@@ -2612,3 +2686,21 @@ export type User = Node & {
   /** 静默 */
   silences?: Maybe<Array<Silence>>;
 };
+
+export type LayoutPkgUserMsgInternalToListQueryVariables = Exact<{
+  first?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<MsgInternalToOrder>;
+  where?: InputMaybe<MsgInternalToWhereInput>;
+}>;
+
+
+export type LayoutPkgUserMsgInternalToListQuery = { __typename?: 'Query', userMsgInternalTos: { __typename?: 'MsgInternalToConnection', totalCount: number, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: any | null, endCursor?: any | null }, edges?: Array<{ __typename?: 'MsgInternalToEdge', cursor: any, node?: { __typename?: 'MsgInternalTo', id: string, msgInternalID: string, createdAt: any, deleteAt?: any | null, readAt?: any | null, userID: string, msgInternal: { __typename?: 'MsgInternal', id: string, tenantID: number, createdBy: number, createdAt: any, subject: string, body?: string | null, format: string, redirect?: string | null, category: string } } | null } | null> | null } };
+
+export type LayoutPkgUserUnreadMsgInternalsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LayoutPkgUserUnreadMsgInternalsQuery = { __typename?: 'Query', userUnreadMsgInternals: number };
+
+
+export const LayoutPkgUserMsgInternalToListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"layoutPkgUserMsgInternalToList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MsgInternalToOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"MsgInternalToWhereInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userMsgInternalTos"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"msgInternalID"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"deleteAt"}},{"kind":"Field","name":{"kind":"Name","value":"readAt"}},{"kind":"Field","name":{"kind":"Name","value":"userID"}},{"kind":"Field","name":{"kind":"Name","value":"msgInternal"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"tenantID"}},{"kind":"Field","name":{"kind":"Name","value":"createdBy"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"subject"}},{"kind":"Field","name":{"kind":"Name","value":"body"}},{"kind":"Field","name":{"kind":"Name","value":"format"}},{"kind":"Field","name":{"kind":"Name","value":"redirect"}},{"kind":"Field","name":{"kind":"Name","value":"category"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<LayoutPkgUserMsgInternalToListQuery, LayoutPkgUserMsgInternalToListQueryVariables>;
+export const LayoutPkgUserUnreadMsgInternalsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"layoutPkgUserUnreadMsgInternals"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"userUnreadMsgInternals"}}]}}]} as unknown as DocumentNode<LayoutPkgUserUnreadMsgInternalsQuery, LayoutPkgUserUnreadMsgInternalsQueryVariables>;
