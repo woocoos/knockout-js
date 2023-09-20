@@ -2,7 +2,7 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from '../org-modal';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
@@ -33,9 +33,9 @@ export interface OrgSelectProps {
    */
   appId?: string;
   /**
-   * 类型
+   * 类型 OrgKind
    */
-  kind: OrgKind;
+  kind: string;
   /**
    * ant SearchProps api
    */

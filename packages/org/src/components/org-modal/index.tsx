@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/ucenter";
 import { gid, instanceName } from "@knockout-js/api";
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/ucenter";
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { Modal, ModalProps } from '@knockout-js/layout';
@@ -32,9 +32,9 @@ export interface OrgModalProps {
    */
   appId?: string;
   /**
-   * 类型
+   * 类型 OrgKind
    */
-  kind: OrgKind;
+  kind: string;
   /**
    * 多选
    */

@@ -1,4 +1,4 @@
-import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput } from "@knockout-js/api/ucenter";
+import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserWhereInput } from "@knockout-js/api/ucenter";
 import { gid, instanceName } from "@knockout-js/api";
 import { useLocale } from "../locale";
 import { useState } from "react";
@@ -25,9 +25,9 @@ export interface UserModalProps {
    */
   title: string;
   /**
-   * 类型过滤
+   * 类型过滤 UserUserType
    */
-  userType?: UserUserType;
+  userType?: string;
   /**
    * 多选
    */

@@ -1,13 +1,13 @@
 {
   "name": "@knockout-js/api",
-  "version": "0.1.1-beta.1",
+  "version": "0.1.1-beta.2",
   "description": "Knockout API",
   "files": [
     "esm",
     "cjs",
     "es2017",
     "dist",
-    "*.d.ts"
+    "*.ts"
   ],
   "main": "esm/index.js",
   "module": "esm/index.js",
