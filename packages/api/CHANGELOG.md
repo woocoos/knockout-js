@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.1-beta.0
+
+### Patch Changes
+
+- 增加消息组件的引入
+
 ## 0.1.0
 
 ### Minor Changes

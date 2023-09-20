@@ -1,5 +1,14 @@
 # @knockout-js/layout
 
+## 0.1.1-beta.0
+
+### Patch Changes
+
+- 增加消息组件的引入
+- Updated dependencies
+  - @knockout-js/ice-urql@0.1.1-beta.0
+  - @knockout-js/api@0.1.1-beta.0
+
 ## 0.1.0
 
 ### Minor Changes
