@@ -2,13 +2,19 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from '../org-modal';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
+
+// fix publish error: Property 'kind' of exported interface has or is using private name 'OrgKind'.
+enum OrgKind {
+  Org = UcenterOrgKind.Org,
+  Root = UcenterOrgKind.Root,
+};
 
 export interface OrgSelectLocale {
   placeholder: string;

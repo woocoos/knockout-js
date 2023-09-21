@@ -2,13 +2,19 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import UserModal from '../user-modal';
-import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType, UserWhereInput, } from '@knockout-js/api/ucenter';
+import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType as UcenterUserUserType, UserWhereInput, } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
+
+// fix publish error: Property 'userType' of exported interface has or is using private name 'UserUserType'
+enum UserUserType {
+  Account = UcenterUserUserType.Account,
+  Member = UcenterUserUserType.Member,
+}
 
 export interface UserSelectLocale {
   placeholder: string;

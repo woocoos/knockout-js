@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.1-beta.2
+
+### Patch Changes
+
+- publish beta
+
 ## 0.1.1-beta.1
 
 ### Patch Changes

@@ -1,10 +1,16 @@
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
 import { gid, instanceName } from "@knockout-js/api";
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/ucenter";
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/ucenter";
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { Modal, ModalProps } from '@knockout-js/layout';
+
+// fix publish error: Property 'kind' of exported interface has or is using private name 'OrgKind'.
+enum OrgKind {
+  Org = UcenterOrgKind.Org,
+  Root = UcenterOrgKind.Root,
+};
 
 export interface OrgModalLocale {
   name: string;

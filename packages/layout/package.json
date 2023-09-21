@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/layout",
-  "version": "0.1.1-beta.1",
+  "version": "0.1.1-beta.2",
   "description": "组件功能描述",
   "files": [
     "esm",
@@ -32,7 +32,7 @@
   ],
   "scripts": {
     "start": "ice-pkg start",
-    "build": "ice-pkg build",
+    "build": "rimraf esm es2017 && ice-pkg build",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
