@@ -7,7 +7,7 @@ sidebar_label: OrgSelect
 ```tsx preview
 import { OrgSelect } from "@knockout-js/org";
 import { useState } from "react";
-import { OrgKind } from "@knockout-js/api";
+import { OrgKind } from "@knockout-js/api/ucenter";
 import { createUrqlInstance } from '@knockout-js/ice-urql/request';
 import { adminxApi } from "./assets/api";
 

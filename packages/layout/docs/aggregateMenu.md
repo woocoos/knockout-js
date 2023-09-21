@@ -9,7 +9,7 @@ import { AggregateMenu,Provider } from "@knockout-js/layout";
 import { useState } from "react";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { Button } from "antd";
-import { App, AppMenu, AppMenuKind } from "@knockout-js/api";
+import { App, AppMenu, AppMenuKind } from "@knockout-js/api/ucenter";
 import { adminxApi } from "./assets/api";
 
 createUrqlInstance([

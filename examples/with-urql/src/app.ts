@@ -74,7 +74,7 @@ export const urqlConfig = defineUrqlConfig([
     url: ICE_UCENTER_URL,
   },
   {
-    instanceName: 'msg',
+    instanceName: 'msgcenter',
     url: ICE_MSG_URL,
   },
 ])

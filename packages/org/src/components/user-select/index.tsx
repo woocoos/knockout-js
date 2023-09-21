@@ -2,7 +2,7 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import UserModal from '../user-modal';
-import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserWhereInput, } from '@knockout-js/api/ucenter';
+import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType, UserWhereInput, } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-table';
@@ -33,9 +33,9 @@ export interface UserSelectProps {
    */
   orgRoleId?: string;
   /**
-   * 过滤用户类型 UserUserType
+   * 过滤用户类型
    */
-  userType?: string;
+  userType?: UserUserType;
   /**
    * ant SearchProps api
    */

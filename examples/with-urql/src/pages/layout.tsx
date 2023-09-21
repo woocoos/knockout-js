@@ -1,14 +1,16 @@
 import { Outlet, useLocation } from '@ice/runtime';
 import { Layout } from '@knockout-js/layout';
 import { history } from 'ice';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import defaultAvatar from '@/assets/images/default-avatar.png';
 import { monitorKeyChange } from '@/pkg/localStore';
 import store from '@/store';
 import { Org } from '@knockout-js/api/esm/gql/ucenter/graphql';
+import { MsgDropdownRef } from '@knockout-js/layout/esm/components/msg-dropdown';
 
 export default () => {
   const location = useLocation(),
+    msgRef = useRef<MsgDropdownRef>(null),
     [userState, userDispatcher] = store.useModel('user'),
     [appState, appDispatcher] = store.useModel('app'),
     tenantList = [
@@ -51,6 +53,7 @@ export default () => {
 
   return (
     <Layout
+      msgRef={msgRef}
       appCode="adminx"
       pathname={location.pathname}
       onClickMenuItem={(item, isOpen) => {
@@ -59,6 +62,14 @@ export default () => {
         } else {
           history?.push(item.path ?? '');
         }
+      }}
+      msgProps={{
+        onItemClick: (data) => {
+          console.log(data);
+        },
+        onMoreClick: () => {
+          console.log('点击更多');
+        },
       }}
       tenantProps={{
         value: userState.tenantId,
@@ -79,6 +90,8 @@ export default () => {
       themeSwitchProps={{
         value: appState.darkMode,
         onChange: (value) => {
+          console.log(msgRef.current)
+          msgRef.current?.setShowDot();
           appDispatcher.updateDarkMode(value);
         },
       }}

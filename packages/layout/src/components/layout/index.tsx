@@ -5,7 +5,7 @@ import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
 import MsgDropdown, { MsgDropdownProps, MsgDropdownRef } from '../msg-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, FC, Ref } from 'react';
+import { ReactNode, FC, Ref, useRef, useImperativeHandle } from 'react';
 import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/ucenter';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
@@ -93,6 +93,10 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 
 const Layout = (props: LayoutProps) => {
 
+  const msgRef = useRef<MsgDropdownRef>(null);
+
+  useImperativeHandle(props.msgRef, () => msgRef.current as MsgDropdownRef);
+
   return (
     <CollectProviders
       locale={props.locale ?? LocaleType.zhCN}
@@ -155,7 +159,7 @@ const Layout = (props: LayoutProps) => {
             actions.push(<I18nDropdown {...props.i18nProps} />)
           }
           if (props.msgProps) {
-            actions.push(<MsgDropdown ref={props.msgRef} {...props.msgProps} />)
+            actions.push(<MsgDropdown  {...props.msgProps} ref={msgRef} />)
           }
           actions.push(<TenantDropdown {...props.tenantProps} />)
           actions.push(<AvatarDropdown {...props.avatarProps} />)

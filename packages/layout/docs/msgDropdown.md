@@ -20,15 +20,15 @@ createUrqlInstance([
 ])
 
 export default () => {
-  const mdRef = useRef();
+  const mdRef = useRef(null);
 
   return (
     <>
       <Button 
         onClick={() => {
-          mdRef.current.setShowDot();
+          mdRef.current?.setShowDot();
         }}>点亮红点</Button>
-      <MsgDropdown ref={mdRef} onMoreClick={() => {}} />
+      <MsgDropdown ref={mdRef} />
     </>
   );
 };

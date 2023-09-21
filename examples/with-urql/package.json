@@ -7,8 +7,8 @@
     "build": "echo 'pass'"
   },
   "dependencies": {
-    "@ice/plugin-request": "^1.0.1",
-    "@ice/runtime": "^1.2.7",
+    "@ice/plugin-request": "^1.0.2",
+    "@ice/runtime": "^1.2.9",
     "@knockout-js/api": "workspace:*",
     "@knockout-js/ice-urql": "workspace:*",
     "@knockout-js/layout": "workspace:*",
@@ -18,7 +18,7 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@ice/app": "^3.2.9",
+    "@ice/app": "^3.2.10",
     "@ice/plugin-antd": "^1.0.1",
     "@ice/plugin-auth": "^1.0.1",
     "@ice/plugin-icestark": "^1.1.0",
