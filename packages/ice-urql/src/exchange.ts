@@ -116,6 +116,8 @@ export interface SubExchangeOpts {
     getState: () => {
       token: string;
       tenantId: string;
+      appCode?: string;
+      deviceId?: string;
     },
   };
 }
@@ -131,11 +133,13 @@ export function subExchange(handler: SubExchangeOpts): Exchange {
       return wsClient({
         url,
         connectionParams: () => {
-          const { token, tenantId } = store.getState();
+          const { token, tenantId, appCode, deviceId } = store.getState();
           cacheToken = token;
           return {
             'Authorization': `Bearer ${token}`,
             'X-Tenant-ID': tenantId,
+            appCode,
+            deviceId,
           }
         }
       })
