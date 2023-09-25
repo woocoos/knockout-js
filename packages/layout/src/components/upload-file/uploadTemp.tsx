@@ -2,12 +2,12 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Modal, Popconfirm, Space, Typography, Upload, message } from "antd"
 import { RcFile } from "antd/es/upload";
 import { useEffect, useRef, useState } from "react";
-import { files as fileApi } from "@knockout-js/api";
 import { useAppCode, useTenantId } from "../provider";
 import { UploadFileProps } from ".";
 import { useLocale } from "../locale";
 import styles from "./index.module.css";
 import { formatFileSize, randomId } from "../_util";
+import { getFiles, getFilesRaw, updateFiles } from "@knockout-js/api";
 
 export default (props: UploadFileProps<string> & {
   /**
@@ -67,7 +67,7 @@ export default (props: UploadFileProps<string> & {
       setLoading(true);
       if (bucket === 'local') {
         try {
-          const result = await fileApi.updateFiles({
+          const result = await updateFiles({
             key,
             bucket,
             file,
@@ -84,12 +84,12 @@ export default (props: UploadFileProps<string> & {
     },
     getValueFile = async () => {
       if (props.value) {
-        const result = await fileApi.getFiles(props.value);
+        const result = await getFiles(props.value);
         if (result?.id) {
           setName(result.name)
         }
         if (bucket === 'local') {
-          const result = await fileApi.getFilesRaw(props.value, 'url');
+          const result = await getFilesRaw(props.value, 'url');
           if (typeof result === 'string') {
             setUrlSrc(result)
           }
@@ -100,7 +100,7 @@ export default (props: UploadFileProps<string> & {
     },
     updateContent = async () => {
       if (props.value) {
-        const result = await fileApi.getFilesRaw(props.value)
+        const result = await getFilesRaw(props.value)
         if (result && typeof result != 'string') {
           const r = new FileReader()
           r.readAsText(result, 'utf-8')

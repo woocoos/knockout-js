@@ -9,10 +9,11 @@ import {
   createClient,
   ClientOptions,
   mapExchange,
-  gql as urqlGql
+  gql as urqlGql,
+  OperationResultSource,
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
-import { authExchange } from './exchange.js';
+import { authExchange, subExchange } from './exchange.js';
 
 export const gql = urqlGql;
 
@@ -44,8 +45,10 @@ function createDefaultClient(config: CustomClientOptions) {
       if (config.exchangeOpt.mapOpts) {
         defaultOpt.exchanges.push(mapExchange(config.exchangeOpt.mapOpts))
       }
+      if (config.exchangeOpt.subOpts) {
+        defaultOpt.exchanges.push(subExchange(config.exchangeOpt.subOpts))
+      }
     }
-
     defaultOpt.exchanges.push(fetchExchange)
   }
   return createClient(defaultOpt)
@@ -189,7 +192,7 @@ export async function mutation<Data = any, Variables extends AnyVariables = AnyV
  * @param context
  * @returns
  */
-export async function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(
+export function subscription<Data = any, Variables extends AnyVariables = AnyVariables>(
   query: DocumentInput<Data, Variables>,
   variables: Variables,
   context?: Partial<OperationContext> & {
@@ -198,10 +201,10 @@ export async function subscription<Data = any, Variables extends AnyVariables = 
 ) {
   const urqlInstance = getInstance(context?.instanceName);
 
-  return await urqlInstance.client.subscription(query, variables, {
+  return urqlInstance.client.subscription(query, variables, {
     url: urqlInstance.config.url,
     ...context
-  }).toPromise();
+  })
 }
 
 

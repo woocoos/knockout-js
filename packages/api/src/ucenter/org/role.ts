@@ -1,6 +1,7 @@
-import { OrgRole, OrgRoleOrder, OrgRoleWhereInput, gid, gql } from '../..';
+import { OrgRole, OrgRoleOrder, OrgRoleWhereInput } from '../../gql/ucenter/graphql';
+import { gid, instanceName } from '../..';
 import { paging, query } from '@knockout-js/ice-urql/request';
-import { instanceName } from '..';
+import { gql } from '../../gql/ucenter';
 
 const orgGroupListQuery = gql(/* GraphQL */`query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){
   orgGroups(first:$first,orderBy: $orderBy,where: $where){
@@ -51,7 +52,7 @@ export async function getOrgGroupList(
     where: gather.where,
     orderBy: gather.orderBy,
   }, gather.current || 1, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
   });
 
   if (result.data?.orgGroups) {
@@ -69,7 +70,7 @@ export async function getOrgRoles(orgRoleIds: (string | number)[]) {
     ids: orgRoleIds.map(id => gid('org_role', id)),
     requestPolicy: "cache-first",
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
   }), list: OrgRole[] = [];
 
   result.data?.nodes?.forEach(item => {
@@ -90,7 +91,7 @@ export async function getOrgRole(orgRoleId: (string | number)) {
     id: gid('org_role', orgRoleId),
     requestPolicy: "cache-first",
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
   });
 
   if (result.data?.node?.__typename === 'OrgRole') {

@@ -1,5 +1,5 @@
 import { Exchange, MapExchangeOpts, RequestPolicy } from 'urql';
-import { AuthExchangeOpts } from './exchange';
+import { AuthExchangeOpts, SubExchangeOpts } from './exchange';
 
 export * from './requestInterceptor.js'
 
@@ -26,6 +26,7 @@ export interface CustomClientOptions {
   exchangeOpt?: {
     authOpts?: AuthExchangeOpts,
     mapOpts?: MapExchangeOpts,
+    subOpts?: SubExchangeOpts,
   }
 }
 

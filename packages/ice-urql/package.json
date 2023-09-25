@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/ice-urql",
-  "version": "0.1.0",
+  "version": "0.1.1-beta.2",
   "description": "urql plugin for ice",
   "license": "MIT",
   "type": "module",
@@ -43,17 +43,18 @@
   },
   "scripts": {
     "start": "ice-pkg start",
-    "build": "ice-pkg build",
+    "build": "rimraf esm es2017 && ice-pkg build",
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "@ice/app": "^3.2.6",
     "@ice/jsx-runtime": "^0.2.0",
-    "@swc/helpers": "^0.5.1",
     "@ice/plugin-request": "^1.0.1",
     "@ice/runtime": "^1.2.4",
+    "@swc/helpers": "^0.5.1",
     "@urql/exchange-auth": "^2.1.6",
     "antd": "^5.6.3",
+    "graphql-ws": "^5.14.0",
     "jwt-decode": "^3.1.2",
     "urql": "^4.0.5"
   },

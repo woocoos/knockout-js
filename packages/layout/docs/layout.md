@@ -12,12 +12,16 @@ import styles from "./layout/index.module.css";
 import { useLocation } from "@docusaurus/router";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { createFromIconfontCN } from "@ant-design/icons";
-import { adminxApi,iconFontScriptUrl } from "./assets/api";
+import { adminxApi,iconFontScriptUrl,msgApi } from "./assets/api";
 
 createUrqlInstance([
   {
     instanceName: "default",
     url: adminxApi,
+  },
+  {
+    instanceName: "msgcenter",
+    url: msgApi,
   },
 ]);
 
@@ -54,6 +58,14 @@ export default () => {
         themeSwitchProps={{
           value: theme,
           onChange: setTheme,
+        }}
+        msgProps={{
+          onItemClick:(data) => {
+            console.log('msg-item',data)
+          },
+          onListClick:() => {
+            console.log('更多消息')
+          }
         }}
         proLayoutProps={{
           menu: {
@@ -163,6 +175,8 @@ export default () => {
 | aggregateMenuProps | 使用应用集成菜单              | AggregateMenuProps                             | ❌    | -               |
 | i18nProps          | I18nDropdown组件对应的参数    | I18nDropdownProps                              | ❌    | -               |
 | tenantProps        | TenantDropdown组件对应的参数  | TenantDropdownProps                            | ✅    | -               |
+| msgRef             | 调用MsgDropdown组件的内部方法 | Ref&lt;MsgDropdownRef&gt;                     | ❌    | -               |
+| msgProps           | MsgDropdown组件对应的参数     | MsgDropdownProps                               | ❌    | -               |
 | avatarProps        | AvatarDropdown组件对应的参数  | AvatarDropdownProps                            | ✅    | -               |
 | themeSwitchProps   | ThemeSwitch组件对应的参数     | ThemeSwitchProps                               | ❌    | -               |
 | proLayoutProps     | ProLayout组件对应的参数       | ProLayoutProps                                 | ❌    | -               |

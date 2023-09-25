@@ -12,6 +12,7 @@ const gid: (type: string, id: string | number) => string
 ```
 
 ### 用例
+
 ```tsx preview
 import { gid } from "@knockout-js/api";
 
@@ -47,3 +48,4 @@ export default () => {
     </div>
   );
 };
+```

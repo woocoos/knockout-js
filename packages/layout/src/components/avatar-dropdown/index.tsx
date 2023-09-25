@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import { useCallback } from 'react';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
 import { Dropdown, Avatar, MenuProps } from 'antd';
 import styles from './index.module.css';

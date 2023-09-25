@@ -1,10 +1,10 @@
 
 import { useState } from 'react';
 import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
-import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, gid } from '@knockout-js/api';
+import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables } from '@knockout-js/api/ucenter';
+import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '../';
 import { Modal, ModalProps } from '@knockout-js/layout';
 
 export interface AppModalLocale {
@@ -145,7 +145,7 @@ export default (props: AppModalProps) => {
               gid: gid('org', props.orgId),
               first: params.pageSize,
               where,
-            }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
+            }, params.current || 1, { instanceName: instanceName.UCENTER });
             if (result.data?.node?.__typename === 'Org') {
               result.data.node.apps.edges?.forEach((item) => {
                 if (item?.node) {
@@ -158,7 +158,7 @@ export default (props: AppModalProps) => {
             const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
               first: params.pageSize,
               where,
-            }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
+            }, params.current || 1, { instanceName: instanceName.UCENTER });
             if (result.data?.apps.totalCount) {
               result.data.apps.edges?.forEach(item => {
                 if (item?.node) {

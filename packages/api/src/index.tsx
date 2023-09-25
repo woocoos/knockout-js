@@ -1,8 +1,11 @@
 import CryptoJS from 'crypto-js';
-export * from './gql/ucenter';
-export * from './gql/ucenter/graphql';
 export * from './ucenter/index';
-export * as files from './files';
+export * from './files';
+
+export enum instanceName {
+  UCENTER = 'ucenter',
+  MSGCENTER = 'msgcenter',
+}
 
 /**
  * get global id by type and id, it is used for relay node query.

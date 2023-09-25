@@ -1,12 +1,12 @@
 import { AutoComplete, Input, ModalProps } from 'antd';
 import ModalApp from '../app-modal';
 import { useCallback, useEffect, useState } from 'react';
-import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables, gid } from '@knockout-js/api';
+import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { SearchProps } from 'antd/es/input';
 import { ProTableProps } from '@ant-design/pro-table';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '..';
 import { BaseOptionType } from 'antd/es/select';
 import styles from '../assets/autoComplete.module.css';
 
@@ -124,7 +124,7 @@ export default (props: AppSelectProps) => {
       } else {
         query<OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables>(appInfoQuery, {
           gid: gid('app', props.value),
-        }, { instanceName: iceUrqlInstance.ucenter }).then(result => {
+        }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'App') {
             setInfo(result.data.node as App);
             setKeyword(result.data.node.name);
@@ -168,7 +168,7 @@ export default (props: AppSelectProps) => {
                   where: {
                     nameContains: keywordStr,
                   }
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.node?.__typename === 'Org') {
                   result.data.node.apps.edges?.forEach(item => {
                     if (item?.node) {
@@ -186,7 +186,7 @@ export default (props: AppSelectProps) => {
                   where: {
                     nameContains: keywordStr,
                   }
-                }, 1, { instanceName: iceUrqlInstance.ucenter });
+                }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.apps.totalCount) {
                   result.data.apps.edges?.forEach(item => {
                     if (item?.node) {

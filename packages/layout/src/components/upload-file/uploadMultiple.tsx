@@ -3,10 +3,9 @@ import { Modal, Spin, Typography, Upload, message } from "antd"
 import { RcFile, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { UploadFileProps } from ".";
-import { Files } from "@knockout-js/api/esm/files";
+import { Files, getFiles, getFilesRaw, updateFiles } from "@knockout-js/api";
 import { useAppCode, useTenantId } from "../provider";
 import { useLocale } from "../locale";
-import { files as fileApi } from "@knockout-js/api";
 import { formatFileSize, randomId } from "../_util";
 
 let files: RcFile[] = [];
@@ -66,7 +65,7 @@ export default (props: UploadFileProps<string[]>) => {
 
           if (bucket === 'local') {
             try {
-              const result = await fileApi.updateFiles({
+              const result = await updateFiles({
                 key,
                 bucket,
                 file,
@@ -96,7 +95,7 @@ export default (props: UploadFileProps<string[]>) => {
               uid: addKeys[i],
               name: '',
             };
-            const result = await fileApi.getFiles(data.uid);
+            const result = await getFiles(data.uid);
             if (result?.id) {
               data.name = result.name;
               data.linkProps = {
@@ -105,7 +104,7 @@ export default (props: UploadFileProps<string[]>) => {
               data.response = result;
             }
             if (bucket === 'local') {
-              const resultRaw = await fileApi.getFilesRaw(data.uid, 'url');
+              const resultRaw = await getFilesRaw(data.uid, 'url');
               if (typeof resultRaw === 'string') {
                 data.url = resultRaw;
               }

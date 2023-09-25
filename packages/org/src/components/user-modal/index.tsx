@@ -1,10 +1,16 @@
-import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType, UserWhereInput, gid } from "@knockout-js/api";
+import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserSimpleStatus, UserUserType as UcenterUserUserType, UserWhereInput } from "@knockout-js/api/ucenter";
+import { gid, instanceName } from "@knockout-js/api";
 import { useLocale } from "../locale";
 import { useState } from "react";
 import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";
 import { gql, paging } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '../';
 import { Modal, ModalProps } from "@knockout-js/layout";
+
+// fix publish error: Property 'userType' of exported interface has or is using private name 'UserUserType'
+enum UserUserType {
+  Account = UcenterUserUserType.Account,
+  Member = UcenterUserUserType.Member,
+}
 
 export interface UserModalLocale {
   principal_name: string;
@@ -178,7 +184,7 @@ export default (props: UserModalProps) => {
             roleId: props.orgRoleId,
             first: params.pageSize,
             where,
-          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
+          }, params.current || 1, { instanceName: instanceName.UCENTER });
           if (result.data?.orgRoleUsers.totalCount) {
             result.data.orgRoleUsers.edges?.forEach(item => {
               if (item?.node) {
@@ -192,7 +198,7 @@ export default (props: UserModalProps) => {
             gid: gid('org', props.orgId),
             first: params.pageSize,
             where,
-          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
+          }, params.current || 1, { instanceName: instanceName.UCENTER });
           if (result.data?.node?.__typename === 'Org') {
             result.data.node.users.edges?.forEach(item => {
               if (item?.node) {
@@ -205,7 +211,7 @@ export default (props: UserModalProps) => {
           const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
             first: params.pageSize,
             where,
-          }, params.current || 1, { instanceName: iceUrqlInstance.ucenter });
+          }, params.current || 1, { instanceName: instanceName.UCENTER });
           if (result.data?.users.totalCount) {
             result.data.users.edges?.forEach(item => {
               if (item?.node) {

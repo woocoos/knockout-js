@@ -4,7 +4,13 @@ import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
-import { userPermissions } from '@knockout-js/api';
+
+const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',
+  ICE_DEV_TID = process.env.ICE_DEV_TID ?? '',
+  ICE_UCENTER_URL = process.env.ICE_UCENTER_URL ?? '',
+  ICE_MSG_URL = process.env.ICE_MSG_URL ?? '',
+  ICE_MSG_WS_URL = process.env.ICE_MSG_WS_URL ?? ''
+// ICE_APP_CODE = process.env.ICE_APP_CODE ?? '',
 
 export default {
   app: {
@@ -15,8 +21,8 @@ export default {
 export const dataLoader = defineDataLoader(async () => {
   return {
     user: {
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyLCJleHAiOjE2OTEzOTcwMDB9.OxViESAOpW8J1pqMVCE0ObOg7nu2-um9SCXn7gR2bdY',
-      tenantId: '1',
+      token: ICE_DEV_TOKEN,
+      tenantId: ICE_DEV_TID,
       refreshToken: 'refreshToken',
       user: {
         id: "1",
@@ -30,23 +36,34 @@ export const urqlConfig = defineUrqlConfig([
   {
     instanceName: 'default',
     url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
-    // exchangeOpt: {
-    //   authOpts: {
-    //     store: {
-    //       getState: () => {
-    //         const { token, tenantId, refreshToken } = store.getModelState('user')
-    //         return {
-    //           token, tenantId, refreshToken
-    //         }
-    //       },
-    //       setStateToken: (newToken) => {
-    //         store.dispatch.user.updateToken(newToken)
-    //       }
-    //     },
-    //     login: '/login',
-    //     refreshApi: "/api-auth/login/refresh-token"
-    //   }
-    // }
+    exchangeOpt: {
+      subOpts: {
+        url: ICE_MSG_WS_URL,
+        store: {
+          getState: () => {
+            const { token, tenantId } = store.getModelState('user')
+            return {
+              token, tenantId
+            }
+          },
+        }
+      },
+      authOpts: {
+        store: {
+          getState: () => {
+            const { token, tenantId, refreshToken } = store.getModelState('user')
+            return {
+              token, tenantId, refreshToken
+            }
+          },
+          setStateToken: (newToken) => {
+            store.dispatch.user.updateToken(newToken)
+          }
+        },
+        login: '/login',
+        refreshApi: "/api-auth/login/refresh-token"
+      }
+    }
   },
   {
     instanceName: 'instance2',
@@ -54,7 +71,11 @@ export const urqlConfig = defineUrqlConfig([
   },
   {
     instanceName: 'ucenter',
-    url: 'http://127.0.0.1:3001/mock-api-adminx/graphql/query',
+    url: ICE_UCENTER_URL,
+  },
+  {
+    instanceName: 'msgcenter',
+    url: ICE_MSG_URL,
   },
 ])
 
@@ -62,17 +83,6 @@ export const urqlConfig = defineUrqlConfig([
 export const authConfig = defineAuthConfig(async (appData) => {
   const { user } = appData,
     initialAuth = {};
-  // 判断路由权限
-  if (user.token) {
-    const result = await userPermissions("test");
-    if (result) {
-      result.forEach(item => {
-        if (item) {
-          initialAuth[item.name] = true;
-        }
-      });
-    }
-  }
   return {
     initialAuth,
   };

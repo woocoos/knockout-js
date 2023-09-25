@@ -1,5 +1,23 @@
 # @knockout-js/ice-urql
 
+## 0.1.1-beta.2
+
+### Patch Changes
+
+- publish beta
+
+## 0.1.1-beta.1
+
+### Patch Changes
+
+- beta.1
+
+## 0.1.1-beta.0
+
+### Patch Changes
+
+- 增加消息组件的引入
+
 ## 0.1.0
 
 ### Minor Changes

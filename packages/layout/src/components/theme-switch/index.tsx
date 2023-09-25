@@ -1,6 +1,5 @@
 import React from 'react';
-import { Switch, SwitchProps } from 'antd';
-import { useLocale } from '../locale';
+import { Moon, Sun } from '../icons';
 
 export interface ThemeSwitchLocale {
   bright: string;
@@ -13,28 +12,19 @@ export interface ThemeSwitchProps {
    */
   value: boolean;
   /**
-   * switch的设置
-   */
-  switchProps?: SwitchProps;
-  /**
    * 值变更事件 (value: boolean) => void;
    */
   onChange: (value: boolean) => void;
 }
 
 const ThemeSwitch: React.FC<ThemeSwitchProps> = (props: ThemeSwitchProps) => {
-  const locale = useLocale('ThemeSwitch')
-  return (
-    <Switch
-      checkedChildren={locale.bright}
-      unCheckedChildren={locale.dark}
-      {...props.switchProps}
-      checked={props.value}
-      onChange={(checked) => {
-        props.onChange(checked)
-      }}
-    />
-  );
+  return props.value ? <Sun style={{ color: 'rgba(0, 0, 0, 0.88)' }} onClick={() => {
+    props.onChange(false)
+
+  }} /> : <Moon style={{ color: 'rgba(0, 0, 0, 0.88)' }} onClick={() => {
+    props.onChange(true)
+
+  }} />
 };
 
 export default ThemeSwitch;

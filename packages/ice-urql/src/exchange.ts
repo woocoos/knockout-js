@@ -1,9 +1,10 @@
 
-import { authExchange as urqlAuthExchange } from "@urql/exchange-auth";
-import { CombinedError, Exchange } from "urql";
+import { authExchange as urqlAuthExchange, } from "@urql/exchange-auth";
+import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchange } from "urql";
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
+import { createClient as wsClient } from 'graphql-ws';
 
 export interface AuthExchangeOpts {
   store: {
@@ -49,7 +50,12 @@ export interface AuthExchangeOpts {
   error?: (error: CombinedError) => boolean;
 }
 
-export function authExchange(handler: AuthExchangeOpts) {
+/**
+ * 身份验证相关的exchange
+ * @param handler
+ * @returns
+ */
+export function authExchange(handler: AuthExchangeOpts): Exchange {
 
   const { store, beforeRefreshTime, refreshApi, login, loginRedirectKey, error } = handler
 
@@ -96,3 +102,66 @@ export function authExchange(handler: AuthExchangeOpts) {
     };
   });
 }
+
+export interface SubExchangeOpts {
+  /**
+   * 链接socket的地址
+   */
+  url: string;
+  store: {
+    /**
+     * 获取需要的数据
+     * @returns
+     */
+    getState: () => {
+      token: string;
+      tenantId: string;
+      appCode?: string;
+      deviceId?: string;
+    },
+  };
+}
+
+/**
+ * 订阅相关的exchange
+ * @param handler
+ * @returns
+ */
+export function subExchange(handler: SubExchangeOpts): Exchange {
+  const { url, store } = handler,
+    createClient = () => {
+      return wsClient({
+        url,
+        connectionParams: () => {
+          const { token, tenantId, appCode, deviceId } = store.getState();
+          cacheToken = token;
+          return {
+            'Authorization': `Bearer ${token}`,
+            'X-Tenant-ID': tenantId,
+            appCode,
+            deviceId,
+          }
+        }
+      })
+    };
+
+  let cacheToken = '',
+    wsc = createClient();
+
+  return urqlSubscriptionExchange({
+    forwardSubscription(request) {
+      const { token } = store.getState();
+      if (cacheToken && cacheToken !== token) {
+        wsc = createClient();
+      }
+      const input = { ...request, query: request.query || '' };
+      return {
+        subscribe(sink) {
+          const unsubscribe = wsc.subscribe(input, sink);
+          return { unsubscribe };
+        },
+      };
+    },
+  })
+}
+

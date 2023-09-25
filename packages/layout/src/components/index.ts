@@ -3,6 +3,7 @@ export { default as ThemeSwitch } from './theme-switch';
 export { default as AvatarDropdown } from './avatar-dropdown';
 export { default as KeepAlive } from './keep-alive';
 export { default as TenantDropdown } from './tenant-dropdown';
+export { default as MsgDropdown } from './msg-dropdown';
 export { default as LeavePrompt, useLeavePrompt } from './leave-prompt';
 export { default as I18nDropdown } from './i18n-dropdown';
 export { default as CollectProviders } from './collect-providers';
@@ -15,7 +16,3 @@ export { default as UploadMultiple } from './upload-file/uploadMultiple';
 export { default as UploadTemp } from './upload-file/uploadTemp';
 
 export * as util from './_util';
-
-export enum iceUrqlInstance {
-  ucenter = "ucenter"
-}

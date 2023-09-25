@@ -37,10 +37,10 @@ sidebar_label: 上传功能
 ```tsx preview
 import { UploadAvatar } from "@knockout-js/layout";
 import { useState } from "react";
-import { files } from "@knockout-js/api";
+import { setFilesApi } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setFilesApi(fileApi)
+setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState()
@@ -68,10 +68,10 @@ export default () => {
 ```tsx preview
 import { UploadMultiple } from "@knockout-js/layout";
 import { useState } from "react";
-import { files } from "@knockout-js/api";
+import { setFilesApi } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setFilesApi(fileApi)
+setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState([])
@@ -108,10 +108,10 @@ export default () => {
 ```tsx preview
 import { UploadTemp } from "@knockout-js/layout";
 import { useState } from "react";
-import { files } from "@knockout-js/api";
+import { setFilesApi } from "@knockout-js/api";
 import { fileApi } from "./assets/api";
 
-files.setFilesApi(fileApi)
+setFilesApi(fileApi)
 
 export default () => {
   const [fileId,setFileId] = useState()

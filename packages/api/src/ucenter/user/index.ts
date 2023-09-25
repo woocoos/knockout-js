@@ -1,6 +1,7 @@
 import { query } from '@knockout-js/ice-urql/request';
-import { instanceName } from '..';
-import { AppActionKind, AppActionMethod, User, gid, gql } from '../..';
+import { gid, instanceName } from '../..';
+import { AppActionKind, AppActionMethod, User } from '../../gql/ucenter/graphql';
+import { gql } from '../../gql/ucenter';
 
 const userIdListQuery = gql(/* GraphQL */`query apiUserIdList($ids:[GID!]!){
   nodes(ids: $ids){
@@ -42,7 +43,7 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
       }
     },
     {
-      instanceName,
+      instanceName: instanceName.UCENTER,
       requestPolicy: "cache-first",
       fetchOptions: { headers },
     }
@@ -62,7 +63,7 @@ export async function getUsers(userIds: (string | number)[]) {
   const result = await query(userIdListQuery, {
     ids: userIds.map(id => gid('user', id))
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   }), list: User[] = [];
 
@@ -83,7 +84,7 @@ export async function getUser(userId: (string | number)) {
   const result = await query(userIdQuery, {
     id: gid('user', userId)
   }, {
-    instanceName,
+    instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
   });
 

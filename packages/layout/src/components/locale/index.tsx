@@ -8,6 +8,7 @@ import { AvatarDropdownLocale } from '../avatar-dropdown';
 import { AggregateMenuLocale } from "../aggregate-menu";
 import { Context, LocaleType, ProviderProps } from "../provider";
 import { UploadFileLocale } from "../upload-file";
+import { MsgDropdownLocale } from "../msg-dropdown";
 
 export interface Locale {
   locale: string;
@@ -17,6 +18,7 @@ export interface Locale {
   TenantDropdown: TenantDropdownLocale;
   AggregateMenu: AggregateMenuLocale;
   UploadFile: UploadFileLocale;
+  MsgDropdown: MsgDropdownLocale;
 }
 
 

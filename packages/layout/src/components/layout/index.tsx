@@ -2,19 +2,20 @@ import { MenuDataItem, ProLayout, ProLayoutProps } from '@ant-design/pro-layout'
 import I18nDropdown, { I18nDropdownProps } from '../i18n-dropdown';
 import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
+import MsgDropdown, { MsgDropdownProps, MsgDropdownRef } from '../msg-dropdown';
 import ThemeSwitch, { ThemeSwitchProps } from '../theme-switch';
 import styles from './layout.module.css';
-import { ReactNode, FC } from 'react';
-import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api';
+import { ReactNode, FC, Ref, useRef, useImperativeHandle } from 'react';
+import { UserMenuListQuery, UserMenuListQueryVariables } from '@knockout-js/api/ucenter';
 import { CollectProviders, LocaleType } from '..';
 import { gql, query } from '@knockout-js/ice-urql/request';
-import { iceUrqlInstance } from '..';
 import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
 import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
 import { BarsOutlined } from '@ant-design/icons';
 import { listFormatTreeData } from '../_util';
+import { instanceName } from '@knockout-js/api';
 
 export interface LayoutProps {
   /**
@@ -51,6 +52,14 @@ export interface LayoutProps {
    */
   avatarProps: AvatarDropdownProps;
   /**
+   * MsgDropdown组件的高级方法
+   */
+  msgRef?: Ref<MsgDropdownRef>
+  /**
+   * MsgDropdown组件对应的参数
+   */
+  msgProps?: MsgDropdownProps;
+  /**
    * ThemeSwitch组件对应的参数
    */
   themeSwitchProps?: ThemeSwitchProps;
@@ -84,6 +93,9 @@ const userMenuListQuery = gql(/* GraphQL */`query userMenuList($appCode:String!)
 
 const Layout = (props: LayoutProps) => {
 
+  const msgRef = useRef<MsgDropdownRef>(null);
+
+  useImperativeHandle(props.msgRef, () => msgRef.current as MsgDropdownRef);
 
   return (
     <CollectProviders
@@ -118,7 +130,7 @@ const Layout = (props: LayoutProps) => {
           request: async () => {
             const result = await query<UserMenuListQuery, UserMenuListQueryVariables>(userMenuListQuery, {
               appCode: props.appCode
-            }, { instanceName: iceUrqlInstance.ucenter });
+            }, { instanceName: instanceName.UCENTER });
             if (result.data?.userMenus.length) {
               const meunList = result.data.userMenus.sort((d1, d2) => {
                 const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
@@ -145,6 +157,9 @@ const Layout = (props: LayoutProps) => {
           const actions: ReactNode[] = [];
           if (props.i18nProps) {
             actions.push(<I18nDropdown {...props.i18nProps} />)
+          }
+          if (props.msgProps) {
+            actions.push(<MsgDropdown  {...props.msgProps} ref={msgRef} />)
           }
           actions.push(<TenantDropdown {...props.tenantProps} />)
           actions.push(<AvatarDropdown {...props.avatarProps} />)
