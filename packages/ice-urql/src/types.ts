@@ -32,6 +32,11 @@ export interface CustomClientOptions {
 
 export type RequestConfig = CustomClientOptions | CustomClientOptions[];
 
+/**
+ * 定义配置
+ * @param configOrDefineConfig
+ * @returns
+ */
 export function defineUrqlConfig(configOrDefineConfig: RequestConfig | ((data?: any) => Promise<RequestConfig>)) {
   return configOrDefineConfig;
 }

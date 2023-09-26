@@ -5,6 +5,7 @@ import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization } from "./request.js";
 
 export interface AuthExchangeOpts {
   store: {
@@ -24,6 +25,10 @@ export interface AuthExchangeOpts {
      */
     setStateToken: (token: string) => void;
   };
+  /**
+   * 签名模式
+   */
+  headerMode?: RequestHeaderAuthorizationMode;
   /**
    * 提前多久刷新token默认0
    * 单位是毫秒
@@ -57,7 +62,7 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, login, loginRedirectKey, error } = handler
+  const { store, beforeRefreshTime, refreshApi, login, loginRedirectKey, error, headerMode } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
@@ -65,13 +70,13 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
         const { token, tenantId } = store.getState();
         return token
           ? utilities.appendHeaders(operation, {
-            'Authorization': `Bearer ${token}`,
+            'Authorization': getRequestHeaderAuthorization(token, headerMode),
             'X-Tenant-ID': `${tenantId}`,
           })
           : operation;
       },
       didAuthError(err) {
-        if (err.response.status === 401) {
+        if (err?.response?.status === 401) {
           if (login) {
             location.href = `${login}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
             return false;

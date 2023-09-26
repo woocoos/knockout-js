@@ -1,8 +1,13 @@
 import { Interceptors } from "@ice/plugin-request";
 import { message } from "antd";
 import type { AxiosError, AxiosResponse } from "axios";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization } from "./request.js";
 
 interface ReqInterceptorOpts {
+  /**
+   * 签名模式
+   */
+  headerMode?: RequestHeaderAuthorizationMode;
   store: {
     /**
      * 获取需要的数据
@@ -36,14 +41,14 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error } = option;
+  const { store, login, loginRedirectKey, error, headerMode } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
         const { token, tenantId } = store.getState();
         if (config.headers) {
           if (!config.headers['Authorization']) {
-            config.headers['Authorization'] = token ? `Bearer ${token}` : ''
+            config.headers['Authorization'] = token ? getRequestHeaderAuthorization(token, headerMode) : ''
           }
           if (!config.headers['X-Tenant-ID']) {
             config.headers['X-Tenant-ID'] = tenantId
