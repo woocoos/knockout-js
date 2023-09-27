@@ -1,7 +1,7 @@
 import { Interceptors } from "@ice/plugin-request";
 import { message } from "antd";
 import type { AxiosError, AxiosResponse } from "axios";
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization } from "./request.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
 
 interface ReqInterceptorOpts {
   /**
@@ -59,7 +59,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
     },
     response: {
       onConfig(response) {
-        if (response.status === 200 && response.data.errors) {
+        if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
             message.error(response.data.errors?.[0]?.message);
@@ -68,13 +68,13 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         return response;
       },
       onError: async (err) => {
-        if (err.response?.status === 401) {
+        if (err?.response?.status === 401) {
           if (login) {
-            location.href = `${login}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+            goLogin(login, loginRedirectKey);
           }
         }
 
-        const errRes = err.response as AxiosResponse<{
+        const errRes = err?.response as AxiosResponse<{
           errors: { message: string }[]
         }, any>
         let msg = errRes?.statusText;

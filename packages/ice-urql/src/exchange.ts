@@ -5,7 +5,7 @@ import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization } from "./request.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
 
 export interface AuthExchangeOpts {
   store: {
@@ -78,7 +78,7 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
       didAuthError(err) {
         if (err?.response?.status === 401) {
           if (login) {
-            location.href = `${login}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+            goLogin(login, loginRedirectKey);
             return false;
           }
         }

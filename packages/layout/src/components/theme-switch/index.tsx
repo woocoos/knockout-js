@@ -1,5 +1,6 @@
 import React from 'react';
 import { Moon, Sun } from '../icons';
+import styles from './index.module.css';
 
 export interface ThemeSwitchLocale {
   bright: string;
@@ -18,13 +19,17 @@ export interface ThemeSwitchProps {
 }
 
 const ThemeSwitch: React.FC<ThemeSwitchProps> = (props: ThemeSwitchProps) => {
-  return props.value ? <Sun style={{ color: 'rgba(0, 0, 0, 0.88)' }} onClick={() => {
-    props.onChange(false)
+  return <span className={styles.action}>
+    <span>{
+      props.value ? <Moon onClick={() => {
+        props.onChange(false)
 
-  }} /> : <Moon style={{ color: 'rgba(0, 0, 0, 0.88)' }} onClick={() => {
-    props.onChange(true)
+      }} /> : <Sun onClick={() => {
+        props.onChange(true)
 
-  }} />
+      }} />}
+    </span>
+  </span>
 };
 
 export default ThemeSwitch;

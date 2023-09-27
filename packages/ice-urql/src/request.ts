@@ -209,6 +209,23 @@ export function subscription<Data = any, Variables extends AnyVariables = AnyVar
 }
 
 /**
+ * 统一loginUrl的处理
+ * @param loginUrl
+ */
+export function goLogin(loginUrl: string, loginRedirectKey?: string) {
+  if (loginUrl.toLowerCase().startsWith("http")) {
+    const url = new URL(loginUrl);
+    if (location.pathname !== url.pathname || location.host != url.host) {
+      location.href = `${loginUrl}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+    }
+  } else {
+    if (location.pathname !== loginUrl) {
+      location.href = `${loginUrl}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+    }
+  }
+}
+
+/**
  * 签名模式
  */
 export enum RequestHeaderAuthorizationMode {
