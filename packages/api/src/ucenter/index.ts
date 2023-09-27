@@ -1,5 +1,6 @@
 export * from './app/indtx'
 export * from './org/index'
 export * from './org/role'
+export * from './dict'
 export * from './org/user'
 export * from './user/index'
