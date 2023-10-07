@@ -1,4 +1,3 @@
-import { getDictItems } from "@knockout-js/api";
 import { AppDictItem } from "@knockout-js/api/ucenter";
 import { Typography } from "antd"
 import { TextProps } from "antd/es/typography/Text";

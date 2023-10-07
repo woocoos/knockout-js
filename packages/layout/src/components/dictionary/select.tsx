@@ -3,7 +3,6 @@ import { AppDictItem } from "@knockout-js/api/ucenter";
 import { Select, SelectProps } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./index.module.css";
-import { getDictItems } from "@knockout-js/api";
 import { useDistItems } from ".";
 
 export interface DictionarySelectProps extends SelectProps {
