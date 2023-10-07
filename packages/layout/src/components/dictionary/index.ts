@@ -8,7 +8,6 @@ const collectCode: string[] = [];
 
 /**
  * 用来处理缓存字典项列表
- * TODO:需要考虑组件处理
  * @returns
  */
 export const useDistItems = (dictCode: string, dataSource?: AppDictItem[]): [AppDictItem[], () => Promise<void>] => {

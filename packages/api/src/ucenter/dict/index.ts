@@ -36,7 +36,7 @@ export async function getDictItems(refCodes: string | string[], forceReload?: bo
       refCodes,
     }, {
       instanceName: instanceName.UCENTER,
-      requestPolicy: forceReload ? "cache-and-network" : "cache-first",
+      requestPolicy: forceReload ? "network-only" : "cache-first",
     });
     result.data?.appDictByRefCode?.forEach(item => {
       if (item?.items?.length) {
@@ -48,7 +48,7 @@ export async function getDictItems(refCodes: string | string[], forceReload?: bo
       refCode: refCodes,
     }, {
       instanceName: instanceName.UCENTER,
-      requestPolicy: "cache-first",
+      requestPolicy: forceReload ? "network-only" : "cache-first",
     });
     if (result.data?.appDictItemByRefCode.length) {
       result.data?.appDictItemByRefCode.forEach(item => {
