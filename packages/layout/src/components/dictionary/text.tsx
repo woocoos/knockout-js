@@ -3,6 +3,7 @@ import { AppDictItem } from "@knockout-js/api/ucenter";
 import { Typography } from "antd"
 import { TextProps } from "antd/es/typography/Text";
 import { useEffect, useState } from "react";
+import { useDistItems } from ".";
 
 export interface DictionaryTextProps extends TextProps {
   /**
@@ -26,24 +27,13 @@ export interface DictionaryTextProps extends TextProps {
 
 export default (props: DictionaryTextProps) => {
   const { value, dataSource, dictCode, valueKey, ...restProps } = props,
-    [options, setOptions] = useState<AppDictItem[]>([]),
+    [items] = useDistItems(dictCode, dataSource),
     [dictItem, setDictItem] = useState<AppDictItem>();
 
-  const requestOptions = async () => {
-    setOptions(await getDictItems(dictCode));
-  }
 
   useEffect(() => {
-    if (props.dataSource) {
-      setOptions(props.dataSource.filter(item => item.dict?.code === props.dictCode));
-    } else {
-      requestOptions()
-    }
-  }, [value, dataSource, dictCode]);
-
-  useEffect(() => {
-    setDictItem(options.find(item => item[valueKey ?? 'code'] === props.value));
-  }, [options, valueKey])
+    setDictItem(items.find(item => item[valueKey ?? 'code'] === value));
+  }, [value, valueKey, items]);
 
   return <Typography.Text {...restProps}>
     {dictItem?.name ?? props.value ?? ''}

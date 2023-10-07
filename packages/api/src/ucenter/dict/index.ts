@@ -29,14 +29,14 @@ const dictItemListQuery = gql(/* GraphQL */`query apiAppDictItemByRefCode($refCo
  * @param refCodes `appCode:appDictCode`
  * @returns
  */
-export async function getDictItems(refCodes: string | string[]) {
+export async function getDictItems(refCodes: string | string[], forceReload?: boolean) {
   const dictItems: AppDictItem[] = []
   if (Array.isArray(refCodes)) {
     const result = await query(dictListQuery, {
       refCodes,
     }, {
       instanceName: instanceName.UCENTER,
-      requestPolicy: "cache-first",
+      requestPolicy: forceReload ? "cache-and-network" : "cache-first",
     });
     result.data?.appDictByRefCode?.forEach(item => {
       if (item?.items?.length) {

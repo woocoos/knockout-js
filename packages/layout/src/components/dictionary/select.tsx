@@ -4,6 +4,7 @@ import { Select, SelectProps } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./index.module.css";
 import { getDictItems } from "@knockout-js/api";
+import { useDistItems } from ".";
 
 export interface DictionarySelectProps extends SelectProps {
   /**
@@ -28,34 +29,19 @@ type DictionarySelectOption = {
 
 export default (props: DictionarySelectProps) => {
   const { dictCode, dataSource, changeValue, ...restProps } = props,
+    [items, itemsReload] = useDistItems(dictCode, dataSource),
     [loading, setLoading] = useState(false),
     [options, setOptions] = useState<DictionarySelectOption[]>([]);
 
-  const requestOptions = async () => {
-    setLoading(true);
-    const result = await getDictItems(dictCode);
-    setOptions(result.map(item => ({
-      label: item.name,
-      value: item[changeValue ?? 'code'],
-      data: item,
-    })));
-    setLoading(false);
-  }
-
   useEffect(() => {
-    if (dataSource?.length) {
-      setOptions(dataSource
-        .filter(item => item.dict?.code === dictCode)
-        .map(item => ({
-          label: item.name,
-          value: item[changeValue ?? 'code'],
-          data: item,
-        }))
-      );
-    } else {
-      requestOptions();
-    }
-  }, [dictCode, dataSource])
+    setOptions(items
+      .map(item => ({
+        label: item.name,
+        value: item[changeValue ?? 'code'],
+        data: item,
+      }))
+    );
+  }, [items])
 
   return <Select
     style={{ width: '100%' }}
@@ -66,7 +52,9 @@ export default (props: DictionarySelectProps) => {
       {menu}
       <div className={styles.selectActions}>
         <ReloadOutlined rev={undefined} onClick={async () => {
-          await requestOptions();
+          setLoading(true);
+          await itemsReload();
+          setLoading(false);
         }} />
       </div>
     </>

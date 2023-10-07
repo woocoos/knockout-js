@@ -349,8 +349,9 @@ export type AppDictItem = Node & {
   id: Scalars['ID']['output'];
   /** 名称 */
   name: Scalars['String']['output'];
+  org?: Maybe<Org>;
   /** 组织ID,空为全局字典 */
-  orgID?: Maybe<Scalars['Int']['output']>;
+  orgID?: Maybe<Scalars['ID']['output']>;
   /** 状态 */
   status?: Maybe<AppDictItemSimpleStatus>;
   updatedAt?: Maybe<Scalars['Time']['output']>;
@@ -427,6 +428,9 @@ export type AppDictItemWhereInput = {
   /** dict edge predicates */
   hasDict?: InputMaybe<Scalars['Boolean']['input']>;
   hasDictWith?: InputMaybe<Array<AppDictWhereInput>>;
+  /** org edge predicates */
+  hasOrg?: InputMaybe<Scalars['Boolean']['input']>;
+  hasOrgWith?: InputMaybe<Array<OrgWhereInput>>;
   /** id field predicates */
   id?: InputMaybe<Scalars['ID']['input']>;
   idGT?: InputMaybe<Scalars['ID']['input']>;
@@ -453,15 +457,11 @@ export type AppDictItemWhereInput = {
   not?: InputMaybe<AppDictItemWhereInput>;
   or?: InputMaybe<Array<AppDictItemWhereInput>>;
   /** org_id field predicates */
-  orgID?: InputMaybe<Scalars['Int']['input']>;
-  orgIDGT?: InputMaybe<Scalars['Int']['input']>;
-  orgIDGTE?: InputMaybe<Scalars['Int']['input']>;
-  orgIDIn?: InputMaybe<Array<Scalars['Int']['input']>>;
+  orgID?: InputMaybe<Scalars['ID']['input']>;
+  orgIDIn?: InputMaybe<Array<Scalars['ID']['input']>>;
   orgIDIsNil?: InputMaybe<Scalars['Boolean']['input']>;
-  orgIDLT?: InputMaybe<Scalars['Int']['input']>;
-  orgIDLTE?: InputMaybe<Scalars['Int']['input']>;
-  orgIDNEQ?: InputMaybe<Scalars['Int']['input']>;
-  orgIDNotIn?: InputMaybe<Array<Scalars['Int']['input']>>;
+  orgIDNEQ?: InputMaybe<Scalars['ID']['input']>;
+  orgIDNotIn?: InputMaybe<Array<Scalars['ID']['input']>>;
   orgIDNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** status field predicates */
   status?: InputMaybe<AppDictItemSimpleStatus>;
@@ -1691,8 +1691,7 @@ export type CreateAppDictItemInput = {
   dictID?: InputMaybe<Scalars['ID']['input']>;
   /** 名称 */
   name: Scalars['String']['input'];
-  /** 组织ID,空为全局字典 */
-  orgID?: InputMaybe<Scalars['Int']['input']>;
+  orgID?: InputMaybe<Scalars['ID']['input']>;
   /** 状态 */
   status?: InputMaybe<AppDictItemSimpleStatus>;
 };
@@ -4326,7 +4325,7 @@ export type PolicyRuleInput = {
 
 export type Query = {
   __typename?: 'Query';
-  /** 根据ref_code获取数据字典 */
+  /** 根据ref_code获取数据字典,用于批量获取 */
   appDictByRefCode: Array<AppDict>;
   /** 根据ref_code获取数据字典值 */
   appDictItemByRefCode: Array<AppDictItem>;

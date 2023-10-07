@@ -30,16 +30,32 @@ export default () => {
     <div>正常使用：
       <DictText 
         dictCode={dictCode} 
-        dataSource={dataSource}  
         value="male" 
       />
     </div>
     <div>用id来处理：
       <DictText 
       dictCode={dictCode} 
-      dataSource={dataSource} 
       value="2" 
       valueKey="id" />
+    </div>
+     <div>测试同时加载同一个数据3：
+      <DictText 
+        dictCode={dictCode} 
+        value="male" 
+      />
+    </div>
+     <div>测试同时加载同一个数据4：
+      <DictText 
+        dictCode={dictCode} 
+        value="male" 
+      />
+    </div>
+     <div>测试同时加载同一个数据5：
+      <DictText 
+        dictCode={dictCode} 
+        value="male" 
+      />
     </div>
     <div>TextProps type='success'：
       <DictText 
@@ -73,6 +89,15 @@ export default () => {
 import { useState } from "react";
 import { Button } from "antd";
 import { DictSelect } from "@knockout-js/layout";
+import { createUrqlInstance } from "@knockout-js/ice-urql/request";
+import { adminxApi } from "./assets/api";
+
+createUrqlInstance([
+  {
+    instanceName: "default",
+    url: adminxApi,
+  }
+]);
 
 export default () => {
   const [itemId, setItemId] = useState()
@@ -88,7 +113,6 @@ export default () => {
     <div>选择结果:{itemCode}</div>
     <DictSelect 
       dictCode={dictCode} 
-      dataSource={dataSource} 
       value={itemCode} 
       onChange={(value) => {
         setItemCode(value);
@@ -97,7 +121,6 @@ export default () => {
     <div>选择结果:{itemId}</div>
     <DictSelect 
       dictCode={dictCode} 
-      dataSource={dataSource} 
       changeValue="id"
       value={itemId} 
       onChange={(value) => {
