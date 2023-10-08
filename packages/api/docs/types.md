@@ -5,6 +5,7 @@
 
 ### 使用
 ```ts
+
 import { App } from '@knockout-js/api/ucenter';
 
 const app:App = {

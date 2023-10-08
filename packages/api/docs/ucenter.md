@@ -19,6 +19,7 @@ import { getApps } from '@knockout-js/api';
 const apps = await getApps([1,2,3]) // 结果:App[]
 ```
 
+
 ## getApp
 
 根据应用id获取应用id、code、name,接口策略为`cache-first`
@@ -32,6 +33,7 @@ import { getApp } from '@knockout-js/api';
 
 const app = await getApp(1) // 结果:App
 ```
+
 
 ## getOrgs
 
@@ -61,6 +63,7 @@ import { getOrg } from '@knockout-js/api';
 const org = await getOrg(1) // 结果:Org
 ```
 
+
 ## getOrgGroupList
 
 获取用户组列表
@@ -83,6 +86,7 @@ const orgGroups = await getOrgGroupList({
 }) // 结果:OrgRoleConnection
 ```
 
+
 ## getOrgRoles
 
 根据组织角色id列表获取组织角色id、orgID、kind、name,接口策略为`cache-first`
@@ -97,6 +101,7 @@ import { getOrgRoles } from '@knockout-js/api';
 const orgRoles = await getOrgRoles([1,2,3]) // 结果:OrgRole[]
 ```
 
+
 ## getOrgRole
 
 根据组织角色id获取组织角色id、orgID、kind、name,接口策略为`cache-first`
@@ -110,6 +115,7 @@ import { getOrgRole } from '@knockout-js/api';
 
 const orgRole = await getOrgRole(1) // 结果:OrgRole
 ```
+
 
 ## getOrgUserList
 
@@ -135,6 +141,7 @@ const orgGroups = await getOrgUserList(1,{
 }) // 结果:UserConnection
 ```
 
+
 ## userPermissions
 
 根据应用code获取应用权限列表,接口策略为`cache-first`
@@ -150,6 +157,7 @@ import { userPermissions } from '@knockout-js/api';
 
 const appActions = await userPermissions('appCode') // 结果:AppAction[]
 ```
+
 
 ## getUsers
 
@@ -195,3 +203,4 @@ import { getDictItems } from '@knockout-js/api';
 const list1 = await getDictItems('appCode:appDictCode') // 结果:AppDictItem[]
 const list2 = await getDictItems(['appCode:appDictCode1','appCode:appDictCode2']) // 结果:AppDictItem[]
 ```
+
