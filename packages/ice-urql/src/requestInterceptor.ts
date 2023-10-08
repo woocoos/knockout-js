@@ -1,8 +1,13 @@
 import { Interceptors } from "@ice/plugin-request";
 import { message } from "antd";
 import type { AxiosError, AxiosResponse } from "axios";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
 
 interface ReqInterceptorOpts {
+  /**
+   * 签名模式
+   */
+  headerMode?: RequestHeaderAuthorizationMode;
   store: {
     /**
      * 获取需要的数据
@@ -36,14 +41,14 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error } = option;
+  const { store, login, loginRedirectKey, error, headerMode } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
         const { token, tenantId } = store.getState();
         if (config.headers) {
           if (!config.headers['Authorization']) {
-            config.headers['Authorization'] = token ? `Bearer ${token}` : ''
+            config.headers['Authorization'] = token ? getRequestHeaderAuthorization(token, headerMode) : ''
           }
           if (!config.headers['X-Tenant-ID']) {
             config.headers['X-Tenant-ID'] = tenantId
@@ -54,7 +59,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
     },
     response: {
       onConfig(response) {
-        if (response.status === 200 && response.data.errors) {
+        if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
             message.error(response.data.errors?.[0]?.message);
@@ -63,13 +68,13 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         return response;
       },
       onError: async (err) => {
-        if (err.response?.status === 401) {
+        if (err?.response?.status === 401) {
           if (login) {
-            location.href = `${login}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+            goLogin(login, loginRedirectKey);
           }
         }
 
-        const errRes = err.response as AxiosResponse<{
+        const errRes = err?.response as AxiosResponse<{
           errors: { message: string }[]
         }, any>
         let msg = errRes?.statusText;

@@ -4,6 +4,8 @@ import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
+import { RequestHeaderAuthorizationMode } from '@knockout-js/ice-urql/request';
+import { instanceName } from '@knockout-js/api';
 
 const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',
   ICE_DEV_TID = process.env.ICE_DEV_TID ?? '',
@@ -49,6 +51,7 @@ export const urqlConfig = defineUrqlConfig([
         }
       },
       authOpts: {
+        headerMode: RequestHeaderAuthorizationMode.KO,
         store: {
           getState: () => {
             const { token, tenantId, refreshToken } = store.getModelState('user')
@@ -70,11 +73,11 @@ export const urqlConfig = defineUrqlConfig([
     url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
   },
   {
-    instanceName: 'ucenter',
+    instanceName: instanceName.UCENTER,
     url: ICE_UCENTER_URL,
   },
   {
-    instanceName: 'msgcenter',
+    instanceName: instanceName.MSGCENTER,
     url: ICE_MSG_URL,
   },
 ])

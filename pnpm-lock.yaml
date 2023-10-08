@@ -208,6 +208,9 @@ importers:
       antd:
         specifier: ^5.6.3
         version: 5.6.3(react-dom@18.2.0)(react@18.2.0)
+      crypto-js:
+        specifier: ^4.1.1
+        version: 4.1.1
       graphql-ws:
         specifier: ^5.14.0
         version: 5.14.0(graphql@16.6.0)
@@ -221,6 +224,9 @@ importers:
         specifier: ^4.0.5
         version: 4.0.5(graphql@16.6.0)(react@18.2.0)
     devDependencies:
+      '@types/crypto-js':
+        specifier: ^4.1.1
+        version: 4.1.1
       '@types/react':
         specifier: ^18.0.0
         version: 18.0.0
@@ -4808,7 +4814,6 @@ packages:
       react: 18.2.0
       style-unit: 3.0.5
     dev: false
-
   /@ice/jsx-runtime@0.2.2(react@18.2.0):
     resolution: {integrity: sha512-RKwn3QgqualrWz+HxGZh7gS5lmCHIwvF6oVRsZbUI6Ekll98RrgGGvUvkn1SdSF7fYqWOG4ZA4neplBCJqf4NA==}
     peerDependencies:

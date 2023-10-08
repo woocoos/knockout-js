@@ -3,10 +3,9 @@ sidebar_position: 1
 ---
 # ucenter 接口
 
-## ucenter
 提供ucenter相关接口
 
-### getApps
+## getApps
 
 根据应用id列表获取应用id、code、name,接口策略为`cache-first`
 
@@ -20,7 +19,8 @@ import { getApps } from '@knockout-js/api';
 const apps = await getApps([1,2,3]) // 结果:App[]
 ```
 
-### getApp
+
+## getApp
 
 根据应用id获取应用id、code、name,接口策略为`cache-first`
 
@@ -34,7 +34,8 @@ import { getApp } from '@knockout-js/api';
 const app = await getApp(1) // 结果:App
 ```
 
-### getOrgs
+
+## getOrgs
 
 根据组织id列表获取组织id、code、name,接口策略为`cache-first`
 
@@ -48,7 +49,7 @@ import { getOrgs } from '@knockout-js/api';
 const orgs = await getOrgs([1,2,3]) // 结果:Org[]
 ```
 
-### getOrg
+## getOrg
 
 根据组织id获取组织id、code、name,接口策略为`cache-first`
 
@@ -62,7 +63,8 @@ import { getOrg } from '@knockout-js/api';
 const org = await getOrg(1) // 结果:Org
 ```
 
-### getOrgGroupList
+
+## getOrgGroupList
 
 获取用户组列表
 
@@ -84,7 +86,8 @@ const orgGroups = await getOrgGroupList({
 }) // 结果:OrgRoleConnection
 ```
 
-### getOrgRoles
+
+## getOrgRoles
 
 根据组织角色id列表获取组织角色id、orgID、kind、name,接口策略为`cache-first`
 
@@ -98,7 +101,8 @@ import { getOrgRoles } from '@knockout-js/api';
 const orgRoles = await getOrgRoles([1,2,3]) // 结果:OrgRole[]
 ```
 
-### getOrgRole
+
+## getOrgRole
 
 根据组织角色id获取组织角色id、orgID、kind、name,接口策略为`cache-first`
 
@@ -112,7 +116,8 @@ import { getOrgRole } from '@knockout-js/api';
 const orgRole = await getOrgRole(1) // 结果:OrgRole
 ```
 
-### getOrgUserList
+
+## getOrgUserList
 
 获取组织下用户组列表
 
@@ -136,7 +141,8 @@ const orgGroups = await getOrgUserList(1,{
 }) // 结果:UserConnection
 ```
 
-### userPermissions
+
+## userPermissions
 
 根据应用code获取应用权限列表,接口策略为`cache-first`
 
@@ -152,7 +158,8 @@ import { userPermissions } from '@knockout-js/api';
 const appActions = await userPermissions('appCode') // 结果:AppAction[]
 ```
 
-### getUsers
+
+## getUsers
 
 根据用户id列表获取用户id,displayName,接口策略为`cache-first`
 
@@ -166,7 +173,7 @@ import { getUsers } from '@knockout-js/api';
 const users = await getUsers([1,2,3]) // 结果:User[]
 ```
 
-### getUser
+## getUser
 
 根据用户id获取用户id,displayName,接口策略为`cache-first`
 
@@ -179,3 +186,21 @@ import { getUser } from '@knockout-js/api';
 
 const user = await getUser(1) // 结果:User
 ```
+
+## getDictItems
+
+根据refCode来获取字典项列表,接口策略为`cache-first`
+
+**参数:**
+
+refCodes: (string | string[])  *string='appCode:appDictCode'*
+
+
+
+```ts
+import { getDictItems } from '@knockout-js/api';
+
+const list1 = await getDictItems('appCode:appDictCode') // 结果:AppDictItem[]
+const list2 = await getDictItems(['appCode:appDictCode1','appCode:appDictCode2']) // 结果:AppDictItem[]
+```
+

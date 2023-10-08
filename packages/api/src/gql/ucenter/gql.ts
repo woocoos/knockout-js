@@ -15,6 +15,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
 const documents = {
     "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdListDocument,
     "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdDocument,
+    "query apiAppDictByRefCode($refCodes: [String!]!){\n  appDictByRefCode(refCodes:$refCodes){\n    id,items{\n      id,code,name,\n      dict{\n        code\n      }\n    }\n  }\n}": types.ApiAppDictByRefCodeDocument,
+    "query apiAppDictItemByRefCode($refCode: String!){\n  appDictItemByRefCode(refCode:$refCode){\n    id,code,name,\n    dict{\n      code\n    }\n  }\n}": types.ApiAppDictItemByRefCodeDocument,
     "query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdListDocument,
     "query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdDocument,
     "query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){\n  orgGroups(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      cursor,node{\n        id,orgID,kind,name,comments\n      }\n    }\n  }\n}": types.ApiOrgGroupListDocument,
@@ -64,6 +66,14 @@ export function gql(source: "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $id
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query apiAppDictByRefCode($refCodes: [String!]!){\n  appDictByRefCode(refCodes:$refCodes){\n    id,items{\n      id,code,name,\n      dict{\n        code\n      }\n    }\n  }\n}"): (typeof documents)["query apiAppDictByRefCode($refCodes: [String!]!){\n  appDictByRefCode(refCodes:$refCodes){\n    id,items{\n      id,code,name,\n      dict{\n        code\n      }\n    }\n  }\n}"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "query apiAppDictItemByRefCode($refCode: String!){\n  appDictItemByRefCode(refCode:$refCode){\n    id,code,name,\n    dict{\n      code\n    }\n  }\n}"): (typeof documents)["query apiAppDictItemByRefCode($refCode: String!){\n  appDictItemByRefCode(refCode:$refCode){\n    id,code,name,\n    dict{\n      code\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

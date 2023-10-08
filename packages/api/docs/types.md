@@ -5,7 +5,8 @@
 
 ### 使用
 ```ts
-import { App } from '@knockout-js/api/esm/gql/ucenter/graphql';
+
+import { App } from '@knockout-js/api/ucenter';
 
 const app:App = {
   id:1,
@@ -18,7 +19,7 @@ const app:App = {
 
 ### 使用
 ```ts
-import { MsgType } from '@knockout-js/api/esm/gql/msgcenter/graphql';
+import { MsgType } from '@knockout-js/api/msgcenter';
 
 const app:MsgType = {
   ...

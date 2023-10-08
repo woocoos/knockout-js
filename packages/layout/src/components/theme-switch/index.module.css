@@ -1,0 +1,14 @@
+.action {
+  display: flex;
+  align-items: center;
+  height: 42px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.action svg {
+  vertical-align: middle;
+  width: 18px;
+  height: 18px;
+}
