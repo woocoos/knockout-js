@@ -35,6 +35,6 @@ export default (props: DictionaryTextProps) => {
   }, [value, valueKey, items]);
 
   return <Typography.Text {...restProps}>
-    {dictItem?.name ?? props.value ?? ''}
+    {dictItem?.name ?? value ?? ''}
   </Typography.Text>
 }
