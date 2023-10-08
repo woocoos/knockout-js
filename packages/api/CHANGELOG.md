@@ -1,5 +1,10 @@
 # @knockout-js/api
 
+## 0.1.2
+
+### Patch Changes
+
+- publish 0.1.2
 
 ## 0.1.1-beta.4
 
@@ -12,7 +17,6 @@
 ### Patch Changes
 
 - publish merge dev
-
 
 ## 0.1.1-beta.3
 
