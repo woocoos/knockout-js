@@ -2,7 +2,7 @@ import { OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, 
 import { gid, instanceName } from "@knockout-js/api";
 import { useLocale } from "../locale";
 import { useState } from "react";
-import ProTable, { ProColumns, ProTableProps } from "@ant-design/pro-table";
+import { ProTable, ProColumns, ProTableProps } from "@ant-design/pro-components";
 import { gql, paging } from '@knockout-js/ice-urql/request';
 import { Modal, ModalProps } from "@knockout-js/layout";
 

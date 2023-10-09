@@ -42,7 +42,7 @@
   ],
   "dependencies": {
     "@ant-design/icons": "^5.2.5",
-    "@ant-design/pro-table": "^3.8.2",
+    "@ant-design/pro-components": "^2.6.28",
     "@ice/jsx-runtime": "^0.2.0",
     "@knockout-js/api": "workspace:^",
     "@knockout-js/layout": "workspace:^",

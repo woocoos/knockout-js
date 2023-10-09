@@ -19,7 +19,7 @@ sidebar_position: 1
 ```tsx preview
 import { useState } from "react";
 import { Button } from "antd";
-import { DictText } from "@knockout-js/layout";
+import { DictText } from "@knockout-js/org";
 
 export default () => {
   const sexDictCode = 'sex';
@@ -91,7 +91,7 @@ export default () => {
 ```tsx preview
 import { useState } from "react";
 import { Button } from "antd";
-import { DictSelect } from "@knockout-js/layout";
+import { DictSelect } from "@knockout-js/org";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { adminxApi } from "./assets/api";
 

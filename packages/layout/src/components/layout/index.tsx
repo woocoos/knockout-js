@@ -1,4 +1,4 @@
-import { MenuDataItem, ProLayout, ProLayoutProps } from '@ant-design/pro-layout';
+import { MenuDataItem, ProLayout, ProLayoutProps } from '@ant-design/pro-components';
 import I18nDropdown, { I18nDropdownProps } from '../i18n-dropdown';
 import TenantDropdown, { TenantDropdownProps } from '../tenant-dropdown';
 import AvatarDropdown, { AvatarDropdownProps } from '../avatar-dropdown';
