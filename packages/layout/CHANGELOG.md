@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.3-beta.0
+
+### Patch Changes
+
+- beta
+
 ## 0.1.2
 
 ### Patch Changes

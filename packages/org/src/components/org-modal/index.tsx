@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
+import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components';
 import { gid, instanceName } from "@knockout-js/api";
 import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgWhereInput } from "@knockout-js/api/ucenter";
 import { useLocale } from '../locale';

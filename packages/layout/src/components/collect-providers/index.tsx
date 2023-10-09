@@ -1,6 +1,6 @@
 import { Locale } from "antd/es/locale";
 import { ReactNode, useEffect, useState } from "react";
-import { ProConfigProvider } from "@ant-design/pro-provider";
+import { ProConfigProvider } from "@ant-design/pro-components";
 import { Provider, LeavePrompt, LocaleType } from "..";
 import { ConfigProvider } from "antd";
 import { AliveScope } from "react-activation";

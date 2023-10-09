@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-table';
+import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components';
 import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';

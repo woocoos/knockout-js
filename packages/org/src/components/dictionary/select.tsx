@@ -3,7 +3,7 @@ import { AppDictItem } from "@knockout-js/api/ucenter";
 import { Select, SelectProps } from "antd";
 import { useEffect, useState } from "react";
 import styles from "./index.module.css";
-import { useDistItems } from ".";
+import { useDistItems } from "./";
 
 export interface DictionarySelectProps extends SelectProps {
   /**
@@ -28,8 +28,8 @@ type DictionarySelectOption = {
 
 export default (props: DictionarySelectProps) => {
   const { dictCode, dataSource, changeValue, ...restProps } = props,
-    [items, itemsReload] = useDistItems(dictCode, dataSource),
-    [loading, setLoading] = useState(false),
+  [items, itemsReload] = useDistItems(dictCode, dataSource),
+  [loading, setLoading] = useState(false),
     [options, setOptions] = useState<DictionarySelectOption[]>([]);
 
   useEffect(() => {

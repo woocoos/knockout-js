@@ -2,8 +2,6 @@ export { default as Provider, Context, type ProviderProps, } from './provider';
 export { default as ThemeSwitch } from './theme-switch';
 export { default as AvatarDropdown } from './avatar-dropdown';
 export { default as KeepAlive } from './keep-alive';
-export { default as DictText } from './dictionary/text';
-export { default as DictSelect } from './dictionary/select';
 export { default as TenantDropdown } from './tenant-dropdown';
 export { default as MsgDropdown } from './msg-dropdown';
 export { default as LeavePrompt, useLeavePrompt } from './leave-prompt';

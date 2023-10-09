@@ -2,7 +2,7 @@ import { AppDictItem } from "@knockout-js/api/ucenter";
 import { Typography } from "antd"
 import { TextProps } from "antd/es/typography/Text";
 import { useEffect, useState } from "react";
-import { useDistItems } from ".";
+import { useDistItems } from "./";
 
 export interface DictionaryTextProps extends TextProps {
   /**

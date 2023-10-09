@@ -5,7 +5,7 @@ import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQu
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { SearchProps } from 'antd/es/input';
-import { ProTableProps } from '@ant-design/pro-table';
+import { ProTableProps } from '@ant-design/pro-components';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import { BaseOptionType } from 'antd/es/select';
 import styles from '../assets/autoComplete.module.css';
