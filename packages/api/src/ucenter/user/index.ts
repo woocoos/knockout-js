@@ -37,8 +37,9 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
       where: {
         hasAppWith: [{ code: appCode, }],
         or: [
+          { kind: AppActionKind.Route },
           { kind: AppActionKind.Function },
-          { kindNEQ: AppActionKind.Function, method: AppActionMethod.Write }
+          { kindNEQ: AppActionKind.Graphql, method: AppActionMethod.Write },
         ],
       }
     },

@@ -24,11 +24,7 @@ import { DictText } from "@knockout-js/org";
 export default () => {
   const sexDictCode = 'sex';
   const dictCode = 'sexTest';
-  const dataSource = [
-    {id:"1",name:'男',code:'male',dict:{code:dictCode}},
-    {id:"2",name:'女',code:'female',dict:{code:dictCode}},
-    {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
-  ]
+  
   return (<>
     <div>正常使用：
       <DictText 
@@ -63,7 +59,11 @@ export default () => {
     <div>TextProps type='success'：
       <DictText 
       dictCode={dictCode} 
-      dataSource={dataSource} 
+      dataSource={[
+        {id:"1",name:'男',code:'male',dict:{code:dictCode}},
+        {id:"2",name:'女',code:'female',dict:{code:dictCode}},
+        {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
+      ]} 
       type="success"
       value="2" 
       valueKey="id" />
@@ -81,6 +81,7 @@ export default () => {
 | ---------- | --------------------------------- | ----------------- | ---- | ------ |
 | value      | 值，支持AppDictItem的id或code字段 | string            | ❌    | -      |
 | dictCode   | AppDict.code                      | string            | ✅    | -      |
+| appCode    | 应用code默认取当前应用不需要传递  | string            | ❌    | -      |
 | dataSource | 外部出入数据源                    | AppDictItem[]     | ❌    | -      |
 | valueKey   | 决定取AppDictItem的id或code字段   | 'id' &#124 'code' | ❌    | 'code' |
 
@@ -107,12 +108,6 @@ export default () => {
   const [itemCode, setItemCode] = useState()
   const sexDictCode = 'sex';
   const dictCode = 'sexTest';
-  const dataSource = [
-    {id:"1",name:'男',code:'male',dict:{code:dictCode}},
-    {id:"2",name:'女',code:'female',dict:{code:dictCode}},
-    {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
-    {id:"4",name:'test',code:'test',dict:{code:dictCode}},
-  ];
 
   return (<>
     <div>选择结果:{itemCode}</div>
@@ -135,7 +130,12 @@ export default () => {
     <div>选择结果:{itemId}</div>
     <DictSelect 
       dictCode={dictCode} 
-      dataSource={dataSource}
+      dataSource={ [
+        {id:"1",name:'男',code:'male',dict:{code:dictCode}},
+        {id:"2",name:'女',code:'female',dict:{code:dictCode}},
+        {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
+        {id:"4",name:'test',code:'test',dict:{code:dictCode}},
+      ]}
       changeValue="id"
       value={itemId} 
       onChange={(value) => {
@@ -154,5 +154,6 @@ export default () => {
 | 属性        | 描述                                    | 类型              | 必填 | 默认值 |
 | ----------- | --------------------------------------- | ----------------- | ---- | ------ |
 | dictCode    | AppDict.code                            | string            | ✅    | -      |
+| appCode     | 应用code默认取当前应用不需要传递        | string            | ❌    | -      |
 | dataSource  | 外部出入数据源                          | AppDictItem[]     | ❌    | -      |
 | changeValue | 决定onChange取AppDictItem的id或code字段 | 'id' &#124 'code' | ❌    | 'code' |

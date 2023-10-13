@@ -352,6 +352,8 @@ export type AppDictItem = Node & {
   org?: Maybe<Org>;
   /** 组织ID,空为全局字典 */
   orgID?: Maybe<Scalars['ID']['output']>;
+  /** 关联代码,由app_code和dict_code组成 */
+  refCode: Scalars['String']['output'];
   /** 状态 */
   status?: Maybe<AppDictItemSimpleStatus>;
   updatedAt?: Maybe<Scalars['Time']['output']>;
@@ -3546,6 +3548,22 @@ export type OrgRoleUserWhereInput = {
  */
 export type OrgRoleWhereInput = {
   and?: InputMaybe<Array<OrgRoleWhereInput>>;
+  /** comments field predicates */
+  comments?: InputMaybe<Scalars['String']['input']>;
+  commentsContains?: InputMaybe<Scalars['String']['input']>;
+  commentsContainsFold?: InputMaybe<Scalars['String']['input']>;
+  commentsEqualFold?: InputMaybe<Scalars['String']['input']>;
+  commentsGT?: InputMaybe<Scalars['String']['input']>;
+  commentsGTE?: InputMaybe<Scalars['String']['input']>;
+  commentsHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  commentsHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  commentsIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  commentsIsNil?: InputMaybe<Scalars['Boolean']['input']>;
+  commentsLT?: InputMaybe<Scalars['String']['input']>;
+  commentsLTE?: InputMaybe<Scalars['String']['input']>;
+  commentsNEQ?: InputMaybe<Scalars['String']['input']>;
+  commentsNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  commentsNotNil?: InputMaybe<Scalars['Boolean']['input']>;
   /** created_at field predicates */
   createdAt?: InputMaybe<Scalars['Time']['input']>;
   createdAtGT?: InputMaybe<Scalars['Time']['input']>;
@@ -4325,6 +4343,8 @@ export type PolicyRuleInput = {
 
 export type Query = {
   __typename?: 'Query';
+  /** 检测应用登录授权 */
+  appAccess: Scalars['Boolean']['output'];
   /** 根据ref_code获取数据字典,用于批量获取 */
   appDictByRefCode: Array<AppDict>;
   /** 根据ref_code获取数据字典值 */
@@ -4379,6 +4399,11 @@ export type Query = {
   /** 用户加入的root组织 */
   userRootOrgs: Array<Org>;
   users: UserConnection;
+};
+
+
+export type QueryAppAccessArgs = {
+  appCode: Scalars['String']['input'];
 };
 
 
@@ -5970,14 +5995,14 @@ export type ApiAppDictByRefCodeQueryVariables = Exact<{
 }>;
 
 
-export type ApiAppDictByRefCodeQuery = { __typename?: 'Query', appDictByRefCode: Array<{ __typename?: 'AppDict', id: string, items?: Array<{ __typename?: 'AppDictItem', id: string, code: string, name: string, dict?: { __typename?: 'AppDict', code: string } | null }> | null }> };
+export type ApiAppDictByRefCodeQuery = { __typename?: 'Query', appDictByRefCode: Array<{ __typename?: 'AppDict', id: string, items?: Array<{ __typename?: 'AppDictItem', id: string, code: string, name: string, refCode: string }> | null }> };
 
 export type ApiAppDictItemByRefCodeQueryVariables = Exact<{
   refCode: Scalars['String']['input'];
 }>;
 
 
-export type ApiAppDictItemByRefCodeQuery = { __typename?: 'Query', appDictItemByRefCode: Array<{ __typename?: 'AppDictItem', id: string, code: string, name: string, dict?: { __typename?: 'AppDict', code: string } | null }> };
+export type ApiAppDictItemByRefCodeQuery = { __typename?: 'Query', appDictItemByRefCode: Array<{ __typename?: 'AppDictItem', id: string, code: string, name: string, refCode: string }> };
 
 export type ApiOrgIdListQueryVariables = Exact<{
   ids: Array<Scalars['GID']['input']> | Scalars['GID']['input'];
@@ -6174,8 +6199,8 @@ export type OrgPkgUserInfoQuery = { __typename?: 'Query', node?: { __typename?: 
 
 export const ApiAppIdListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppIdList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdListQuery, ApiAppIdListQueryVariables>;
 export const ApiAppIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdQuery, ApiAppIdQueryVariables>;
-export const ApiAppDictByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"dict"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppDictByRefCodeQuery, ApiAppDictByRefCodeQueryVariables>;
-export const ApiAppDictItemByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictItemByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictItemByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"dict"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"code"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppDictItemByRefCodeQuery, ApiAppDictItemByRefCodeQueryVariables>;
+export const ApiAppDictByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"refCode"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppDictByRefCodeQuery, ApiAppDictByRefCodeQueryVariables>;
+export const ApiAppDictItemByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictItemByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictItemByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"refCode"}}]}}]}}]} as unknown as DocumentNode<ApiAppDictItemByRefCodeQuery, ApiAppDictItemByRefCodeQueryVariables>;
 export const ApiOrgIdListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgIdList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Org"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgIdListQuery, ApiOrgIdListQueryVariables>;
 export const ApiOrgIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Org"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgIdQuery, ApiOrgIdQueryVariables>;
 export const ApiOrgGroupListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgGroupList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrgRoleOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrgRoleWhereInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"orgGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"orgID"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"comments"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgGroupListQuery, ApiOrgGroupListQueryVariables>;

@@ -10,9 +10,13 @@ export interface DictionaryTextProps extends TextProps {
    */
   value?: string;
   /**
-   * 字典code
+   * 字典dictCode
    */
   dictCode: string;
+  /**
+  * 应用code
+  */
+  appCode?: string;
   /**
    * 外部提供数据源
    */
@@ -25,8 +29,8 @@ export interface DictionaryTextProps extends TextProps {
 
 
 export default (props: DictionaryTextProps) => {
-  const { value, dataSource, dictCode, valueKey, ...restProps } = props,
-    [items] = useDistItems(dictCode, dataSource),
+  const { value, dataSource, appCode, dictCode, valueKey, ...restProps } = props,
+    [items] = useDistItems(dictCode, appCode, dataSource),
     [dictItem, setDictItem] = useState<AppDictItem>();
 
 
