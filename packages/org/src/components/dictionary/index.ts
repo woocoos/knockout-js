@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 
 let timeoutFn: NodeJS.Timeout | undefined = undefined, isLoad = false;
 const distData: Record<string, AppDictItem[] | undefined> = {},
+  distDataChangeEvent = 'distDataChangeEvent',
   collectRefCodes: string[] = [];
 
 /**
@@ -25,7 +26,8 @@ export const useDistItems = (dictCode: string, appCode?: string, dataSource?: Ap
       if (code) {
         distData[code] = list.filter(item => item.refCode == code);
       }
-    })
+    });
+    document.dispatchEvent(new CustomEvent(distDataChangeEvent))
   }
 
   /**
@@ -61,9 +63,16 @@ export const useDistItems = (dictCode: string, appCode?: string, dataSource?: Ap
   }, [refCode, dataSource]);
 
   useEffect(() => {
-    setItems(distData[refCode]?.filter(item => item.refCode === refCode) ?? [])
-  }, [distData[refCode]])
+    const handleChange = () => {
+      setItems(distData[refCode] ?? [])
+    }
 
+    document.addEventListener(distDataChangeEvent, handleChange);
+
+    return () => {
+      document.removeEventListener(distDataChangeEvent, handleChange);
+    }
+  }, [])
 
   return [items, reloadDistItems];
 }

@@ -9,9 +9,6 @@ sidebar_position: 1
 
 本 Demo 演示用法。
 
-**TODO:如果在`<ProTable ... />`上出现名称没转换,可能需要放一个不设置value的`<DictText dictCode="MsgCategory"  />`在同层来触发名称渲染**
-
-
 ## DictText
 
 用于展示值组件
@@ -23,46 +20,53 @@ import { DictText } from "@knockout-js/org";
 
 export default () => {
   const sexDictCode = 'sex';
+  const appCode = 'app1';
   const dictCode = 'sexTest';
   
   return (<>
     <div>正常使用：
       <DictText 
         dictCode={sexDictCode} 
+        appCode={appCode}
         value="male" 
       />
     </div>
     <div>用id来处理：
       <DictText 
       dictCode={sexDictCode} 
+      appCode={appCode} 
       value="2" 
       valueKey="id" />
     </div>
      <div>测试同时加载同一个数据3：
       <DictText 
         dictCode={sexDictCode} 
+        appCode={appCode} 
         value="male" 
       />
     </div>
      <div>测试同时加载同一个数据4：
       <DictText 
         dictCode={sexDictCode} 
+        appCode={appCode} 
         value="male" 
       />
     </div>
      <div>测试同时加载同一个数据5：
       <DictText 
         dictCode={sexDictCode} 
+        appCode={appCode} 
         value="male" 
       />
     </div>
     <div>TextProps type='success'：
       <DictText 
-      dictCode={dictCode} 
+      dictCode={dictCode}
+      appCode={appCode}
       dataSource={[
-        {id:"1",name:'男',code:'male',dict:{code:dictCode}},
-        {id:"2",name:'女',code:'female',dict:{code:dictCode}},
-        {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
+        {id:"1",name:'男',code:'male',refCode:`${appCode}:${dictCode}`},
+        {id:"2",name:'女',code:'female',refCode:`${appCode}:${dictCode}`},
+        {id:"3",name:'保密',code:'confidentiality',refCode:`${appCode}:${dictCode}`},
       ]} 
       type="success"
       value="2" 
@@ -107,12 +111,14 @@ export default () => {
   const [itemId, setItemId] = useState()
   const [itemCode, setItemCode] = useState()
   const sexDictCode = 'sex';
+  const appCode = 'app1';
   const dictCode = 'sexTest';
 
   return (<>
     <div>选择结果:{itemCode}</div>
     <DictSelect 
       dictCode={sexDictCode} 
+      appCode={appCode} 
       value={itemCode} 
       onChange={(value) => {
         setItemCode(value);
@@ -121,6 +127,7 @@ export default () => {
     <div>选择结果:{itemId}</div>
     <DictSelect 
       dictCode={sexDictCode} 
+      appCode={appCode} 
       changeValue="id"
       value={itemId} 
       onChange={(value) => {
@@ -130,11 +137,12 @@ export default () => {
     <div>选择结果:{itemId}</div>
     <DictSelect 
       dictCode={dictCode} 
+      appCode={appCode} 
       dataSource={ [
-        {id:"1",name:'男',code:'male',dict:{code:dictCode}},
-        {id:"2",name:'女',code:'female',dict:{code:dictCode}},
-        {id:"3",name:'保密',code:'confidentiality',dict:{code:dictCode}},
-        {id:"4",name:'test',code:'test',dict:{code:dictCode}},
+        {id:"1",name:'男',code:'male',refCode:`${appCode}:${dictCode}`},
+        {id:"2",name:'女',code:'female',refCode:`${appCode}:${dictCode}`},
+        {id:"3",name:'保密',code:'confidentiality',refCode:`${appCode}:${dictCode}`},
+        {id:"4",name:'test',code:'test',refCode:`${appCode}:${dictCode}`},
       ]}
       changeValue="id"
       value={itemId} 
