@@ -1,6 +1,7 @@
 import store from "@/store"
 import { gid } from "@knockout-js/api"
 import { gql, subscription, query } from "@knockout-js/ice-urql/request"
+import { DictText } from "@knockout-js/org"
 
 const
   subQuery = gql`subscription{
@@ -28,6 +29,7 @@ export default () => {
 
   return <>
     <h1>测试URQL订阅</h1>
+    <DictText dictCode="sex" value="male"></DictText>
     <div>
       <button onClick={async () => {
         const result = await query(nodeQuery, {

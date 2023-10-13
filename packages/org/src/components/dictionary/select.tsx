@@ -7,9 +7,13 @@ import { useDistItems } from "./";
 
 export interface DictionarySelectProps extends SelectProps {
   /**
-   * 字典code
+   * 字典dictCode
    */
   dictCode: string;
+  /**
+   * 应用code
+   */
+  appCode?: string;
   /**
    * 外部提供数据源
    */
@@ -27,9 +31,9 @@ type DictionarySelectOption = {
 }
 
 export default (props: DictionarySelectProps) => {
-  const { dictCode, dataSource, changeValue, ...restProps } = props,
-  [items, itemsReload] = useDistItems(dictCode, dataSource),
-  [loading, setLoading] = useState(false),
+  const { dictCode, dataSource, appCode, changeValue, ...restProps } = props,
+    [items, itemsReload] = useDistItems(dictCode, appCode, dataSource),
+    [loading, setLoading] = useState(false),
     [options, setOptions] = useState<DictionarySelectOption[]>([]);
 
   useEffect(() => {

@@ -7,20 +7,14 @@ import { AppDictItem } from '../../gql/ucenter/graphql';
 const dictListQuery = gql(/* GraphQL */`query apiAppDictByRefCode($refCodes: [String!]!){
   appDictByRefCode(refCodes:$refCodes){
     id,items{
-      id,code,name,
-      dict{
-        code
-      }
+      id,code,name,refCode
     }
   }
 }`)
 
 const dictItemListQuery = gql(/* GraphQL */`query apiAppDictItemByRefCode($refCode: String!){
   appDictItemByRefCode(refCode:$refCode){
-    id,code,name,
-    dict{
-      code
-    }
+    id,code,name,refCode
   }
 }`)
 
