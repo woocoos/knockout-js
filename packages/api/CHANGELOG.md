@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.5
+
+### Patch Changes
+
+- fix 获取权限 bug
+
 ## 0.1.4
 
 ### Patch Changes
