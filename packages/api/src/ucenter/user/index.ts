@@ -39,7 +39,7 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
         or: [
           { kind: AppActionKind.Route },
           { kind: AppActionKind.Function },
-          { kindNEQ: AppActionKind.Graphql, method: AppActionMethod.Write },
+          { method: AppActionMethod.Write },
         ],
       }
     },
