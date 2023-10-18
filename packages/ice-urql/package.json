@@ -58,7 +58,6 @@
     "@ice/runtime": "^1.2.4",
     "@swc/helpers": "^0.5.1",
     "@urql/exchange-auth": "^2.1.6",
-    "antd": "^5.6.3",
     "crypto-js": "^4.1.1",
     "graphql-ws": "^5.14.0",
     "jwt-decode": "^3.1.2",
