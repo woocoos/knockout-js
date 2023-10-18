@@ -2,7 +2,6 @@
 import { authExchange as urqlAuthExchange, } from "@urql/exchange-auth";
 import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchange } from "urql";
 import jwtDcode, { JwtPayload } from 'jwt-decode';
-import { message } from 'antd';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
 import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
@@ -52,7 +51,7 @@ export interface AuthExchangeOpts {
    * @param error
    * @returns
    */
-  error?: (error: CombinedError) => boolean;
+  error?: (error: CombinedError, errStr?: string) => boolean;
 }
 
 /**
@@ -82,8 +81,7 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
             return false;
           }
         }
-        message.error(err.toString().replace('[Network] ', '').replace('[GraphQL] ', ''))
-        return error?.(err) ?? false;
+        return error?.(err, err.toString().replace('[Network] ', '').replace('[GraphQL] ', '')) ?? false;
       },
       async refreshAuth() {
         const { refreshToken } = store.getState();

@@ -14,6 +14,7 @@ const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',
   ICE_MSG_WS_URL = process.env.ICE_MSG_WS_URL ?? ''
 // ICE_APP_CODE = process.env.ICE_APP_CODE ?? '',
 
+
 export default {
   app: {
     rootId: 'app',
@@ -21,6 +22,7 @@ export default {
 };
 
 export const dataLoader = defineDataLoader(async () => {
+  console.log('defineDataLoader')
   return {
     user: {
       token: ICE_DEV_TOKEN,
@@ -84,6 +86,7 @@ export const urqlConfig = defineUrqlConfig([
 
 // 权限
 export const authConfig = defineAuthConfig(async (appData) => {
+  console.log('defineAuthConfig')
   const { user } = appData,
     initialAuth = {};
   return {
@@ -93,6 +96,7 @@ export const authConfig = defineAuthConfig(async (appData) => {
 
 // store数据项
 export const storeConfig = defineStoreConfig(async (appData) => {
+  console.log('defineStoreConfig')
   const { user } = appData;
   return {
     initialStates: {
@@ -101,18 +105,23 @@ export const storeConfig = defineStoreConfig(async (appData) => {
   };
 });
 
+
 // 请求配置
-export const requestConfig = defineRequestConfig(() => ({
-  baseURL: '/',
-  interceptors: requestInterceptor({
-    store: {
-      getState: () => {
-        const { token, tenantId } = store.getModelState('user')
-        return {
-          token, tenantId
+export const requestConfig = defineRequestConfig(async () => {
+  console.log('defineRequestConfig')
+  return {
+    baseURL: '/',
+    interceptors: requestInterceptor({
+      store: {
+        getState: () => {
+          return {
+            token: '', tenantId: ''
+          }
         }
-      }
-    },
-    login: '/login'
-  })
-}));
+      },
+      login: '/login'
+    }),
+  }
+});
+
+

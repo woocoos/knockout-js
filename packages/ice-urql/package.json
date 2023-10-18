@@ -1,37 +1,42 @@
 {
   "name": "@knockout-js/ice-urql",
-  "version": "0.1.3",
+  "version": "0.1.4-beta.1",
   "description": "urql plugin for ice",
   "license": "MIT",
   "type": "module",
-  "main": "./es2017/index.js",
-  "types": "./es2017/index.d.ts",
+  "main": "./esm/index.js",
+  "types": "./esm/index.d.ts",
   "exports": {
     ".": {
-      "types": "./es2017/index.d.ts",
-      "import": "./es2017/index.js",
-      "default": "./es2017/index.js"
+      "types": "./esm/index.d.ts",
+      "import": "./esm/index.js",
+      "default": "./esm/index.js"
     },
     "./runtime": {
-      "types": "./es2017/runtime.d.ts",
-      "import": "./es2017/runtime.js",
-      "default": "./es2017/runtime.js"
+      "types": "./esm/runtime.d.ts",
+      "import": "./esm/runtime.js",
+      "default": "./esm/runtime.js"
     },
     "./request": {
-      "types": "./es2017/request.d.ts",
-      "import": "./es2017/request.js",
-      "default": "./es2017/request.js"
+      "types": "./esm/request.d.ts",
+      "import": "./esm/request.js",
+      "default": "./esm/request.js"
+    },
+    "./requestInterceptor": {
+      "types": "./esm/requestInterceptor.d.ts",
+      "import": "./esm/requestInterceptor.js",
+      "default": "./esm/requestInterceptor.js"
     },
     "./types": {
-      "types": "./es2017/types.d.ts",
-      "import": "./es2017/types.js",
-      "default": "./es2017/types.js"
+      "types": "./esm/types.d.ts",
+      "import": "./esm/types.js",
+      "default": "./esm/types.js"
     },
     "./*": "./*"
   },
   "files": [
+    "esm",
     "es2017",
-    "!es2017/**/*.map",
     "*.d.ts"
   ],
   "publishConfig": {
@@ -53,7 +58,6 @@
     "@ice/runtime": "^1.2.4",
     "@swc/helpers": "^0.5.1",
     "@urql/exchange-auth": "^2.1.6",
-    "antd": "^5.6.3",
     "crypto-js": "^4.1.1",
     "graphql-ws": "^5.14.0",
     "jwt-decode": "^3.1.2",
