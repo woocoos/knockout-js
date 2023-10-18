@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.4
+
+### Patch Changes
+
+- ice-urlq 0.1.4
+
 ## 0.1.4-beta.1
 
 ### Patch Changes
