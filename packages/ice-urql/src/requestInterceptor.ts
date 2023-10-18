@@ -1,5 +1,4 @@
 import { Interceptors } from "@ice/plugin-request";
-import { message } from "antd";
 import type { AxiosError, AxiosResponse } from "axios";
 import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
 
@@ -32,7 +31,7 @@ interface ReqInterceptorOpts {
    * @param error
    * @returns
    */
-  error?: (error: AxiosError<unknown, any>) => void;
+  error?: (error: AxiosError | AxiosResponse, errStr?: string) => void;
 }
 
 /**
@@ -62,7 +61,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
-            message.error(response.data.errors?.[0]?.message);
+            error?.(response as AxiosResponse, response.data.errors?.[0]?.message)
           }
         }
         return response;
@@ -82,11 +81,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
           msg = errRes?.data?.errors?.[0]?.message;
         }
 
-        if (msg) {
-          message.error(msg);
-        }
-
-        error?.(err as AxiosError<unknown, any>)
+        error?.(err as AxiosError, msg)
       },
     },
   }

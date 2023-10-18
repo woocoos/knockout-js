@@ -4,30 +4,29 @@ import urqlPlugin from '@knockout-js/ice-urql';
 import request from "@ice/plugin-request";
 import jsxPlus from '@ice/plugin-jsx-plus';
 import auth from '@ice/plugin-auth';
-import antd from '@ice/plugin-antd';
 
 const NODE_ENV = process.env.NODE_ENV,
-  minify = process.env.NODE_ENV === 'production' ? 'swc' : 'swc';
+  minify = NODE_ENV === 'production' ? 'swc' : false;
 
 export default defineConfig(() => ({
   ssg: false,
-  ssr: false,
   minify,
-  codeSplitting: 'page',
+  codeSplitting: 'page-vendors',
   compileDependencies: NODE_ENV === 'development' ? [/@urql\/core/] : true,
   routes: {
     ignoreFiles: [
       '**/components/**',   // 添加此配置忽略components被解析成路由组件
     ],
   },
+  externals: {
+    'react': 'React',
+    'react-dom': 'ReactDOM',
+  },
   plugins: [
     urqlPlugin(),
     request(),
     store(),
     jsxPlus(),
-    antd({
-      importStyle: false,
-    }),
     auth(),
   ],
 }));
