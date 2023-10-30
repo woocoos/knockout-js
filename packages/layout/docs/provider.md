@@ -43,3 +43,4 @@ export default () => {
 | ------------- | -------------------- | ------------------------- |
 | useAppCode()  | 获取上下文的appCode  | strign  &#124;  undefined |
 | useTenantId() | 获取上下文的tenantId | strign  &#124;  undefined |
+| useDark()     | 获取上下文的dark     | boolean                   |

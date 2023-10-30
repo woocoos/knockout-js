@@ -34,8 +34,8 @@ export default () => {
 
 ## props
 
-| 属性       | 描述  | 类型                   | 必填 | 默认值 |
-|----------|-----|----------------------|----|-----|
-| value    | 值   | string               | ✅  | -   |
-| dataSource    | 提供数据源   | Org[]               | ✅  | -   |
-| onChange | 更新值 | (value:string)=>void | ✅  | -   |
+| 属性       | 描述       | 类型                 | 必填 | 默认值 |
+| ---------- | ---------- | -------------------- | ---- | ------ |
+| value      | 值         | string               | ✅    | -      |
+| dataSource | 提供数据源 | Org[]                | ✅    | -      |
+| onChange   | 更新值     | (value:string)=>void | ✅    | -      |

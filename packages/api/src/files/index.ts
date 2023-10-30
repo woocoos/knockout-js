@@ -53,7 +53,7 @@ export async function updateFiles(data: {
  * @param fileId
  * @returns
  */
-export async function getFiles(fileId: string) {
+export async function getFiles(fileId: string | number) {
   if (fileId == '0') {
     return null;
   }
@@ -69,7 +69,7 @@ export async function getFiles(fileId: string) {
  * @param fileId
  * @returns
  */
-export async function delFiles(fileId: string) {
+export async function delFiles(fileId: string | number) {
   if (fileId == '0') {
     return null;
   }

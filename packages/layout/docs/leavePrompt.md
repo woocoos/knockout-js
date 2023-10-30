@@ -50,9 +50,18 @@ export default () => {
 
 <ReactDocgenProps path="../src/components/leave-prompt/index.tsx"></ReactDocgenProps>
 
-## useLeavePrompt
+## method
 
-| 名称                 | 参数                     | 描述                            |
-|--------------------|------------------------|-------------------------------|
-| checkLeave         | () => boolean          | 检测是否可以离开。true:可离开,false:被拦截   |
+用法
+
+```ts
+import { useLeavePrompt } from "@knockout-js/layout";
+
+const [checkLeave, setLeavePromptWhen] = useLeavePrompt();
+```
+说明：
+
+| 名称               | 参数                   | 描述                                           |
+| ------------------ | ---------------------- | ---------------------------------------------- |
+| checkLeave         | () => boolean          | 检测是否可以离开。true:可离开,false:被拦截     |
 | setLeavePromptWhen | (when:boolean) => void | 主动设置是否可以离开。true:可离开,false:被拦截 |

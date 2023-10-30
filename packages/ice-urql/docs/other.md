@@ -10,9 +10,10 @@
 | 属性             | 描述                    | 类型                                                | 必填 | 默认值   |
 | ---------------- | ----------------------- | --------------------------------------------------- | ---- | -------- |
 | store            | 提供获取数据            | {getState: () => {token: string;tenantId: string;}} | ✅    | -        |
+| headerMode       | header签名模式          | RequestHeaderAuthorizationMode                      | ❌    | -        |
 | login            | 登陆地址                | string                                              | ❌    | -        |
 | loginRedirectKey | 登陆地址记录当前路由key | string                                              | ❌    | redirect |
-| error            | 异常处理                | (error: AxiosError) => void                         | ❌    | -        |
+| error            | 异常处理                | (error: AxiosError,errStr?:string) => void          | ❌    | -        |
 
 ### 用例
 ```ts title=app.ts
