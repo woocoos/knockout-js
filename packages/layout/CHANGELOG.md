@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.4
+
+### Patch Changes
+
+- 修复 bug
+
 ## 0.1.3
 
 ### Patch Changes
