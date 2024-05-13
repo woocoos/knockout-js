@@ -1,17 +1,17 @@
-import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-design/icons"
-import { useCallback, useEffect, useState } from "react"
-import styles from "./index.module.css"
-import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
-import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, } from "@dnd-kit/core";
-import { arrayMove, SortableContext, useSortable, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-design/icons";
+import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, } from "@dnd-kit/core";
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from '@dnd-kit/utilities';
-import { useLocale } from "../locale";
-import { useDark } from "../provider";
+import { instanceName } from "@knockout-js/api";
+import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/ucenter";
+import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
+import { Drawer, DrawerProps, Empty, Input, Space } from "antd";
+import { useCallback, useEffect, useState } from "react";
 import { listFormatTreeData, treeFormatList } from "../_util";
 import { OpenWin } from "../icons";
-import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/ucenter";
-import { instanceName } from "@knockout-js/api";
+import { useLocale } from "../locale";
+import { useDark } from "../provider";
+import styles from "./index.module.css";
 
 const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){
   userMenus(appCode: $appCode){
@@ -360,7 +360,7 @@ export default (props: AggregateMenuProps) => {
           {/* all应用菜单 */}
           <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
             <div className={styles.aggregateMenuDrawerAllMenuColumn}>
-              {filterList.map(item => (
+              {filterList.map(item => (item.menu.length ?
                 <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>
                   <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
                   {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
@@ -373,7 +373,7 @@ export default (props: AggregateMenuProps) => {
                     </div>
                   ))}
                 </div>
-              ))}
+                : <></>))}
             </div>
           </div>
         </div>

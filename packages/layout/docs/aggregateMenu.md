@@ -57,6 +57,10 @@ export default () => {
       app: { id: '6', name: 'app6', code: 'app6' } as App,
       menu:menuData(6,10)
     },
+    {
+      app: { id: '7', name: 'app7', code: 'app7' } as App,
+      menu:[]
+    },
   ];
 
 

@@ -163,10 +163,10 @@
 
 /* 黑色主题处理 */
 .aggregateMenuDark {
-  color: #ffffffcc;
+  color: #1c1121;
 }
 
-.aggregateMenuDark .aggregateMenuDrawerAllInput {
+/* .aggregateMenuDark .aggregateMenuDrawerAllInput {
   border-bottom: 1px solid #ffffff40;
 }
 
@@ -177,4 +177,4 @@
 
 .aggregateMenuDark .aggregateMenuDrawerMenuItem:hover {
   background-color: #ffffff40;
-}
+} */
