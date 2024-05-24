@@ -4,9 +4,11 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "ice start",
+    "dev-build": "ice build",
     "build": "echo 'pass'"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.583.0",
     "@ice/plugin-request": "^1.0.2",
     "@ice/runtime": "^1.2.9",
     "@knockout-js/api": "workspace:*",
