@@ -13,30 +13,36 @@ const client = new S3Client({
   },
 }), bucket = "test1";
 
+// const client = new S3Client({
+//   endpoint: "http://oss-cn-shenzhen.aliyuncs.com",
+//   region: "oss-cn-shenzhen",
+//   credentials: {
+//     accessKeyId: "",
+//     secretAccessKey: "",
+//   },
+// }), bucket = "";
+
 type S3Object = {
   key: string;
   bucket: string;
 }
 
-
 export default () => {
 
   const [fileList, setFileList] = useState<UploadFile<S3Object>[]>([])
-  // const [fileList, setFileList] = useState<UploadFile<S3Object>[]>([{ "uid": "rc-upload-1716535094380-2", "name": "641.jpg", "status": "done", "response": { "bucket": "test1", "key": "1716538460408.jpg" } }])
 
   const getFile = async (bucket: string, key: string) => {
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: key,
       ResponseContentEncoding: "utf-8",
-      ResponseContentType: "blob",
     });
     try {
       const response = await client.send(command);
       if (response?.$metadata?.httpStatusCode === 200) {
         const byteBody = await response.Body?.transformToByteArray();
         if (byteBody) {
-          return URL.createObjectURL(new File([byteBody], key, { type: response.Metadata?.type }));
+          return URL.createObjectURL(new File([byteBody], key, { type: response.ContentType }));
         }
       }
     } catch (error) {
@@ -47,16 +53,14 @@ export default () => {
   const updateFile = async (bucket: string, file: File) => {
     const
       suffix = file.name.split('.').pop(),
-      key = `${Date.now()}.${suffix}`,
+      key = `test/${Date.now()}.${suffix}`,
       body = new Blob([file], { type: file.type });
     const command = new PutObjectCommand({
       Bucket: bucket,
       Key: key,
       Body: body,
       ContentEncoding: "utf-8",
-      Metadata: {
-        "type": file.type,
-      },
+      ContentType: file.type,
     });
     try {
       const response = await client.send(command);
@@ -119,8 +123,10 @@ export default () => {
       onRemove={async (file: UploadFile<S3Object>) => {
         if (file.response?.bucket && file.response?.key) {
           await delFile(file.response.bucket, file.response.key);
+          setFileList(fileList.filter(item => item.uid !== file.uid))
+        } else {
+          setFileList(fileList.filter(item => item.uid !== file.uid))
         }
-        setFileList(fileList.filter(item => item.uid !== file.uid))
       }}
     >
       <Button>Click to Upload</Button>
