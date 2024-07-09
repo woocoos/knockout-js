@@ -4,11 +4,9 @@ import { awsS3, getFileSource } from "@knockout-js/api";
 
 type S3Object = {
   path: string;
-  bucket: string;
   storageUrl: string;
 }
 
-const bucket = 'woocootest'
 
 export default () => {
 
@@ -44,7 +42,7 @@ export default () => {
           const result = await s3.uploadFile(file, `test`)
           if (result) {
             fileData.status = 'done'
-            fileData.response = { bucket: bucket, path: result.path, storageUrl: result.storageUrl }
+            fileData.response = { path: result.path, storageUrl: result.storageUrl }
           } else {
             fileData.status = 'error'
           }
@@ -54,7 +52,7 @@ export default () => {
       }}
       onPreview={async (file: UploadFile<S3Object>) => {
         console.log('click:file', file)
-        if (file.response?.bucket && file.response?.path && s3) {
+        if (file.response?.path && s3) {
           const result = await s3.getFile(file.response.path);
           if (result) {
             window.open(result as string);
@@ -62,7 +60,7 @@ export default () => {
         }
       }}
       onRemove={async (file: UploadFile<S3Object>) => {
-        if (file.response?.bucket && file.response?.path && s3) {
+        if (file.response?.path && s3) {
           await s3.delFile(file.response.path);
           setFileList(fileList.filter(item => item.uid !== file.uid))
         } else {
