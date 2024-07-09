@@ -184,3 +184,30 @@ function getUser(userId: (string | number)): Promise<{
 function getDictItems(refCodes: string | string[], forceReload?: boolean): Promise<AppDictItem[]>:AppDictItem[]
 ```
 
+
+## getFileSource
+
+获取当前组织的文件数据源，可配合awsS3操作使用,接口策略为`cache-first`
+
+```ts
+function getFileSource(filter?: {
+    bucket: string;
+    endpoint: string;
+}): Promise<{
+    __typename?: "FileIdentity";
+    id: string;
+    isDefault: boolean;
+    tenantID: string;
+    source: {
+        __typename?: "FileSource";
+        id: string;
+        bucket: string;
+        region: string;
+        kind: FileSourceKind;
+        endpoint: string;
+        stsEndpoint: string;
+        bucketurl?: string | null;
+    };
+} | null | undefined>
+```
+

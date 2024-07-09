@@ -1,94 +1,32 @@
-import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { Button, Upload, UploadFile } from "antd";
-import { useState } from "react";
-// aws sdk 文档
-// https://docs.aws.amazon.com/zh_cn/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
-
-const client = new S3Client({
-  endpoint: "http://127.0.0.1:9000",
-  region: "local",
-  credentials: {
-    accessKeyId: "oTbKaIMXjCnx3HzrH5Qo",
-    secretAccessKey: "XfvZSw6a954U77hZ3rrSr6jmDKEPFhDNHOJJbW4B",
-  },
-}), bucket = "test1";
-
-// const client = new S3Client({
-//   endpoint: "http://oss-cn-shenzhen.aliyuncs.com",
-//   region: "oss-cn-shenzhen",
-//   credentials: {
-//     accessKeyId: "",
-//     secretAccessKey: "",
-//   },
-// }), bucket = "";
+import { useEffect, useState } from "react";
+import { awsS3, getFileSource } from "@knockout-js/api";
 
 type S3Object = {
-  key: string;
+  path: string;
   bucket: string;
+  storageUrl: string;
 }
+
+const bucket = 'woocootest'
 
 export default () => {
 
+  const [s3, setS3] = useState<awsS3>()
+
+  useEffect(() => {
+    getFileSource().then((result) => {
+      if (result) {
+        setS3(new awsS3({
+          bucket: result.source.bucket,
+          endpoint: result.source.endpoint,
+          region: result.source.region,
+        }))
+      }
+    })
+  }, [])
+
   const [fileList, setFileList] = useState<UploadFile<S3Object>[]>([])
-
-  const getFile = async (bucket: string, key: string) => {
-    const command = new GetObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      ResponseContentEncoding: "utf-8",
-    });
-    try {
-      const response = await client.send(command);
-      if (response?.$metadata?.httpStatusCode === 200) {
-        const byteBody = await response.Body?.transformToByteArray();
-        if (byteBody) {
-          return URL.createObjectURL(new File([byteBody], key, { type: response.ContentType }));
-        }
-      }
-    } catch (error) {
-    }
-    return null
-  }
-
-  const updateFile = async (bucket: string, file: File) => {
-    const
-      suffix = file.name.split('.').pop(),
-      key = `test/${Date.now()}.${suffix}`,
-      body = new Blob([file], { type: file.type });
-    const command = new PutObjectCommand({
-      Bucket: bucket,
-      Key: key,
-      Body: body,
-      ContentEncoding: "utf-8",
-      ContentType: file.type,
-    });
-    try {
-      const response = await client.send(command);
-      if (response?.$metadata?.httpStatusCode === 200) {
-        return {
-          key,
-          bucket,
-        }
-      }
-    } catch (error) {
-    }
-    return null;
-  };
-
-  const delFile = async (bucket: string, key: string) => {
-    const command = new DeleteObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    });
-    try {
-      const response = await client.send(command);
-      if (response.$metadata.httpStatusCode === 200) {
-        return true;
-      }
-    } catch (error) {
-    }
-    return false;
-  }
 
   return <>
     <h1>测试aws s3</h1>
@@ -97,32 +35,35 @@ export default () => {
       accept="image/*"
       fileList={fileList}
       beforeUpload={async (file) => {
-        const fileData: UploadFile<S3Object> = {
-          uid: file.uid,
-          name: file.name,
-          status: 'uploading',
-        };
-        const result = await updateFile(bucket, file);
-        if (result) {
-          fileData.status = 'done';
-          fileData.response = { bucket: result.bucket, key: result.key }
-        } else {
-          fileData.status = 'error';
+        if (s3) {
+          const fileData: UploadFile<S3Object> = {
+            uid: file.uid,
+            name: file.name,
+            status: 'uploading',
+          };
+          const result = await s3.uploadFile(file, `test`)
+          if (result) {
+            fileData.status = 'done'
+            fileData.response = { bucket: bucket, path: result.path, storageUrl: result.storageUrl }
+          } else {
+            fileData.status = 'error'
+          }
+          setFileList([...fileList, fileData])
         }
-        setFileList([...fileList, fileData])
         return false
       }}
       onPreview={async (file: UploadFile<S3Object>) => {
-        if (file.response?.bucket && file.response?.key) {
-          const result = await getFile(file.response.bucket, file.response.key);
+        console.log('click:file', file)
+        if (file.response?.bucket && file.response?.path && s3) {
+          const result = await s3.getFile(file.response.path);
           if (result) {
-            window.open(result);
+            window.open(result as string);
           }
         }
       }}
       onRemove={async (file: UploadFile<S3Object>) => {
-        if (file.response?.bucket && file.response?.key) {
-          await delFile(file.response.bucket, file.response.key);
+        if (file.response?.bucket && file.response?.path && s3) {
+          await s3.delFile(file.response.path);
           setFileList(fileList.filter(item => item.uid !== file.uid))
         } else {
           setFileList(fileList.filter(item => item.uid !== file.uid))
@@ -136,3 +77,4 @@ export default () => {
 
   </>
 }
+

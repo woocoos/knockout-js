@@ -29,4 +29,11 @@ export default defineConfig(() => ({
     jsxPlus(),
     auth(),
   ],
+  proxy: {
+    "/api-s3": {
+      target: "http://127.0.0.1:10070/",
+      changeOrigin: true,
+      pathRewrite: { [`^/api-s3`]: '' },
+    }
+  }
 }));
