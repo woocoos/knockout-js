@@ -13,6 +13,7 @@ export default () => {
   const [s3, setS3] = useState<awsS3>()
 
   useEffect(() => {
+    // 结合文件原的使用情况
     getFileSource().then((result) => {
       if (result) {
         setS3(new awsS3({
@@ -41,8 +42,9 @@ export default () => {
           };
           const result = await s3.uploadFile(file, `test`)
           if (result) {
+            const storageUrl = await s3.getFileUrl(result.path)
             fileData.status = 'done'
-            fileData.response = { path: result.path, storageUrl: result.storageUrl }
+            fileData.response = { path: result.path, storageUrl: storageUrl ?? '' }
           } else {
             fileData.status = 'error'
           }
@@ -51,12 +53,8 @@ export default () => {
         return false
       }}
       onPreview={async (file: UploadFile<S3Object>) => {
-        console.log('click:file', file)
-        if (file.response?.path && s3) {
-          const result = await s3.getFile(file.response.path);
-          if (result) {
-            window.open(result as string);
-          }
+        if (file.response?.storageUrl) {
+          window.open(file.response.storageUrl);
         }
       }}
       onRemove={async (file: UploadFile<S3Object>) => {
@@ -73,6 +71,12 @@ export default () => {
 
     {JSON.stringify(fileList)}
 
+    <h2> 预览 </h2>
+    {fileList.map((item, index) => <div>
+      <div>{index + 1}</div>
+      <img src={item.response?.storageUrl} width={100} height={100} />
+    </div>)
+    }
   </>
 }
 

@@ -1,4 +1,5 @@
 import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { request } from "@ice/plugin-request/request";
 
 // aws sdk 文档
@@ -91,39 +92,6 @@ export class awsS3 {
   }
 
   /**
-   * 获取文件
-   * @param path
-   * @param bucket
-   * @returns
-   */
-  public async getFile(path: string, outputType: 'url' | 'uint8Array' = 'url') {
-    await this.getSts()
-    if (this.client) {
-      const command = new GetObjectCommand({
-        Bucket: this.bucket,
-        Key: path,
-        ResponseContentEncoding: "utf-8",
-      })
-      try {
-        const response = await this.client.send(command)
-        if (response?.$metadata?.httpStatusCode === 200) {
-          const byteBody = await response.Body?.transformToByteArray()
-          if (byteBody) {
-            if (outputType === 'uint8Array') {
-              return byteBody
-            } else {
-              return URL.createObjectURL(new File([byteBody], path, { type: response.ContentType }));
-            }
-          }
-        }
-      } catch (error) {
-      }
-    }
-    return null
-  }
-
-
-  /**
    * 文件上传
    * @param file File对象
    * @param dir 到哪个目录下
@@ -148,7 +116,6 @@ export class awsS3 {
         if (response?.$metadata?.httpStatusCode === 200) {
           return {
             path: key,
-            storageUrl: this.getStorageUrl(key),
           }
         }
       } catch (error) {
@@ -183,6 +150,54 @@ export class awsS3 {
   }
 
   /**
+   * 获取文件流
+   * @param path
+   * @param bucket
+   * @returns
+   */
+  public async getFileUint8Array(path: string) {
+    await this.getSts()
+    if (this.client) {
+      const command = new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        ResponseContentEncoding: "utf-8",
+      })
+      try {
+        const response = await this.client.send(command)
+        if (response?.$metadata?.httpStatusCode === 200) {
+          const byteBody = await response.Body?.transformToByteArray()
+          if (byteBody) {
+            // return URL.createObjectURL(new File([byteBody], path, { type: response.ContentType }));
+            return byteBody
+          }
+        }
+      } catch (error) {
+      }
+    }
+    return null
+  }
+
+  /**
+   * 获取文件url
+   * @param path
+   * @param expiresIn
+   * @returns
+   */
+  public async getFileUrl(path: string, expiresIn: number = 3600) {
+    await this.getSts()
+    if (this.client) {
+      const command = new GetObjectCommand({
+        Bucket: this.bucket,
+        Key: path,
+        ResponseContentEncoding: "utf-8",
+        ResponseContentDisposition: "inline",
+      })
+      return await getSignedUrl(this.client, command, { expiresIn })
+    }
+  }
+
+  /**
    * 根据path得到存储的url
    * @param path
    * @returns
@@ -192,16 +207,20 @@ export class awsS3 {
   }
 
   /**
-   * 存储的url解析出数据
+   * 存储的url解析出可展示的url
    * @param url
+   * @param expiresIn  default 3600
    * @returns
    */
-  public parseStorageUrl(url: string) {
-    const splitUrl = url.split(`/${this.bucket}/`);
-    return {
-      endpoint: splitUrl[0],
-      bucket: this.bucket,
-      path: splitUrl[1],
+  public async parseStorageUrl(url: string, expiresIn: number = 3600) {
+    const u = new URL(url);
+    const endpoint = u.origin;
+    const bucket = u.pathname.split('/')[1];
+    const path = u.pathname.slice(bucket.length + 2)
+    if (endpoint === this.endpoint && bucket === this.bucket && path) {
+      return await this.getFileUrl(path, expiresIn)
+    } else {
+      return url
     }
   }
 }

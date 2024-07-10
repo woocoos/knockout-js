@@ -37,13 +37,20 @@ export default () => {
 ## api
 
 
-### getFile
+### getFileUrl
 
-获取
+获取文件url
 
 ```ts
-// 会默认给展示的url，如果需要文件对象的需要修改outputType=uint8Array
-s3.getFile(path: string, outputType?: "url" | "uint8Array"): Promise<string | Uint8Array | null>
+s3.getFileUrl(path: string, expiresIn?: number): Promise<string | undefined>
+```
+
+### getFile
+
+获取文件二进制流
+
+```ts
+s3.getFileUint8Array(path: string): Promise<Uint8Array | null>
 ```
 
 ### uploadFile
@@ -53,7 +60,6 @@ s3.getFile(path: string, outputType?: "url" | "uint8Array"): Promise<string | Ui
 ```ts
 s3.uploadFile(file: File, dir: string): Promise<{
     path: string;
-    storageUrl: string;
 } | null>
 ```
 
@@ -77,12 +83,8 @@ s3.getStorageUrl(path: string): string
 
 ### parseStorageUrl
 
-解析存储在数据库的url
+存储在数据库的url转换成可展示的url
 
 ```ts
-s3.parseStorageUrl(url: string): {
-    endpoint: string;
-    bucket: string;
-    path: string;
-}
+s3.parseStorageUrl(url: string, expiresIn?: number): Promise<string | undefined>
 ```
