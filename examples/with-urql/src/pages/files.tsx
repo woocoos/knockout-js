@@ -1,6 +1,6 @@
 import { Button, Upload, UploadFile } from "antd";
-import { useEffect, useState } from "react";
-import { awsS3, getFileSource } from "@knockout-js/api";
+import { useState } from "react";
+import { delFile, getFileUrl, uploadFile } from "@knockout-js/api";
 
 type S3Object = {
   path: string;
@@ -9,21 +9,6 @@ type S3Object = {
 
 
 export default () => {
-
-  const [s3, setS3] = useState<awsS3>()
-
-  useEffect(() => {
-    // 结合文件原的使用情况
-    getFileSource().then((result) => {
-      if (result) {
-        setS3(new awsS3({
-          bucket: result.source.bucket,
-          endpoint: result.source.endpoint,
-          region: result.source.region,
-        }))
-      }
-    })
-  }, [])
 
   const [fileList, setFileList] = useState<UploadFile<S3Object>[]>([])
 
@@ -34,22 +19,20 @@ export default () => {
       accept="image/*"
       fileList={fileList}
       beforeUpload={async (file) => {
-        if (s3) {
-          const fileData: UploadFile<S3Object> = {
-            uid: file.uid,
-            name: file.name,
-            status: 'uploading',
-          };
-          const result = await s3.uploadFile(file, `test`)
-          if (result) {
-            const storageUrl = await s3.getFileUrl(result.path)
-            fileData.status = 'done'
-            fileData.response = { path: result.path, storageUrl: storageUrl ?? '' }
-          } else {
-            fileData.status = 'error'
-          }
-          setFileList([...fileList, fileData])
+        const fileData: UploadFile<S3Object> = {
+          uid: file.uid,
+          name: file.name,
+          status: 'uploading',
+        };
+        const result = await uploadFile(file, `test`)
+        if (result) {
+          const storageUrl = await getFileUrl(result.path)
+          fileData.status = 'done'
+          fileData.response = { path: result.path, storageUrl: storageUrl ?? '' }
+        } else {
+          fileData.status = 'error'
         }
+        setFileList([...fileList, fileData])
         return false
       }}
       onPreview={async (file: UploadFile<S3Object>) => {
@@ -58,8 +41,8 @@ export default () => {
         }
       }}
       onRemove={async (file: UploadFile<S3Object>) => {
-        if (file.response?.path && s3) {
-          await s3.delFile(file.response.path);
+        if (file.response?.path) {
+          await delFile(file.response.path);
           setFileList(fileList.filter(item => item.uid !== file.uid))
         } else {
           setFileList(fileList.filter(item => item.uid !== file.uid))
@@ -69,7 +52,9 @@ export default () => {
       <Button>Click to Upload</Button>
     </Upload>
 
-    {JSON.stringify(fileList)}
+    <div>
+      {JSON.stringify(fileList)}
+    </div>
 
     <h2> 预览 </h2>
     {fileList.map((item, index) => <div>

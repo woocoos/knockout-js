@@ -6,51 +6,33 @@ sidebar_position: 1
 
 ## 使用
 
-```tsx title=xxx.tsx
-import { awsS3, getFileSource } from "@knockout-js/api";
+```ts title=xxx.ts
+import { getFileUrl } from "@knockout-js/api";
 
-// 使用awsS3处理文件上传
 export default () => {
-
-  const [s3, setS3] = useState<awsS3>()
-
-  useEffect(() => {
-    //这个是获取当前组织的文件源数据，如有特殊情况，请自行修改
-    getFileSource().then((result) => {
-      if (result) {
-        setS3(
-          new awsS3({
-            bucket: result.source.bucket,
-            endpoint: result.source.endpoint,
-            region: result.source.region,
-          })
-        )
-      }
-    })
-  }, [])
-
-  return <></>
+    const url = await getFileUrl(path)
 }
 
 ```
 
 ## api
 
+api中的 `endpoint` `bucket` 两个非必填参数都是默取fileSource isDefault=true里的配置，如果有需要调整可直接设置覆盖
 
 ### getFileUrl
 
 获取文件url
 
 ```ts
-s3.getFileUrl(path: string, expiresIn?: number): Promise<string | undefined>
+function getFileUrl(path: string, expiresIn?: number, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
 
-### getFile
+### getFileUint8Array
 
 获取文件二进制流
 
 ```ts
-s3.getFileUint8Array(path: string): Promise<Uint8Array | null>
+function getFileUint8Array(path: string, endpoint?: string, bucket?: string): Promise<Uint8Array | null>
 ```
 
 ### uploadFile
@@ -58,7 +40,7 @@ s3.getFileUint8Array(path: string): Promise<Uint8Array | null>
 上传
 
 ```ts
-s3.uploadFile(file: File, dir: string): Promise<{
+function uploadFile(file: File, dir: string, endpoint?: string, bucket?: string): Promise<{
     path: string;
 } | null>
 ```
@@ -68,7 +50,7 @@ s3.uploadFile(file: File, dir: string): Promise<{
 删除
 
 ```ts
-s3.delFile(path: string): Promise<true | null>
+function delFile(path: string, endpoint?: string, bucket?: string): Promise<true | null>
 ```
 
 
@@ -77,7 +59,7 @@ s3.delFile(path: string): Promise<true | null>
 根据path得到需要存储在数据库的url，方便后续解析处理
 
 ```ts
-s3.getStorageUrl(path: string): string
+function getStorageUrl(path: string, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
 
 
@@ -86,5 +68,5 @@ s3.getStorageUrl(path: string): string
 存储在数据库的url转换成可展示的url
 
 ```ts
-s3.parseStorageUrl(url: string, expiresIn?: number): Promise<string | undefined>
+function parseStorageUrl(url: string, expiresIn?: number, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
