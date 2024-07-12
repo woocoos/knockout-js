@@ -255,7 +255,7 @@ export async function parseStorageUrl(url: string, expiresIn: number = 3600, end
   const s3Data = await getAwsS3Data(endpoint, bucket)
   if (s3Data && url.indexOf(s3Data.bucketUrl) === 0) {
     const path = url.replace(`${s3Data.bucketUrl}/`, '')
-    return await getFileUrl(path, expiresIn)
+    return await getFileUrl(path.split('?')[0], expiresIn)
   }
   return url
 }
