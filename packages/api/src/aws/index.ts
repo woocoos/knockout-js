@@ -72,7 +72,7 @@ async function getAwsS3Data(endpoint?: string, bucket?: string) {
           awsS3Data[key] = undefined
         }
       }
-      if (awsS3Data[key] === undefined) {
+      if (!awsS3Data[key]) {
         try {
           const result = await request.post<{
             access_key_id: string,
@@ -98,6 +98,7 @@ async function getAwsS3Data(endpoint?: string, bucket?: string) {
                 credentials: {
                   accessKeyId: stsData.accessKeyId,
                   secretAccessKey: stsData.secretAccessKey,
+                  sessionToken: stsData.sessionToken
                 },
                 bucketEndpoint: true
               })

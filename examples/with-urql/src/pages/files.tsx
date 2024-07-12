@@ -57,7 +57,7 @@ export default () => {
     </div>
 
     <h2> 预览 </h2>
-    {fileList.map((item, index) => <div>
+    {fileList.map((item, index) => <div key={index}>
       <div>{index + 1}</div>
       <img src={item.response?.storageUrl} width={100} height={100} />
     </div>)
