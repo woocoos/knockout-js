@@ -27,12 +27,12 @@ api中的 `endpoint` `bucket` 两个非必填参数都是默取fileSource isDefa
 function getFileUrl(path: string, expiresIn?: number, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
 
-### getFileUint8Array
+### getFileByteArray
 
 获取文件二进制流
 
 ```ts
-function getFileUint8Array(path: string, endpoint?: string, bucket?: string): Promise<Uint8Array | null>
+function getFileByteArray(path: string, endpoint?: string, bucket?: string): Promise<Uint8Array | null>
 ```
 
 ### uploadFile

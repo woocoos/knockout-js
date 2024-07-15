@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6-beta.0
+
+### Patch Changes
+
+- add aws-s3 api
+
 ## 0.1.5
 
 ### Patch Changes
