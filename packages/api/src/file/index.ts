@@ -187,7 +187,7 @@ export async function delFile(path: string, endpoint?: string, bucket?: string) 
  * 可通过下面方法转换成访问url
  * URL.createObjectURL(new File([byteBody], path, { type: response.ContentType }));
  */
-export async function getFileByteArray(path: string, endpoint?: string, bucket?: string) {
+export async function getFileRaw(path: string, endpoint?: string, bucket?: string) {
   const s3Data = await getAwsS3Data(endpoint, bucket)
   if (s3Data) {
     const command = new GetObjectCommand({

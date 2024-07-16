@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# aws-s3 接口
+# file 接口
 
-## 使用
+## 启用
 
 ```ts title=xxx.ts
 import { getFileUrl } from "@knockout-js/api";
@@ -27,12 +27,12 @@ api中的 `endpoint` `bucket` 两个非必填参数都是默取fileSource isDefa
 function getFileUrl(path: string, expiresIn?: number, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
 
-### getFileByteArray
+### getFileRaw
 
 获取文件二进制流
 
 ```ts
-function getFileByteArray(path: string, endpoint?: string, bucket?: string): Promise<Uint8Array | null>
+function getFileRaw(path: string, endpoint?: string, bucket?: string): Promise<Uint8Array | null>
 ```
 
 ### uploadFile
@@ -53,6 +53,14 @@ function uploadFile(file: File, dir: string, endpoint?: string, bucket?: string)
 function delFile(path: string, endpoint?: string, bucket?: string): Promise<true | null>
 ```
 
+
+### setStsApi
+
+修改sts api地址 默认请求地址：`/api-s3/oss/sts`
+
+```ts
+function setStsApi(api: string): void
+```
 
 ### getStorageUrl
 
