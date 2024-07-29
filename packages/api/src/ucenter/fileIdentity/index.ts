@@ -4,10 +4,10 @@ import { instanceName } from '../..';
 
 
 const fileIdentitiesQuery = gql(/* GraphQL */`query apiFileIdentities{
-  fileIdentities{
+  fileIdentitiesForOrg{
     id,isDefault,tenantID,
     source{
-      id,bucket,region,kind,endpoint,stsEndpoint,bucketurl
+      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL
     }
   }
 }`)
@@ -27,14 +27,14 @@ export async function getFileSource(filter?: {
     requestPolicy: "cache-first",
   });
 
-  if (result.data?.fileIdentities.length) {
+  if (result.data?.fileIdentitiesForOrg.length) {
     if (filter) {
-      const filterData = result.data?.fileIdentities.find(item => item.source.bucket == filter.bucket && item.source.endpoint == filter.endpoint);
+      const filterData = result.data?.fileIdentitiesForOrg.find(item => item.source.bucket == filter.bucket && item.source.endpoint == filter.endpoint);
       if (filterData) {
         return filterData
       }
     }
-    return result.data?.fileIdentities.find(item => item.isDefault);
+    return result.data?.fileIdentitiesForOrg.find(item => item.isDefault);
   }
   return null
 }

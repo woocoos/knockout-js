@@ -42,6 +42,8 @@ export type App = Node & {
   id: Scalars['ID']['output'];
   /** 应用类型 */
   kind: AppKind;
+  /** 应用图标地址 */
+  logo?: Maybe<Scalars['String']['output']>;
   /** 图标,存储路规则：/{appcode}/{tid}/xxx */
   logoFileID?: Maybe<Scalars['ID']['output']>;
   menus: AppMenuConnection;
@@ -1715,6 +1717,8 @@ export type CreateAppInput = {
   dictIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** 应用类型 */
   kind: AppKind;
+  /** 应用图标地址 */
+  logo?: InputMaybe<Scalars['String']['input']>;
   /** 图标,存储路规则：/{appcode}/{tid}/xxx */
   logoFileID?: InputMaybe<Scalars['ID']['input']>;
   menuIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
@@ -1837,11 +1841,13 @@ export type CreateFileSourceInput = {
   /** 文件存储空间 */
   bucket: Scalars['String']['input'];
   /** 文件存储空间地址，用于匹配url */
-  bucketurl?: InputMaybe<Scalars['String']['input']>;
+  bucketURL: Scalars['String']['input'];
   /** 备注 */
   comments?: InputMaybe<Scalars['String']['input']>;
   /** 对外服务的访问域名 */
   endpoint: Scalars['String']['input'];
+  /** 是否禁止修改endpoint，如果是自定义域名设为true */
+  endpointImmutable?: InputMaybe<Scalars['Boolean']['input']>;
   fileIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   identityIDs?: InputMaybe<Array<Scalars['ID']['input']>>;
   /** 文件来源 */
@@ -2095,6 +2101,8 @@ export type FileIdentity = Node & {
   __typename?: 'FileIdentity';
   /** accesskey id */
   accessKeyID: Scalars['String']['output'];
+  /** accesskey secret */
+  accessKeySecret: Scalars['String']['output'];
   /** 备注 */
   comments?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Time']['output'];
@@ -2316,16 +2324,17 @@ export type FileSource = Node & {
   /** 文件存储空间 */
   bucket: Scalars['String']['output'];
   /** 文件存储空间地址，用于匹配url */
-  bucketurl?: Maybe<Scalars['String']['output']>;
+  bucketURL: Scalars['String']['output'];
   /** 备注 */
   comments?: Maybe<Scalars['String']['output']>;
   createdAt: Scalars['Time']['output'];
   createdBy: Scalars['Int']['output'];
   /** 对外服务的访问域名 */
   endpoint: Scalars['String']['output'];
+  /** 是否禁止修改endpoint，如果是自定义域名设为true */
+  endpointImmutable: Scalars['Boolean']['output'];
   files: FileConnection;
   id: Scalars['ID']['output'];
-  identities: FileIdentityConnection;
   /** 文件来源 */
   kind: FileSourceKind;
   /** 地域，数据存储的物理位置 */
@@ -2344,16 +2353,6 @@ export type FileSourceFilesArgs = {
   last?: InputMaybe<Scalars['Int']['input']>;
   orderBy?: InputMaybe<FileOrder>;
   where?: InputMaybe<FileWhereInput>;
-};
-
-
-export type FileSourceIdentitiesArgs = {
-  after?: InputMaybe<Scalars['Cursor']['input']>;
-  before?: InputMaybe<Scalars['Cursor']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<FileIdentityOrder>;
-  where?: InputMaybe<FileIdentityWhereInput>;
 };
 
 /** A connection to a list of items. */
@@ -2416,22 +2415,20 @@ export type FileSourceWhereInput = {
   bucketLTE?: InputMaybe<Scalars['String']['input']>;
   bucketNEQ?: InputMaybe<Scalars['String']['input']>;
   bucketNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
-  /** bucketUrl field predicates */
-  bucketurl?: InputMaybe<Scalars['String']['input']>;
-  bucketurlContains?: InputMaybe<Scalars['String']['input']>;
-  bucketurlContainsFold?: InputMaybe<Scalars['String']['input']>;
-  bucketurlEqualFold?: InputMaybe<Scalars['String']['input']>;
-  bucketurlGT?: InputMaybe<Scalars['String']['input']>;
-  bucketurlGTE?: InputMaybe<Scalars['String']['input']>;
-  bucketurlHasPrefix?: InputMaybe<Scalars['String']['input']>;
-  bucketurlHasSuffix?: InputMaybe<Scalars['String']['input']>;
-  bucketurlIn?: InputMaybe<Array<Scalars['String']['input']>>;
-  bucketurlIsNil?: InputMaybe<Scalars['Boolean']['input']>;
-  bucketurlLT?: InputMaybe<Scalars['String']['input']>;
-  bucketurlLTE?: InputMaybe<Scalars['String']['input']>;
-  bucketurlNEQ?: InputMaybe<Scalars['String']['input']>;
-  bucketurlNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
-  bucketurlNotNil?: InputMaybe<Scalars['Boolean']['input']>;
+  /** bucket_url field predicates */
+  bucketURL?: InputMaybe<Scalars['String']['input']>;
+  bucketURLContains?: InputMaybe<Scalars['String']['input']>;
+  bucketURLContainsFold?: InputMaybe<Scalars['String']['input']>;
+  bucketURLEqualFold?: InputMaybe<Scalars['String']['input']>;
+  bucketURLGT?: InputMaybe<Scalars['String']['input']>;
+  bucketURLGTE?: InputMaybe<Scalars['String']['input']>;
+  bucketURLHasPrefix?: InputMaybe<Scalars['String']['input']>;
+  bucketURLHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  bucketURLIn?: InputMaybe<Array<Scalars['String']['input']>>;
+  bucketURLLT?: InputMaybe<Scalars['String']['input']>;
+  bucketURLLTE?: InputMaybe<Scalars['String']['input']>;
+  bucketURLNEQ?: InputMaybe<Scalars['String']['input']>;
+  bucketURLNotIn?: InputMaybe<Array<Scalars['String']['input']>>;
   /** created_at field predicates */
   createdAt?: InputMaybe<Scalars['Time']['input']>;
   createdAtGT?: InputMaybe<Scalars['Time']['input']>;
@@ -2459,6 +2456,9 @@ export type FileSourceWhereInput = {
   endpointGTE?: InputMaybe<Scalars['String']['input']>;
   endpointHasPrefix?: InputMaybe<Scalars['String']['input']>;
   endpointHasSuffix?: InputMaybe<Scalars['String']['input']>;
+  /** endpoint_immutable field predicates */
+  endpointImmutable?: InputMaybe<Scalars['Boolean']['input']>;
+  endpointImmutableNEQ?: InputMaybe<Scalars['Boolean']['input']>;
   endpointIn?: InputMaybe<Array<Scalars['String']['input']>>;
   endpointLT?: InputMaybe<Scalars['String']['input']>;
   endpointLTE?: InputMaybe<Scalars['String']['input']>;
@@ -3505,6 +3505,25 @@ export type OrgEdge = {
   cursor: Scalars['Cursor']['output'];
   /** The item at the end of the edge. */
   node?: Maybe<Org>;
+};
+
+/** 业务调用的fileIdentity */
+export type OrgFileIdentity = {
+  __typename?: 'OrgFileIdentity';
+  /** 备注 */
+  comments?: Maybe<Scalars['String']['output']>;
+  createdAt: Scalars['Time']['output'];
+  createdBy: Scalars['Int']['output'];
+  /** 文件来源ID */
+  fileSourceID: Scalars['ID']['output'];
+  id: Scalars['ID']['output'];
+  /** 租户默认的凭证 */
+  isDefault: Scalars['Boolean']['output'];
+  source: FileSource;
+  /** 组织ID */
+  tenantID: Scalars['ID']['output'];
+  updatedAt?: Maybe<Scalars['Time']['output']>;
+  updatedBy?: Maybe<Scalars['Int']['output']>;
 };
 
 /** OrgKind is enum for the field kind */
@@ -4665,7 +4684,9 @@ export type Query = {
   /** 检测权限 */
   checkPermission: Scalars['Boolean']['output'];
   /** 文件凭证 */
-  fileIdentities: Array<FileIdentity>;
+  fileIdentities: FileIdentityConnection;
+  /** 获取当前组织的文件凭证 */
+  fileIdentitiesForOrg: Array<OrgFileIdentity>;
   /** 文件来源 */
   fileSources: FileSourceConnection;
   /** 获取全局ID,开发用途 */
@@ -4767,6 +4788,16 @@ export type QueryAppsArgs = {
 
 export type QueryCheckPermissionArgs = {
   permission: Scalars['String']['input'];
+};
+
+
+export type QueryFileIdentitiesArgs = {
+  after?: InputMaybe<Scalars['Cursor']['input']>;
+  before?: InputMaybe<Scalars['Cursor']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
+  orderBy?: InputMaybe<FileIdentityOrder>;
+  where?: InputMaybe<FileIdentityWhereInput>;
 };
 
 
@@ -4994,6 +5025,7 @@ export type UpdateAppInput = {
   clearAppSecret?: InputMaybe<Scalars['Boolean']['input']>;
   clearComments?: InputMaybe<Scalars['Boolean']['input']>;
   clearDicts?: InputMaybe<Scalars['Boolean']['input']>;
+  clearLogo?: InputMaybe<Scalars['Boolean']['input']>;
   clearLogoFileID?: InputMaybe<Scalars['Boolean']['input']>;
   clearMenus?: InputMaybe<Scalars['Boolean']['input']>;
   clearPolicies?: InputMaybe<Scalars['Boolean']['input']>;
@@ -5008,6 +5040,8 @@ export type UpdateAppInput = {
   comments?: InputMaybe<Scalars['String']['input']>;
   /** 应用类型 */
   kind?: InputMaybe<AppKind>;
+  /** 应用图标地址 */
+  logo?: InputMaybe<Scalars['String']['input']>;
   /** 图标,存储路规则：/{appcode}/{tid}/xxx */
   logoFileID?: InputMaybe<Scalars['ID']['input']>;
   /** 名称 */
@@ -5139,8 +5173,7 @@ export type UpdateFileSourceInput = {
   /** 文件存储空间 */
   bucket?: InputMaybe<Scalars['String']['input']>;
   /** 文件存储空间地址，用于匹配url */
-  bucketurl?: InputMaybe<Scalars['String']['input']>;
-  clearBucketUrl?: InputMaybe<Scalars['Boolean']['input']>;
+  bucketURL?: InputMaybe<Scalars['String']['input']>;
   clearComments?: InputMaybe<Scalars['Boolean']['input']>;
   clearFiles?: InputMaybe<Scalars['Boolean']['input']>;
   clearIdentities?: InputMaybe<Scalars['Boolean']['input']>;
@@ -5148,6 +5181,8 @@ export type UpdateFileSourceInput = {
   comments?: InputMaybe<Scalars['String']['input']>;
   /** 对外服务的访问域名 */
   endpoint?: InputMaybe<Scalars['String']['input']>;
+  /** 是否禁止修改endpoint，如果是自定义域名设为true */
+  endpointImmutable?: InputMaybe<Scalars['Boolean']['input']>;
   /** 文件来源 */
   kind?: InputMaybe<FileSourceKind>;
   /** 地域，数据存储的物理位置 */
@@ -6323,14 +6358,14 @@ export type ApiAppIdListQueryVariables = Exact<{
 }>;
 
 
-export type ApiAppIdListQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'App', id: string, code: string, name: string } | { __typename?: 'AppAction' } | { __typename?: 'AppDict' } | { __typename?: 'AppDictItem' } | { __typename?: 'AppMenu' } | { __typename?: 'AppPolicy' } | { __typename?: 'AppRes' } | { __typename?: 'AppRole' } | { __typename?: 'File' } | { __typename?: 'FileIdentity' } | { __typename?: 'FileSource' } | { __typename?: 'OauthClient' } | { __typename?: 'Org' } | { __typename?: 'OrgPolicy' } | { __typename?: 'OrgRole' } | { __typename?: 'OrgUserPreference' } | { __typename?: 'Permission' } | { __typename?: 'User' } | { __typename?: 'UserDevice' } | { __typename?: 'UserIdentity' } | { __typename?: 'UserLoginProfile' } | { __typename?: 'UserPassword' } | null> };
+export type ApiAppIdListQuery = { __typename?: 'Query', nodes: Array<{ __typename?: 'App', id: string, code: string, name: string, logo?: string | null, status?: AppSimpleStatus | null } | { __typename?: 'AppAction' } | { __typename?: 'AppDict' } | { __typename?: 'AppDictItem' } | { __typename?: 'AppMenu' } | { __typename?: 'AppPolicy' } | { __typename?: 'AppRes' } | { __typename?: 'AppRole' } | { __typename?: 'File' } | { __typename?: 'FileIdentity' } | { __typename?: 'FileSource' } | { __typename?: 'OauthClient' } | { __typename?: 'Org' } | { __typename?: 'OrgPolicy' } | { __typename?: 'OrgRole' } | { __typename?: 'OrgUserPreference' } | { __typename?: 'Permission' } | { __typename?: 'User' } | { __typename?: 'UserDevice' } | { __typename?: 'UserIdentity' } | { __typename?: 'UserLoginProfile' } | { __typename?: 'UserPassword' } | null> };
 
 export type ApiAppIdQueryVariables = Exact<{
   id: Scalars['GID']['input'];
 }>;
 
 
-export type ApiAppIdQuery = { __typename?: 'Query', node?: { __typename?: 'App', id: string, code: string, name: string } | { __typename?: 'AppAction' } | { __typename?: 'AppDict' } | { __typename?: 'AppDictItem' } | { __typename?: 'AppMenu' } | { __typename?: 'AppPolicy' } | { __typename?: 'AppRes' } | { __typename?: 'AppRole' } | { __typename?: 'File' } | { __typename?: 'FileIdentity' } | { __typename?: 'FileSource' } | { __typename?: 'OauthClient' } | { __typename?: 'Org' } | { __typename?: 'OrgPolicy' } | { __typename?: 'OrgRole' } | { __typename?: 'OrgUserPreference' } | { __typename?: 'Permission' } | { __typename?: 'User' } | { __typename?: 'UserDevice' } | { __typename?: 'UserIdentity' } | { __typename?: 'UserLoginProfile' } | { __typename?: 'UserPassword' } | null };
+export type ApiAppIdQuery = { __typename?: 'Query', node?: { __typename?: 'App', id: string, code: string, name: string, logo?: string | null, status?: AppSimpleStatus | null } | { __typename?: 'AppAction' } | { __typename?: 'AppDict' } | { __typename?: 'AppDictItem' } | { __typename?: 'AppMenu' } | { __typename?: 'AppPolicy' } | { __typename?: 'AppRes' } | { __typename?: 'AppRole' } | { __typename?: 'File' } | { __typename?: 'FileIdentity' } | { __typename?: 'FileSource' } | { __typename?: 'OauthClient' } | { __typename?: 'Org' } | { __typename?: 'OrgPolicy' } | { __typename?: 'OrgRole' } | { __typename?: 'OrgUserPreference' } | { __typename?: 'Permission' } | { __typename?: 'User' } | { __typename?: 'UserDevice' } | { __typename?: 'UserIdentity' } | { __typename?: 'UserLoginProfile' } | { __typename?: 'UserPassword' } | null };
 
 export type ApiAppDictByRefCodeQueryVariables = Exact<{
   refCodes: Array<Scalars['String']['input']> | Scalars['String']['input'];
@@ -6349,7 +6384,7 @@ export type ApiAppDictItemByRefCodeQuery = { __typename?: 'Query', appDictItemBy
 export type ApiFileIdentitiesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ApiFileIdentitiesQuery = { __typename?: 'Query', fileIdentities: Array<{ __typename?: 'FileIdentity', id: string, isDefault: boolean, tenantID: string, source: { __typename?: 'FileSource', id: string, bucket: string, region: string, kind: FileSourceKind, endpoint: string, stsEndpoint: string, bucketurl?: string | null } }> };
+export type ApiFileIdentitiesQuery = { __typename?: 'Query', fileIdentitiesForOrg: Array<{ __typename?: 'OrgFileIdentity', id: string, isDefault: boolean, tenantID: string, source: { __typename?: 'FileSource', id: string, bucket: string, region: string, kind: FileSourceKind, endpoint: string, stsEndpoint: string, bucketURL: string } }> };
 
 export type ApiOrgIdListQueryVariables = Exact<{
   ids: Array<Scalars['GID']['input']> | Scalars['GID']['input'];
@@ -6544,11 +6579,11 @@ export type OrgPkgUserInfoQueryVariables = Exact<{
 export type OrgPkgUserInfoQuery = { __typename?: 'Query', node?: { __typename?: 'App' } | { __typename?: 'AppAction' } | { __typename?: 'AppDict' } | { __typename?: 'AppDictItem' } | { __typename?: 'AppMenu' } | { __typename?: 'AppPolicy' } | { __typename?: 'AppRes' } | { __typename?: 'AppRole' } | { __typename?: 'File' } | { __typename?: 'FileIdentity' } | { __typename?: 'FileSource' } | { __typename?: 'OauthClient' } | { __typename?: 'Org' } | { __typename?: 'OrgPolicy' } | { __typename?: 'OrgRole' } | { __typename?: 'OrgUserPreference' } | { __typename?: 'Permission' } | { __typename?: 'User', id: string, displayName: string, email?: string | null, mobile?: string | null } | { __typename?: 'UserDevice' } | { __typename?: 'UserIdentity' } | { __typename?: 'UserLoginProfile' } | { __typename?: 'UserPassword' } | null };
 
 
-export const ApiAppIdListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppIdList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdListQuery, ApiAppIdListQueryVariables>;
-export const ApiAppIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdQuery, ApiAppIdQueryVariables>;
+export const ApiAppIdListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppIdList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdListQuery, ApiAppIdListQueryVariables>;
+export const ApiAppIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"App"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logo"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppIdQuery, ApiAppIdQueryVariables>;
 export const ApiAppDictByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCodes"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCodes"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"items"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"refCode"}}]}}]}}]}}]} as unknown as DocumentNode<ApiAppDictByRefCodeQuery, ApiAppDictByRefCodeQueryVariables>;
 export const ApiAppDictItemByRefCodeDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiAppDictItemByRefCode"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"appDictItemByRefCode"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"refCode"},"value":{"kind":"Variable","name":{"kind":"Name","value":"refCode"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"refCode"}}]}}]}}]} as unknown as DocumentNode<ApiAppDictItemByRefCodeQuery, ApiAppDictItemByRefCodeQueryVariables>;
-export const ApiFileIdentitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiFileIdentities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fileIdentities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"tenantID"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"stsEndpoint"}},{"kind":"Field","name":{"kind":"Name","value":"bucketurl"}}]}}]}}]}}]} as unknown as DocumentNode<ApiFileIdentitiesQuery, ApiFileIdentitiesQueryVariables>;
+export const ApiFileIdentitiesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiFileIdentities"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fileIdentitiesForOrg"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"isDefault"}},{"kind":"Field","name":{"kind":"Name","value":"tenantID"}},{"kind":"Field","name":{"kind":"Name","value":"source"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"bucket"}},{"kind":"Field","name":{"kind":"Name","value":"region"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"endpoint"}},{"kind":"Field","name":{"kind":"Name","value":"stsEndpoint"}},{"kind":"Field","name":{"kind":"Name","value":"bucketURL"}}]}}]}}]}}]} as unknown as DocumentNode<ApiFileIdentitiesQuery, ApiFileIdentitiesQueryVariables>;
 export const ApiOrgIdListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgIdList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ids"}},"type":{"kind":"NonNullType","type":{"kind":"ListType","type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ids"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ids"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Org"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgIdListQuery, ApiOrgIdListQueryVariables>;
 export const ApiOrgIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"GID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"InlineFragment","typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Org"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"code"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgIdQuery, ApiOrgIdQueryVariables>;
 export const ApiOrgGroupListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"apiOrgGroupList"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrgRoleOrder"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"where"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"OrgRoleWhereInput"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"orgGroups"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"orderBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"orderBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"where"},"value":{"kind":"Variable","name":{"kind":"Name","value":"where"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"cursor"}},{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"orgID"}},{"kind":"Field","name":{"kind":"Name","value":"kind"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"comments"}}]}}]}}]}}]}}]} as unknown as DocumentNode<ApiOrgGroupListQuery, ApiOrgGroupListQueryVariables>;

@@ -56,6 +56,8 @@ type App implements Node {
   id: ID!
   """应用类型"""
   kind: AppKind!
+  """应用图标地址"""
+  logo: String
   """图标,存储路规则：/{appcode}/{tid}/xxx"""
   logoFileID: ID
   menus(
@@ -1700,6 +1702,8 @@ input CreateAppInput {
   dictIDs: [ID!]
   """应用类型"""
   kind: AppKind!
+  """应用图标地址"""
+  logo: String
   """图标,存储路规则：/{appcode}/{tid}/xxx"""
   logoFileID: ID
   menuIDs: [ID!]
@@ -1822,11 +1826,13 @@ input CreateFileSourceInput {
   """文件存储空间"""
   bucket: String!
   """文件存储空间地址，用于匹配url"""
-  bucketurl: String
+  bucketURL: String!
   """备注"""
   comments: String
   """对外服务的访问域名"""
   endpoint: String!
+  """是否禁止修改endpoint，如果是自定义域名设为true"""
+  endpointImmutable: Boolean
   fileIDs: [ID!]
   identityIDs: [ID!]
   """文件来源"""
@@ -2082,6 +2088,8 @@ type FileEdge {
 type FileIdentity implements Node {
   """accesskey id"""
   accessKeyID: String!
+  """accesskey secret"""
+  accessKeySecret: String!
   """备注"""
   comments: String
   createdAt: Time!
@@ -2300,13 +2308,15 @@ type FileSource implements Node {
   """文件存储空间"""
   bucket: String!
   """文件存储空间地址，用于匹配url"""
-  bucketurl: String
+  bucketURL: String!
   """备注"""
   comments: String
   createdAt: Time!
   createdBy: Int!
   """对外服务的访问域名"""
   endpoint: String!
+  """是否禁止修改endpoint，如果是自定义域名设为true"""
+  endpointImmutable: Boolean!
   files(
     """Returns the elements in the list that come after the specified cursor."""
     after: Cursor
@@ -2324,22 +2334,6 @@ type FileSource implements Node {
     where: FileWhereInput
   ): FileConnection!
   id: ID!
-  identities(
-    """Returns the elements in the list that come after the specified cursor."""
-    after: Cursor
-    """
-    Returns the elements in the list that come before the specified cursor.
-    """
-    before: Cursor
-    """Returns the first _n_ elements from the list."""
-    first: Int
-    """Returns the last _n_ elements from the list."""
-    last: Int
-    """Ordering options for FileIdentities returned from the connection."""
-    orderBy: FileIdentityOrder
-    """Filtering options for FileIdentities returned from the connection."""
-    where: FileIdentityWhereInput
-  ): FileIdentityConnection!
   """文件来源"""
   kind: FileSourceKind!
   """地域，数据存储的物理位置"""
@@ -2408,22 +2402,20 @@ input FileSourceWhereInput {
   bucketLTE: String
   bucketNEQ: String
   bucketNotIn: [String!]
-  """bucketUrl field predicates"""
-  bucketurl: String
-  bucketurlContains: String
-  bucketurlContainsFold: String
-  bucketurlEqualFold: String
-  bucketurlGT: String
-  bucketurlGTE: String
-  bucketurlHasPrefix: String
-  bucketurlHasSuffix: String
-  bucketurlIn: [String!]
-  bucketurlIsNil: Boolean
-  bucketurlLT: String
-  bucketurlLTE: String
-  bucketurlNEQ: String
-  bucketurlNotIn: [String!]
-  bucketurlNotNil: Boolean
+  """bucket_url field predicates"""
+  bucketURL: String
+  bucketURLContains: String
+  bucketURLContainsFold: String
+  bucketURLEqualFold: String
+  bucketURLGT: String
+  bucketURLGTE: String
+  bucketURLHasPrefix: String
+  bucketURLHasSuffix: String
+  bucketURLIn: [String!]
+  bucketURLLT: String
+  bucketURLLTE: String
+  bucketURLNEQ: String
+  bucketURLNotIn: [String!]
   """created_at field predicates"""
   createdAt: Time
   createdAtGT: Time
@@ -2451,6 +2443,9 @@ input FileSourceWhereInput {
   endpointGTE: String
   endpointHasPrefix: String
   endpointHasSuffix: String
+  """endpoint_immutable field predicates"""
+  endpointImmutable: Boolean
+  endpointImmutableNEQ: Boolean
   endpointIn: [String!]
   endpointLT: String
   endpointLTE: String
@@ -3112,6 +3107,24 @@ type OrgEdge {
   cursor: Cursor!
   """The item at the end of the edge."""
   node: Org
+}
+
+"""业务调用的fileIdentity"""
+type OrgFileIdentity {
+  """备注"""
+  comments: String
+  createdAt: Time!
+  createdBy: Int!
+  """文件来源ID"""
+  fileSourceID: ID!
+  id: ID!
+  """租户默认的凭证"""
+  isDefault: Boolean!
+  source: FileSource!
+  """组织ID"""
+  tenantID: ID!
+  updatedAt: Time
+  updatedBy: Int
 }
 
 """OrgKind is enum for the field kind"""
@@ -4281,7 +4294,24 @@ type Query {
     permission: String!
   ): Boolean!
   """文件凭证"""
-  fileIdentities: [FileIdentity!]!
+  fileIdentities(
+    """Returns the elements in the list that come after the specified cursor."""
+    after: Cursor
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+    """Returns the first _n_ elements from the list."""
+    first: Int
+    """Returns the last _n_ elements from the list."""
+    last: Int
+    """Ordering options for FileIdentities returned from the connection."""
+    orderBy: FileIdentityOrder
+    """Filtering options for FileIdentities returned from the connection."""
+    where: FileIdentityWhereInput
+  ): FileIdentityConnection!
+  """获取当前组织的文件凭证"""
+  fileIdentitiesForOrg: [OrgFileIdentity!]!
   """文件来源"""
   fileSources(
     """Returns the elements in the list that come after the specified cursor."""
@@ -4455,6 +4485,7 @@ input UpdateAppInput {
   clearAppSecret: Boolean
   clearComments: Boolean
   clearDicts: Boolean
+  clearLogo: Boolean
   clearLogoFileID: Boolean
   clearMenus: Boolean
   clearPolicies: Boolean
@@ -4469,6 +4500,8 @@ input UpdateAppInput {
   comments: String
   """应用类型"""
   kind: AppKind
+  """应用图标地址"""
+  logo: String
   """图标,存储路规则：/{appcode}/{tid}/xxx"""
   logoFileID: ID
   """名称"""
@@ -4600,8 +4633,7 @@ input UpdateFileSourceInput {
   """文件存储空间"""
   bucket: String
   """文件存储空间地址，用于匹配url"""
-  bucketurl: String
-  clearBucketUrl: Boolean
+  bucketURL: String
   clearComments: Boolean
   clearFiles: Boolean
   clearIdentities: Boolean
@@ -4609,6 +4641,8 @@ input UpdateFileSourceInput {
   comments: String
   """对外服务的访问域名"""
   endpoint: String
+  """是否禁止修改endpoint，如果是自定义域名设为true"""
+  endpointImmutable: Boolean
   """文件来源"""
   kind: FileSourceKind
   """地域，数据存储的物理位置"""

@@ -13,11 +13,11 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdListDocument,
-    "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}": types.ApiAppIdDocument,
+    "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}": types.ApiAppIdListDocument,
+    "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}": types.ApiAppIdDocument,
     "query apiAppDictByRefCode($refCodes: [String!]!){\n  appDictByRefCode(refCodes:$refCodes){\n    id,items{\n      id,code,name,refCode\n    }\n  }\n}": types.ApiAppDictByRefCodeDocument,
     "query apiAppDictItemByRefCode($refCode: String!){\n  appDictItemByRefCode(refCode:$refCode){\n    id,code,name,refCode\n  }\n}": types.ApiAppDictItemByRefCodeDocument,
-    "query apiFileIdentities{\n  fileIdentities{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketurl\n    }\n  }\n}": types.ApiFileIdentitiesDocument,
+    "query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}": types.ApiFileIdentitiesDocument,
     "query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdListDocument,
     "query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdDocument,
     "query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){\n  orgGroups(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      cursor,node{\n        id,orgID,kind,name,comments\n      }\n    }\n  }\n}": types.ApiOrgGroupListDocument,
@@ -62,11 +62,11 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name\n    }\n  }\n}"];
+export function gql(source: "query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}"): (typeof documents)["query apiAppIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"): (typeof documents)["query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name\n    }\n  }\n}"];
+export function gql(source: "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}"): (typeof documents)["query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -78,7 +78,7 @@ export function gql(source: "query apiAppDictItemByRefCode($refCode: String!){\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query apiFileIdentities{\n  fileIdentities{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketurl\n    }\n  }\n}"): (typeof documents)["query apiFileIdentities{\n  fileIdentities{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketurl\n    }\n  }\n}"];
+export function gql(source: "query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}"): (typeof documents)["query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -63,7 +63,7 @@ async function getAwsS3Data(endpoint?: string, bucket?: string) {
     const fe = filesource.source.endpoint,
       fb = filesource.source.bucket,
       fr = filesource.source.region,
-      fburl = filesource.source.bucketurl ?? '',
+      fburl = filesource.source.bucketURL,
       key = `${fe}/${fb}/${fr}`
     if (stsApi) {
       if (awsS3Data[key]?.stsData?.expiration) {
