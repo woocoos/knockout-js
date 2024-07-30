@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6-beta.2
+
+### Patch Changes
+
+- 文件上传组件一并支持
+
 ## 0.1.6-beta.1
 
 ### Patch Changes

@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.5-beta.0
+
+### Patch Changes
+
+- 文件上传组件一并支持
+- Updated dependencies
+  - @knockout-js/api@0.1.6-beta.2
+
 ## 0.1.4
 
 ### Patch Changes
