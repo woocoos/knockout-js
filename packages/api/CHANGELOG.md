@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6-beta.1
+
+### Patch Changes
+
+- update graphql file
+
 ## 0.1.6-beta.0
 
 ### Patch Changes

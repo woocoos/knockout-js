@@ -56,6 +56,9 @@ pnpm changeset pre enter rc      # 设置 rc 版本
 # 要修改版本的包
 pnpm changeset
 
+# 设置版本
+pnpm changeset version
+
 #发布测试版本
 pnpm changeset publish
 
