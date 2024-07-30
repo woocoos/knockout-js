@@ -1,67 +1,48 @@
-import { Button, Upload, UploadFile } from "antd";
 import { useState } from "react";
-import { delFile, getFileUrl, uploadFile } from "@knockout-js/api";
+import { UploadAvatar, UploadTemp, UploadMultiple } from "@knockout-js/layout";
 
-type S3Object = {
-  path: string;
-  storageUrl: string;
-}
 
 
 export default () => {
 
-  const [fileList, setFileList] = useState<UploadFile<S3Object>[]>([])
+  // http://127.0.0.1:9000/test1/test/r6utsqowmb.jpg
+  // http://qldevtest.oss-cn-shenzhen.aliyuncs.com/test/yfdrm6dyr78.jpg
+  const [avatar, setAvatar] = useState<string | undefined>()
+
+  // http://127.0.0.1:9000/test1/test/pkcfcpf9xs.txt
+  const [temp, setTemp] = useState<string | undefined>()
+
+  //
+  const [list, setList] = useState<string[] | undefined>(['http://127.0.0.1:9000/test1/test/d8y6zjdyf2k.jpg', 'http://127.0.0.1:9000/test1/test/ivbs8cydz3.jpg'])
 
   return <>
-    <h1>测试aws s3</h1>
     {/* accept 值 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept */}
-    <Upload
+    <h1>测试 组件 UploadAvatar</h1>
+    <div>avatar: {avatar}</div>
+    <UploadAvatar
+      value={avatar}
+      onChange={setAvatar}
+      directory="test"
       accept="image/*"
-      fileList={fileList}
-      beforeUpload={async (file) => {
-        const fileData: UploadFile<S3Object> = {
-          uid: file.uid,
-          name: file.name,
-          status: 'uploading',
-        };
-        const result = await uploadFile(file, `test`)
-        if (result) {
-          const storageUrl = await getFileUrl(result.path)
-          fileData.status = 'done'
-          fileData.response = { path: result.path, storageUrl: storageUrl ?? '' }
-        } else {
-          fileData.status = 'error'
-        }
-        setFileList([...fileList, fileData])
-        return false
-      }}
-      onPreview={async (file: UploadFile<S3Object>) => {
-        if (file.response?.storageUrl) {
-          window.open(file.response.storageUrl);
-        }
-      }}
-      onRemove={async (file: UploadFile<S3Object>) => {
-        if (file.response?.path) {
-          await delFile(file.response.path);
-          setFileList(fileList.filter(item => item.uid !== file.uid))
-        } else {
-          setFileList(fileList.filter(item => item.uid !== file.uid))
-        }
-      }}
-    >
-      <Button>Click to Upload</Button>
-    </Upload>
+    />
 
-    <div>
-      {JSON.stringify(fileList)}
-    </div>
+    <h1>测试 组件 UploadTemp</h1>
+    <div>temp: {temp}</div>
+    <UploadTemp
+      value={temp}
+      onChange={setTemp}
+      directory="test"
+      accept=".txt"
+    />
 
-    <h2> 预览 </h2>
-    {fileList.map((item, index) => <div key={index}>
-      <div>{index + 1}</div>
-      <img src={item.response?.storageUrl} width={100} height={100} />
-    </div>)
-    }
+    <h1>测试 组件 UploadMultiple</h1>
+    <div>list: {list?.join(';')}</div>
+    <UploadMultiple
+      value={list}
+      onChange={setList}
+      directory="test"
+      accept="image/*"
+    />
   </>
 }
 

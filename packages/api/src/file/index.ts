@@ -1,4 +1,4 @@
-import { DeleteObjectCommand, GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { request } from "@ice/plugin-request/request";
 import { getFileSource } from "..";
@@ -117,7 +117,7 @@ async function getAwsS3Data(endpoint?: string, bucket?: string) {
 /**
  * 文件上传
  * @param file File对象
- * @param dir 到哪个目录下
+ * @param dir  文件目录下
  * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
@@ -135,6 +135,9 @@ export async function uploadFile(file: File, dir: string, endpoint?: string, buc
         Body: body,
         ContentEncoding: "utf-8",
         ContentType: file.type,
+        Metadata: {
+          name: file.name,
+        }
       })
     try {
       const response = await s3Data.client.send(command)
@@ -185,6 +188,7 @@ export async function delFile(path: string, endpoint?: string, bucket?: string) 
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  * 可通过下面方法转换成访问url
+ * const byteBody = await result.Body?.transformToByteArray()
  * URL.createObjectURL(new File([byteBody], path, { type: response.ContentType }));
  */
 export async function getFileRaw(path: string, endpoint?: string, bucket?: string) {
@@ -198,10 +202,7 @@ export async function getFileRaw(path: string, endpoint?: string, bucket?: strin
     try {
       const response = await s3Data.client.send(command)
       if (response?.$metadata?.httpStatusCode === 200) {
-        const byteBody = await response.Body?.transformToByteArray()
-        if (byteBody) {
-          return byteBody
-        }
+        return response
       }
     } catch (error) {
     }
@@ -213,21 +214,26 @@ export async function getFileRaw(path: string, endpoint?: string, bucket?: strin
 /**
  * 获取文件url
  * @param path
- * @param expiresIn
+ * @param expiresIn  default 3600
+ * @param inBrowser  是否在浏览器中展示
  * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function getFileUrl(path: string, expiresIn: number = 3600, endpoint?: string, bucket?: string) {
+export async function getFileUrl(path: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
   const s3Data = await getAwsS3Data(endpoint, bucket)
   if (s3Data) {
-    const command = new GetObjectCommand({
+    const input: GetObjectCommandInput = {
       Bucket: s3Data.bucketUrl,
       Key: path,
       ResponseContentEncoding: "utf-8",
-      ResponseContentDisposition: "inline",
-    })
-    return await getSignedUrl(s3Data.client, command, { expiresIn })
+    }
+    if (inBrowser) {
+      input.ResponseContentDisposition = 'inline'
+    } else {
+      input.ResponseContentDisposition = 'attachment'
+    }
+    return await getSignedUrl(s3Data.client, new GetObjectCommand(input), { expiresIn })
   }
 }
 
@@ -248,15 +254,50 @@ export async function getStorageUrl(path: string, endpoint?: string, bucket?: st
  * 存储的url解析出可展示的url
  * @param url
  * @param expiresIn  default 3600
+ * @param inBrowser  是否在浏览器中展示
  * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function parseStorageUrl(url: string, expiresIn: number = 3600, endpoint?: string, bucket?: string) {
+export async function parseStorageUrl(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
   const s3Data = await getAwsS3Data(endpoint, bucket)
-  if (s3Data && url.indexOf(s3Data.bucketUrl) === 0) {
-    const path = url.replace(`${s3Data.bucketUrl}/`, '')
-    return await getFileUrl(path.split('?')[0], expiresIn)
+  if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
+    const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
+    return await getFileUrl(path, expiresIn, inBrowser, endpoint, bucket)
   }
-  return url
+  return storageUrl
+}
+
+export type UploadFileRes = {
+  path: string;
+  storageUrl: string;
+  url: string;
+  name: string;
+}
+
+
+/**
+ * 存储的url解析出相关数据
+ * @param storageUrl
+ * @param expiresIn  default 3600
+ * @param inBrowser  是否在浏览器中展示
+ * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @returns
+ */
+export async function parseStorageData(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
+  const s3Data = await getAwsS3Data(endpoint, bucket)
+  if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
+    const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
+    const rawRes = await getFileRaw(path, endpoint, bucket)
+    const url = await getFileUrl(path, expiresIn, inBrowser, endpoint, bucket)
+    const name = rawRes?.Metadata?.['name'] ?? path.split('/').pop()
+
+    return {
+      path,
+      storageUrl,
+      url,
+      name,
+    } as UploadFileRes
+  }
 }
