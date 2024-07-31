@@ -47,15 +47,17 @@ export function setStsApi(api: string) {
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-async function getAwsS3Data(endpoint?: string, bucket?: string) {
+async function getAwsS3Data(endpoint?: string, bucket?: string, bucketUrl?: string) {
   let filesourceFilter: {
     endpoint: string,
-    bucket: string
+    bucket: string,
+    bucketUrl?: string,
   } | undefined = undefined
   if (endpoint && bucket) {
     filesourceFilter = {
       endpoint,
       bucket,
+      bucketUrl,
     }
   }
   const filesource = await getFileSource(filesourceFilter)
@@ -83,7 +85,7 @@ async function getAwsS3Data(endpoint?: string, bucket?: string) {
             endpoint: fe,
             bucket: fb,
           })
-          if (result?.session_token) {
+          if (result?.access_key_id) {
             const stsData = {
               accessKeyId: result.access_key_id,
               secretAccessKey: result.secret_access_key,
@@ -260,7 +262,7 @@ export async function getStorageUrl(path: string, endpoint?: string, bucket?: st
  * @returns
  */
 export async function parseStorageUrl(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+  const s3Data = await getAwsS3Data(endpoint, bucket, storageUrl)
   if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
     const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
     return await getFileUrl(path, expiresIn, inBrowser, endpoint, bucket)
@@ -286,7 +288,7 @@ export type UploadFileRes = {
  * @returns
  */
 export async function parseStorageData(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+  const s3Data = await getAwsS3Data(endpoint, bucket, storageUrl)
   if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
     const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
     const rawRes = await getFileRaw(path, endpoint, bucket)

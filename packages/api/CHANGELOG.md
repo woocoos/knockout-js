@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6-beta.3
+
+### Patch Changes
+
+- 支持不需要 sts 创建 s3 client 和扩展 bucketUrl 检索
+
 ## 0.1.6-beta.2
 
 ### Patch Changes
