@@ -18,8 +18,8 @@ const fileIdentitiesQuery = gql(/* GraphQL */`query apiFileIdentities{
  * @returns
  */
 export async function getFileSource(filter?: {
-  bucket: string,
-  endpoint: string,
+  bucket?: string,
+  endpoint?: string,
   bucketUrl?: string,
 }) {
   const result = await query(fileIdentitiesQuery, {
@@ -29,17 +29,15 @@ export async function getFileSource(filter?: {
   });
 
   if (result.data?.fileIdentitiesForOrg.length) {
-    if (filter) {
-      if (filter.bucketUrl) {
-        const filterData = result.data?.fileIdentitiesForOrg.find(item => filter.bucketUrl?.indexOf(item.source.bucketURL) == 0);
-        if (filterData) {
-          return filterData
-        }
-      } else {
-        const filterData = result.data?.fileIdentitiesForOrg.find(item => item.source.bucket == filter.bucket && item.source.endpoint == filter.endpoint);
-        if (filterData) {
-          return filterData
-        }
+    if (filter?.bucketUrl) {
+      const filterData = result.data?.fileIdentitiesForOrg.find(item => filter.bucketUrl?.indexOf(item.source.bucketURL) == 0);
+      if (filterData) {
+        return filterData
+      }
+    } else if (filter?.bucket && filter?.endpoint) {
+      const filterData = result.data?.fileIdentitiesForOrg.find(item => item.source.bucket == filter.bucket && item.source.endpoint == filter.endpoint);
+      if (filterData) {
+        return filterData
       }
     }
     return result.data?.fileIdentitiesForOrg.find(item => item.isDefault);

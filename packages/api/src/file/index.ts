@@ -49,17 +49,21 @@ export function setStsApi(api: string) {
  */
 async function getAwsS3Data(endpoint?: string, bucket?: string, bucketUrl?: string) {
   let filesourceFilter: {
-    endpoint: string,
-    bucket: string,
+    endpoint?: string,
+    bucket?: string,
     bucketUrl?: string,
   } | undefined = undefined
-  if (endpoint && bucket) {
+  if (bucketUrl) {
+    filesourceFilter = {
+      bucketUrl,
+    }
+  } else if (endpoint && bucket) {
     filesourceFilter = {
       endpoint,
       bucket,
-      bucketUrl,
     }
   }
+
   const filesource = await getFileSource(filesourceFilter)
   if (filesource) {
     const fe = filesource.source.endpoint,
