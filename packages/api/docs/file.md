@@ -79,7 +79,7 @@ function getStorageUrl(path: string, endpoint?: string, bucket?: string): Promis
 function parseStorageUrl(storageUrl: string, expiresIn?: number, inBrowser?: boolean, endpoint?: string, bucket?: string): Promise<string | undefined>
 ```
 
-### 
+### parseStorageData
 
 存储在数据库的url转换成想要的关键的UploadFileRes信息
 
