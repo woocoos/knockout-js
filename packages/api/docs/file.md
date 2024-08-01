@@ -40,7 +40,7 @@ function getFileRaw(path: string, endpoint?: string, bucket?: string): Promise<G
 上传
 
 ```ts
-function uploadFile(file: File, dir: string, endpoint?: string, bucket?: string): Promise<{
+function uploadFile(file: File, dir: string, useFileName?: boolean, endpoint?: string, bucket?: string): Promise<{
     path: string;
 } | null>
 ```

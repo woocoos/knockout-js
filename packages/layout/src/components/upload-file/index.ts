@@ -29,6 +29,10 @@ export interface UploadFileProps<T> {
    */
   directory: string;
   /**
+   * 使用上传文件名当作存储名称
+   */
+  useFileName?: boolean;
+  /**
    * 限制文件大小 默认5M
    */
   maxSize?: number;

@@ -81,7 +81,7 @@ export default (props: UploadFileProps<string> & {
             return false;
           }
           setLoading(true);
-          const result = await uploadFile(file, props.directory, props.endpoint, props.bucket);
+          const result = await uploadFile(file, props.directory, props.useFileName, props.endpoint, props.bucket);
           if (result?.path) {
             const storageUlr = await getStorageUrl(result.path, props.endpoint, props.bucket),
               url = await getFileUrl(result.path, 3600, undefined, props.endpoint, props.bucket)

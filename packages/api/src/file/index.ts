@@ -124,16 +124,17 @@ async function getAwsS3Data(endpoint?: string, bucket?: string, bucketUrl?: stri
  * 文件上传
  * @param file File对象
  * @param dir  文件目录下
+ * @param useFileName  使用file.name 当作文件名
  * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
  * @param bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function uploadFile(file: File, dir: string, endpoint?: string, bucket?: string) {
+export async function uploadFile(file: File, dir: string, useFileName?: boolean, endpoint?: string, bucket?: string) {
   const s3Data = await getAwsS3Data(endpoint, bucket)
   if (s3Data) {
     const
       suffix = file.name.split('.').pop(),
-      key = `${dir}/${Math.random().toString(36).substring(2)}.${suffix}`.split('/').filter((item) => item).join('/'),
+      key = useFileName ? `${dir}/${file.name}`.split('/').filter((item) => item).join('/') : `${dir}/${Math.random().toString(36).substring(2)}.${suffix}`.split('/').filter((item) => item).join('/'),
       body = new Blob([file], { type: file.type }),
       command = new PutObjectCommand({
         Bucket: s3Data.bucketUrl,

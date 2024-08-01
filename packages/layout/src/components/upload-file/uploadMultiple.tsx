@@ -39,7 +39,7 @@ export default (props: UploadFileProps<string[]>) => {
       for (let i = 0; i < files.length; i++) {
         const item = files[i];
 
-        const uData = await uploadFile(item, props.directory, props.endpoint, props.bucket);
+        const uData = await uploadFile(item, props.directory, props.useFileName, props.endpoint, props.bucket);
         if (uData?.path) {
           const storageUrl = await getStorageUrl(uData.path, props.endpoint, props.bucket);
           if (storageUrl) {
