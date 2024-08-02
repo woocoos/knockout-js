@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/api",
-  "version": "0.1.6-beta.3",
+  "version": "0.1.6-beta.4",
   "description": "Knockout API",
   "files": [
     "esm",

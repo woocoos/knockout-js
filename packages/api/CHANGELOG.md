@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6-beta.4
+
+### Patch Changes
+
+- 优化 file api 的参数形式
+
 ## 0.1.6-beta.3
 
 ### Patch Changes

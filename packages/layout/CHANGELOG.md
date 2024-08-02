@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.5-beta.1
+
+### Patch Changes
+
+- 优化 file api 的参数形式
+- Updated dependencies
+  - @knockout-js/api@0.1.6-beta.4
+
 ## 0.1.5-beta.0
 
 ### Patch Changes
