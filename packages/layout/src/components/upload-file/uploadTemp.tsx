@@ -30,7 +30,11 @@ export default (props: UploadFileProps<string> & {
   const
     getValueFile = async () => {
       if (props.value) {
-        const result = await parseStorageData(props.value, undefined, false, props.endpoint, props.bucket);
+        const result = await parseStorageData(props.value, {
+          inBrowser: false,
+          endpoint: props.endpoint,
+          bucket: props.bucket
+        });
         if (result) {
           setName(result.name)
           setUrlSrc(result.url)
@@ -41,7 +45,10 @@ export default (props: UploadFileProps<string> & {
       if (props.value) {
         const dataRes = await parseStorageData(props.value)
         if (dataRes) {
-          const result = await getFileRaw(dataRes.path, props.endpoint, props.bucket)
+          const result = await getFileRaw(dataRes.path, {
+            endpoint: props.endpoint,
+            bucket: props.bucket
+          })
           if (result) {
             const content = await result.Body?.transformToString('utf-8')
             const r = new FileReader()
@@ -81,10 +88,21 @@ export default (props: UploadFileProps<string> & {
             return false;
           }
           setLoading(true);
-          const result = await uploadFile(file, props.directory, props.useFileName, props.endpoint, props.bucket);
+          const result = await uploadFile(file, props.directory, {
+            endpoint: props.endpoint,
+            bucket: props.bucket,
+            useFileName: props.useFileName,
+            custromFileName: props.custromFileName,
+          });
           if (result?.path) {
-            const storageUlr = await getStorageUrl(result.path, props.endpoint, props.bucket),
-              url = await getFileUrl(result.path, 3600, undefined, props.endpoint, props.bucket)
+            const storageUlr = await getStorageUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket
+            }),
+              url = await getFileUrl(result.path, {
+                endpoint: props.endpoint,
+                bucket: props.bucket
+              })
             setName(file.name)
             setUrlSrc(url)
             props.onChange?.(storageUlr)

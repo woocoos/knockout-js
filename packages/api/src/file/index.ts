@@ -43,24 +43,29 @@ export function setStsApi(api: string) {
 
 /**
  * 获取缓存client相关数据
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.bucketUrl  default 是默认fileSource isDefault=true 的bucketUrl
  * @returns
  */
-async function getAwsS3Data(endpoint?: string, bucket?: string, bucketUrl?: string) {
+async function getAwsS3Data(options?: {
+  endpoint?: string;
+  bucket?: string;
+  bucketUrl?: string;
+}) {
   let filesourceFilter: {
     endpoint?: string,
     bucket?: string,
     bucketUrl?: string,
   } | undefined = undefined
-  if (bucketUrl) {
+  if (options?.bucketUrl) {
     filesourceFilter = {
-      bucketUrl,
+      bucketUrl: options.bucketUrl,
     }
-  } else if (endpoint && bucket) {
+  } else if (options?.endpoint && options?.bucket) {
     filesourceFilter = {
-      endpoint,
-      bucket,
+      endpoint: options?.endpoint,
+      bucket: options?.bucket,
     }
   }
 
@@ -124,17 +129,31 @@ async function getAwsS3Data(endpoint?: string, bucket?: string, bucketUrl?: stri
  * 文件上传
  * @param file File对象
  * @param dir  文件目录下
- * @param useFileName  使用file.name 当作文件名
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
+ *
+ * 以下两个参数适用于需要覆盖文件的场景 同时使用只生效 useFileName
+ * @param options.useFileName  使用file.name当作文件名
+ * @param options.custromFileName  使用这个值当作文件名时不包含后缀 custromFileName='fileName'
  * @returns
  */
-export async function uploadFile(file: File, dir: string, useFileName?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+export async function uploadFile(file: File, dir: string, options?: {
+  endpoint?: string;
+  bucket?: string;
+  useFileName?: boolean;
+  custromFileName?: string;
+}) {
+  const s3Data = await getAwsS3Data({
+    endpoint: options?.endpoint,
+    bucket: options?.bucket,
+  })
   if (s3Data) {
     const
       suffix = file.name.split('.').pop(),
-      key = useFileName ? `${dir}/${file.name}`.split('/').filter((item) => item).join('/') : `${dir}/${Math.random().toString(36).substring(2)}.${suffix}`.split('/').filter((item) => item).join('/'),
+      key = options?.useFileName ?
+        `${dir}/${file.name}`.split('/').filter((item) => item).join('/') :
+        `${dir}/${options?.custromFileName ? options.custromFileName : Math.random().toString(36).substring(2)}.${suffix}`
+          .split('/').filter((item) => item).join('/'),
       body = new Blob([file], { type: file.type }),
       command = new PutObjectCommand({
         Bucket: s3Data.bucketUrl,
@@ -163,12 +182,15 @@ export async function uploadFile(file: File, dir: string, useFileName?: boolean,
 /**
  * 文件删除
  * @param path
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function delFile(path: string, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+export async function delFile(path: string, options?: {
+  endpoint?: string;
+  bucket?: string;
+}) {
+  const s3Data = await getAwsS3Data(options)
   if (s3Data) {
     const command = new DeleteObjectCommand({
       Bucket: s3Data.bucketUrl,
@@ -191,15 +213,18 @@ export async function delFile(path: string, endpoint?: string, bucket?: string) 
 /**
  * 获取文件流
  * @param path
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  * 可通过下面方法转换成访问url
  * const byteBody = await result.Body?.transformToByteArray()
  * URL.createObjectURL(new File([byteBody], path, { type: response.ContentType }));
  */
-export async function getFileRaw(path: string, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+export async function getFileRaw(path: string, options?: {
+  endpoint?: string;
+  bucket?: string;
+}) {
+  const s3Data = await getAwsS3Data(options)
   if (s3Data) {
     const command = new GetObjectCommand({
       Bucket: s3Data.bucketUrl,
@@ -221,26 +246,40 @@ export async function getFileRaw(path: string, endpoint?: string, bucket?: strin
 /**
  * 获取文件url
  * @param path
- * @param expiresIn  default 3600
- * @param inBrowser  是否在浏览器中展示
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.expiresIn  default 3600
+ * @param options.inBrowser  是否在浏览器中展示
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function getFileUrl(path: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+export async function getFileUrl(path: string, options?: {
+  expiresIn?: number;
+  inBrowser?: boolean;
+  endpoint?: string;
+  bucket?: string;
+}) {
+  const s3Data = await getAwsS3Data({
+    endpoint: options?.endpoint,
+    bucket: options?.bucket
+  })
   if (s3Data) {
     const input: GetObjectCommandInput = {
       Bucket: s3Data.bucketUrl,
       Key: path,
       ResponseContentEncoding: "utf-8",
     }
-    if (inBrowser) {
+    if (options?.inBrowser) {
       input.ResponseContentDisposition = 'inline'
     } else {
       input.ResponseContentDisposition = 'attachment'
     }
-    return await getSignedUrl(s3Data.client, new GetObjectCommand(input), { expiresIn })
+    return await getSignedUrl(
+      s3Data.client,
+      new GetObjectCommand(input),
+      {
+        expiresIn: options?.expiresIn ?? 3600
+      }
+    )
   }
 }
 
@@ -248,29 +287,41 @@ export async function getFileUrl(path: string, expiresIn: number = 3600, inBrows
 /**
  * 根据path得到存储的url
  * @param path
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function getStorageUrl(path: string, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket)
+export async function getStorageUrl(path: string, options?: {
+  endpoint?: string;
+  bucket?: string
+}) {
+  const s3Data = await getAwsS3Data(options)
   return s3Data ? `${s3Data.bucketUrl}/${path}` : undefined
 }
 
 /**
  * 存储的url解析出可展示的url
  * @param url
- * @param expiresIn  default 3600
- * @param inBrowser  是否在浏览器中展示
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.expiresIn  default 3600
+ * @param options.inBrowser  是否在浏览器中展示
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function parseStorageUrl(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket, storageUrl)
+export async function parseStorageUrl(storageUrl: string, options?: {
+  expiresIn?: number,
+  inBrowser?: boolean,
+  endpoint?: string,
+  bucket?: string
+}) {
+  const s3Data = await getAwsS3Data({
+    endpoint: options?.endpoint,
+    bucket: options?.bucket,
+    bucketUrl: storageUrl,
+  })
   if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
     const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
-    return await getFileUrl(path, expiresIn, inBrowser, endpoint, bucket)
+    return await getFileUrl(path, options)
   }
   return storageUrl
 }
@@ -286,18 +337,30 @@ export type UploadFileRes = {
 /**
  * 存储的url解析出相关数据
  * @param storageUrl
- * @param expiresIn  default 3600
- * @param inBrowser  是否在浏览器中展示
- * @param endpoint   default 是默认fileSource isDefault=true 的endpoint
- * @param bucket     default 是默认fileSource isDefault=true 的bucket
+ * @param options.expiresIn  default 3600
+ * @param options.inBrowser  是否在浏览器中展示
+ * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
+ * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
  */
-export async function parseStorageData(storageUrl: string, expiresIn: number = 3600, inBrowser?: boolean, endpoint?: string, bucket?: string) {
-  const s3Data = await getAwsS3Data(endpoint, bucket, storageUrl)
+export async function parseStorageData(storageUrl: string, options?: {
+  expiresIn?: number,
+  inBrowser?: boolean,
+  endpoint?: string,
+  bucket?: string
+}) {
+  const s3Data = await getAwsS3Data({
+    endpoint: options?.endpoint,
+    bucket: options?.bucket,
+    bucketUrl: storageUrl,
+  })
   if (s3Data && storageUrl.indexOf(s3Data.bucketUrl) === 0) {
     const path = storageUrl.replace(`${s3Data.bucketUrl}/`, '').split('?')[0]
-    const rawRes = await getFileRaw(path, endpoint, bucket)
-    const url = await getFileUrl(path, expiresIn, inBrowser, endpoint, bucket)
+    const rawRes = await getFileRaw(path, {
+      endpoint: options?.endpoint,
+      bucket: options?.bucket
+    })
+    const url = await getFileUrl(path, options)
     const name = rawRes?.Metadata?.['name'] ?? path.split('/').pop()
 
     return {

@@ -24,7 +24,12 @@ api中的 `endpoint` `bucket` 两个非必填参数都是默取fileSource isDefa
 获取文件url
 
 ```ts
-function getFileUrl(path: string, expiresIn?: number, inBrowser?: boolean, endpoint?: string, bucket?: string): Promise<string | undefined>
+function getFileUrl(path: string, options?: {
+    expiresIn?: number;
+    inBrowser?: boolean;
+    endpoint?: string;
+    bucket?: string;
+}): Promise<string | undefined>
 ```
 
 ### getFileRaw
@@ -32,7 +37,10 @@ function getFileUrl(path: string, expiresIn?: number, inBrowser?: boolean, endpo
 获取s3输出对象方便外部调用后自行对处理
 
 ```ts
-function getFileRaw(path: string, endpoint?: string, bucket?: string): Promise<GetObjectCommandOutput | null>
+function getFileRaw(path: string, options?: {
+    endpoint?: string;
+    bucket?: string;
+}): Promise<GetObjectCommandOutput | null>
 ```
 
 ### uploadFile
@@ -40,7 +48,12 @@ function getFileRaw(path: string, endpoint?: string, bucket?: string): Promise<G
 上传
 
 ```ts
-function uploadFile(file: File, dir: string, useFileName?: boolean, endpoint?: string, bucket?: string): Promise<{
+function uploadFile(file: File, dir: string, options?: {
+    endpoint?: string;
+    bucket?: string;
+    useFileName?: boolean;
+    custromFileName?: string;
+}): Promise<{
     path: string;
 } | null>
 ```
@@ -50,9 +63,11 @@ function uploadFile(file: File, dir: string, useFileName?: boolean, endpoint?: s
 删除
 
 ```ts
-function delFile(path: string, endpoint?: string, bucket?: string): Promise<true | null>
+function delFile(path: string, options?: {
+    endpoint?: string;
+    bucket?: string;
+}): Promise<true | null>
 ```
-
 
 ### setStsApi
 
@@ -67,7 +82,10 @@ function setStsApi(api: string): void
 根据path得到需要存储在数据库的url，方便后续解析处理
 
 ```ts
-function getStorageUrl(path: string, endpoint?: string, bucket?: string): Promise<string | undefined>
+function getStorageUrl(path: string, options?: {
+    endpoint?: string;
+    bucket?: string;
+}): Promise<string | undefined>
 ```
 
 
@@ -76,7 +94,12 @@ function getStorageUrl(path: string, endpoint?: string, bucket?: string): Promis
 存储在数据库的url转换成可展示的url
 
 ```ts
-function parseStorageUrl(storageUrl: string, expiresIn?: number, inBrowser?: boolean, endpoint?: string, bucket?: string): Promise<string | undefined>
+function parseStorageUrl(storageUrl: string, options?: {
+    expiresIn?: number;
+    inBrowser?: boolean;
+    endpoint?: string;
+    bucket?: string;
+}): Promise<string | undefined>
 ```
 
 ### parseStorageData
@@ -91,5 +114,10 @@ type UploadFileRes = {
     name: string;
 }
 
-function parseStorageData(storageUrl: string, expiresIn?: number, inBrowser?: boolean, endpoint?: string, bucket?: string): Promise<UploadFileRes | undefined>
+function parseStorageData(storageUrl: string, options?: {
+    expiresIn?: number;
+    inBrowser?: boolean;
+    endpoint?: string;
+    bucket?: string;
+}): Promise<UploadFileRes | undefined>
 ```

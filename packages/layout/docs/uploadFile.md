@@ -7,16 +7,17 @@ sidebar_label: 上传功能
 
 ## 通用props
 
-| 属性        | 描述                        | 类型                                    | 必填 | 默认值 |
-| ----------- | --------------------------- | --------------------------------------- | ---- | ------ |
-| directory   | 存储位置目录                | string                                  | ✅    | -      |
-| bucket      | 文件上传bucket              | string                                  | ❌    | -      |
-| endpoint    | endpoint                    | string                                  | ❌    | -      |
-| useFileName | 使用上传文件名当作存储名称  | boolean                                 | ❌    | -      |
-| maxSize     | 文件大小限制 （字节为单位） | number                                  | ❌    | 5M     |
-| accept      | 接受上传的文件类型          | string                                  | ❌    | -      |
-| value       | 上传的id                    | string &#124; string[]                  | ❌    | -      |
-| onChange    | 返回上传的id                | (value: string &#124; string[]) => void | ❌    | -      |
+| 属性            | 描述                             | 类型                                    | 必填 | 默认值 |
+| --------------- | -------------------------------- | --------------------------------------- | ---- | ------ |
+| directory       | 存储位置目录                     | string                                  | ✅    | -      |
+| bucket          | 文件上传bucket                   | string                                  | ❌    | -      |
+| endpoint        | endpoint                         | string                                  | ❌    | -      |
+| useFileName     | 使用file.name当作文件名          | boolean                                 | ❌    | -      |
+| custromFileName | 使用这个值当作文件名时不包含后缀 | string                                  | ❌    | -      |
+| maxSize         | 文件大小限制 （字节为单位）      | number                                  | ❌    | 5M     |
+| accept          | 接受上传的文件类型               | string                                  | ❌    | -      |
+| value           | 上传的id                         | string &#124; string[]                  | ❌    | -      |
+| onChange        | 返回上传的id                     | (value: string &#124; string[]) => void | ❌    | -      |
 
 根据组件是多选还是单选决定`value`是返回数组还是单个，同时`onChange`也是一样
 

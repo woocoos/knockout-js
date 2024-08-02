@@ -14,7 +14,10 @@ export default (props: UploadFileProps<string>) => {
 
   const getValueFile = async () => {
     if (props.value) {
-      const result = await parseStorageUrl(props.value, undefined, undefined, props.endpoint, props.bucket);
+      const result = await parseStorageUrl(props.value, {
+        endpoint: props.endpoint,
+        bucket: props.bucket
+      });
       if (result) {
         setImgsrc(result)
       }
@@ -41,11 +44,22 @@ export default (props: UploadFileProps<string>) => {
             return false;
           }
           setLoading(true);
-          const result = await uploadFile(file, props.directory, props.useFileName, props.endpoint, props.bucket);
+          const result = await uploadFile(file, props.directory, {
+            endpoint: props.endpoint,
+            bucket: props.bucket,
+            useFileName: props.useFileName,
+            custromFileName: props.custromFileName,
+          });
 
           if (result?.path) {
-            const storageUrl = await getStorageUrl(result.path, props.endpoint, props.bucket);
-            const url = await getFileUrl(result.path, undefined, undefined, props.endpoint, props.bucket)
+            const storageUrl = await getStorageUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket,
+            });
+            const url = await getFileUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket
+            })
             props.onChange?.(storageUrl);
             setImgsrc(url)
           } else {

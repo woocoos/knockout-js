@@ -29,9 +29,13 @@ export interface UploadFileProps<T> {
    */
   directory: string;
   /**
-   * 使用上传文件名当作存储名称
+   * 使用file.name当作文件名
    */
   useFileName?: boolean;
+  /**
+   * 使用这个值当作文件名时不包含后缀 custromFileName='fileName'
+   */
+  custromFileName?: string;
   /**
    * 限制文件大小 默认5M
    */

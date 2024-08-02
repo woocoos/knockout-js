@@ -39,9 +39,17 @@ export default (props: UploadFileProps<string[]>) => {
       for (let i = 0; i < files.length; i++) {
         const item = files[i];
 
-        const uData = await uploadFile(item, props.directory, props.useFileName, props.endpoint, props.bucket);
+        const uData = await uploadFile(item, props.directory, {
+          endpoint: props.endpoint,
+          bucket: props.bucket,
+          useFileName: props.useFileName,
+          custromFileName: props.custromFileName,
+        });
         if (uData?.path) {
-          const storageUrl = await getStorageUrl(uData.path, props.endpoint, props.bucket);
+          const storageUrl = await getStorageUrl(uData.path, {
+            endpoint: props.endpoint,
+            bucket: props.bucket
+          });
           if (storageUrl) {
             values.push(storageUrl)
           }
@@ -90,7 +98,10 @@ export default (props: UploadFileProps<string[]>) => {
           const storageUrl = file.response?.storageUrl,
             path = file.response?.path
           if (storageUrl && path) {
-            const result = await delFile(path, props.endpoint, props.bucket);
+            const result = await delFile(path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket
+            });
             if (result) {
               props.onChange?.(props.value?.filter(item => item != storageUrl) || [])
             } else {
