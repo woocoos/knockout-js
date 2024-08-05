@@ -162,7 +162,7 @@ export async function uploadFile(file: File, dir: string, options?: {
         ContentEncoding: "utf-8",
         ContentType: file.type,
         Metadata: {
-          name: file.name,
+          name: encodeURIComponent(file.name),
         }
       })
     try {
@@ -361,7 +361,7 @@ export async function parseStorageData(storageUrl: string, options?: {
       bucket: options?.bucket
     })
     const url = await getFileUrl(path, options)
-    const name = rawRes?.Metadata?.['name'] ?? path.split('/').pop()
+    const name = rawRes?.Metadata?.['name'] ? decodeURIComponent(rawRes?.Metadata?.['name']) : path.split('/').pop()
 
     return {
       path,

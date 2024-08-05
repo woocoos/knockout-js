@@ -1,19 +1,19 @@
 import { useState } from "react";
 import { UploadAvatar, UploadTemp, UploadMultiple } from "@knockout-js/layout";
+import { getFileRaw, parseStorageData } from "@knockout-js/api";
 
 
 
 export default () => {
 
   // http://127.0.0.1:9000/test1/test/r6utsqowmb.jpg
-  // http://qldevtest.oss-cn-shenzhen.aliyuncs.com/test/yfdrm6dyr78.jpg
   const [avatar, setAvatar] = useState<string | undefined>()
 
   // http://127.0.0.1:9000/test1/test/pkcfcpf9xs.txt
   const [temp, setTemp] = useState<string | undefined>()
 
-  //
-  const [list, setList] = useState<string[] | undefined>(['http://127.0.0.1:9000/test1/test/d8y6zjdyf2k.jpg', 'http://127.0.0.1:9000/test1/test/ivbs8cydz3.jpg'])
+  // 'http://127.0.0.1:9000/test1/test/d8y6zjdyf2k.jpg', 'http://127.0.0.1:9000/test1/test/ivbs8cydz3.jpg'
+  const [list, setList] = useState<string[] | undefined>([])
 
   return <>
     {/* accept 值 https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file#accept */}
@@ -43,6 +43,16 @@ export default () => {
       directory="test"
       accept="image/*"
     />
+    <br />
+    <button onClick={() => {
+      const storageUrl = ''
+      parseStorageData(storageUrl).then((result) => {
+        console.log(result)
+      })
+      // getFileRaw('test/r5pn9yy1xjt.jpg').then((result) => {
+      //   console.log(result)
+      // })
+    }}>点击测试</button>
   </>
 }
 
