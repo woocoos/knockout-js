@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.5
+
+### Patch Changes
+
+- 使用 s3 的方式处理文件操作
+- Updated dependencies
+  - @knockout-js/api@0.1.6
+
 ## 0.1.5-beta.1
 
 ### Patch Changes

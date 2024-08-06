@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.6
+
+### Patch Changes
+
+- 使用 s3 的方式处理文件操作
+
 ## 0.1.6-beta.4
 
 ### Patch Changes
