@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 export * from './ucenter/index';
-export * from './files';
+export * from './file';
 
 export enum instanceName {
   UCENTER = 'ucenter',

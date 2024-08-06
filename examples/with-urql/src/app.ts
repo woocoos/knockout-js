@@ -47,18 +47,21 @@ export const urqlConfig = defineUrqlConfig([
           getState: () => {
             const { token, tenantId } = store.getModelState('user')
             return {
-              token, tenantId
+              token: token ?? ICE_DEV_TOKEN,
+              tenantId: tenantId ?? ICE_DEV_TID
             }
           },
         }
       },
       authOpts: {
-        headerMode: RequestHeaderAuthorizationMode.KO,
+        // headerMode: RequestHeaderAuthorizationMode.KO,
         store: {
           getState: () => {
             const { token, tenantId, refreshToken } = store.getModelState('user')
             return {
-              token, tenantId, refreshToken
+              token: token ?? ICE_DEV_TOKEN,
+              tenantId: tenantId ?? ICE_DEV_TID,
+              refreshToken
             }
           },
           setStateToken: (newToken) => {
@@ -107,15 +110,15 @@ export const storeConfig = defineStoreConfig(async (appData) => {
 
 
 // 请求配置
-export const requestConfig = defineRequestConfig(async () => {
+export const requestConfig = defineRequestConfig(() => {
   console.log('defineRequestConfig')
   return {
-    baseURL: '/',
     interceptors: requestInterceptor({
       store: {
         getState: () => {
           return {
-            token: '', tenantId: ''
+            token: ICE_DEV_TOKEN,
+            tenantId: ICE_DEV_TID
           }
         }
       },

@@ -12,7 +12,7 @@ export default defineConfig(() => ({
   ssg: false,
   minify,
   codeSplitting: 'page-vendors',
-  compileDependencies: NODE_ENV === 'development' ? [/@urql\/core/] : true,
+  compileDependencies: NODE_ENV === 'development' ? [/@urql\/core/, /@smithy\/core/] : true,
   routes: {
     ignoreFiles: [
       '**/components/**',   // 添加此配置忽略components被解析成路由组件
@@ -29,4 +29,11 @@ export default defineConfig(() => ({
     jsxPlus(),
     auth(),
   ],
+  proxy: {
+    "/api-s3": {
+      target: "http://127.0.0.1:10070/",
+      changeOrigin: true,
+      pathRewrite: { [`^/api-s3`]: '' },
+    }
+  }
 }));

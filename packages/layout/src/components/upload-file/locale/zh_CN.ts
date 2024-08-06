@@ -10,6 +10,8 @@ const locale: UploadFileLocale = {
   fileUpload: "文件上传",
   tempViewer: "模板预览",
   tempDown: "模板下载",
+  errorUpload: '上传异常，请联系管理员',
+  errorDel: '删除异常，请联系管理员',
 };
 
 export default locale

@@ -1,5 +1,35 @@
 # @knockout-js/api
 
+## 0.1.6-beta.4
+
+### Patch Changes
+
+- 优化 file api 的参数形式
+
+## 0.1.6-beta.3
+
+### Patch Changes
+
+- 支持不需要 sts 创建 s3 client 和扩展 bucketUrl 检索
+
+## 0.1.6-beta.2
+
+### Patch Changes
+
+- 文件上传组件一并支持
+
+## 0.1.6-beta.1
+
+### Patch Changes
+
+- update graphql file
+
+## 0.1.6-beta.0
+
+### Patch Changes
+
+- add aws-s3 api
+
 ## 0.1.5
 
 ### Patch Changes

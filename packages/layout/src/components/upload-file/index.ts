@@ -8,6 +8,8 @@ export type UploadFileLocale = {
   // 支持扩展名
   supportExtension: string;
   errSupportExtension: string;
+  errorUpload: string;
+  errorDel: string;
   fileUpload: string;
   tempViewer: string;
   tempDown: string;
@@ -19,23 +21,23 @@ export interface UploadFileProps<T> {
    */
   bucket?: string;
   /**
-   * 应用code
+   * endpoint
    */
-  appCode?: string;
+  endpoint?: string;
   /**
-   * tenantId
+   * 目录格式  xxx/xx
    */
-  tenantId?: string;
+  directory: string;
   /**
-   * 目录格式  xxx/ss
+   * 使用file.name当作文件名
    */
-  directory?: string;
+  useFileName?: boolean;
   /**
-   * 强制使用目录当前缀
+   * 使用这个值当作文件名时不包含后缀 custromFileName='fileName'
    */
-  forceDirectory?: boolean;
+  custromFileName?: string;
   /**
-   * 限制文件大小
+   * 限制文件大小 默认5M
    */
   maxSize?: number;
   /**
@@ -43,19 +45,14 @@ export interface UploadFileProps<T> {
    */
   accept?: string;
   /**
-   * 文件 id
+   * 使用url
    */
   value?: T;
   /**
-   * 返回文件id
+   * 返回存储数据库的url
    * @param value
    * @returns
    */
   onChange?: (value?: T) => void;
-  /**
-   * 返回文件path
-   * @param path
-   * @returns
-   */
-  onChangePath?: (path?: T) => void;
+
 }

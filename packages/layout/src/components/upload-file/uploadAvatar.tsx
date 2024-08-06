@@ -1,75 +1,30 @@
 import { PlusOutlined } from "@ant-design/icons";
 import { Spin, Upload, message } from "antd"
-import { RcFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
-import { useAppCode, useTenantId } from "../provider";
-import { UploadFileProps } from ".";
+import { UploadFileProps } from "./index";
 import { useLocale } from "../locale";
-import { formatFileSize, randomId } from "../_util";
-import { getFilesRaw, updateFiles } from "@knockout-js/api";
+import { formatFileSize } from "../_util";
+import { parseStorageUrl, getStorageUrl, uploadFile, getFileUrl } from "@knockout-js/api";
 
 export default (props: UploadFileProps<string>) => {
-  const
-    bucket = props.bucket ?? 'local',
-    appCode = props.appCode ?? useAppCode(),
-    tenantId = props.tenantId ?? useTenantId(),
-    locale = useLocale("UploadFile"),
+  const locale = useLocale("UploadFile"),
     [messageApi] = message.useMessage(),
     [loading, setLoading] = useState(false),
     [imgsrc, setImgsrc] = useState<string>();
 
-  const
-    getUploadKey = (file: RcFile) => {
-      const suffix = file.name.split('.').pop(),
-        keys: string[] = [];
-      if (props.forceDirectory && props.directory) {
-        keys.push(props.directory)
-      } else {
-        if (appCode) {
-          keys.push(appCode)
-        }
-        if (tenantId) {
-          keys.push(tenantId)
-        }
-        if (props.directory) {
-          keys.push(props.directory)
-        }
+  const getValueFile = async () => {
+    if (props.value) {
+      const result = await parseStorageUrl(props.value, {
+        endpoint: props.endpoint,
+        bucket: props.bucket
+      });
+      if (result) {
+        setImgsrc(result)
       }
-      keys.push(`${randomId(16)}.${suffix}`);
-      return `/${keys.join('/')}`.replace('//', '/');
-    },
-    updateFile = async (file: RcFile) => {
-      const key = getUploadKey(file);
-      setLoading(true);
-      if (bucket === 'local') {
-        try {
-          const result = await updateFiles({
-            key,
-            bucket,
-            file,
-          })
-          if (result) {
-            props.onChange?.(result)
-            props.onChangePath?.(key);
-          }
-        } catch (error) {
-
-        }
-      }
-      setLoading(false)
-    },
-    getValueFile = async () => {
-      if (props.value) {
-        if (bucket === 'local') {
-          const result = await getFilesRaw(props.value, 'url');
-          if (typeof result === 'string') {
-            setImgsrc(result)
-          }
-        }
-      } else {
-        setImgsrc(undefined)
-      }
+    } else {
+      setImgsrc(undefined)
     }
+  }
 
   useEffect(() => {
     getValueFile()
@@ -88,8 +43,29 @@ export default (props: UploadFileProps<string>) => {
             messageApi.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
             return false;
           }
+          setLoading(true);
+          const result = await uploadFile(file, props.directory, {
+            endpoint: props.endpoint,
+            bucket: props.bucket,
+            useFileName: props.useFileName,
+            custromFileName: props.custromFileName,
+          });
 
-          await updateFile(file);
+          if (result?.path) {
+            const storageUrl = await getStorageUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket,
+            });
+            const url = await getFileUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket
+            })
+            props.onChange?.(storageUrl);
+            setImgsrc(url)
+          } else {
+            messageApi.error(locale.errorUpload);
+          }
+          setLoading(false)
           return false;
         }}
       >

@@ -7,7 +7,7 @@ import { App } from "../../gql/ucenter/graphql";
 const appIdListQuery = gql(/* GraphQL */`query apiAppIdList($ids:[GID!]!){
   nodes(ids: $ids){
     ... on App{
-      id,code,name
+      id,code,name,logo,status
     }
   }
 }`)
@@ -15,7 +15,7 @@ const appIdListQuery = gql(/* GraphQL */`query apiAppIdList($ids:[GID!]!){
 const appIdQuery = gql(/* GraphQL */`query apiAppId($id:GID!){
   node(id: $id){
     ... on App{
-      id,code,name
+      id,code,name,logo,status
     }
   }
 }`)

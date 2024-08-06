@@ -2,12 +2,11 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Button, Modal, Popconfirm, Space, Typography, Upload, message } from "antd"
 import { RcFile } from "antd/es/upload";
 import { useEffect, useRef, useState } from "react";
-import { useAppCode, useTenantId } from "../provider";
 import { UploadFileProps } from ".";
 import { useLocale } from "../locale";
 import styles from "./index.module.css";
-import { formatFileSize, randomId } from "../_util";
-import { getFiles, getFilesRaw, updateFiles } from "@knockout-js/api";
+import { formatFileSize } from "../_util";
+import { getFileRaw, getFileUrl, getStorageUrl, parseStorageData, uploadFile } from "@knockout-js/api";
 
 export default (props: UploadFileProps<string> & {
   /**
@@ -16,9 +15,6 @@ export default (props: UploadFileProps<string> & {
   showDelBtn?: boolean;
 }) => {
   const
-    bucket = props.bucket ?? 'local',
-    appCode = props.appCode ?? useAppCode(),
-    tenantId = props.tenantId ?? useTenantId(),
     locale = useLocale("UploadFile"),
     [messageApi] = message.useMessage(),
     [loading, setLoading] = useState(false),
@@ -32,83 +28,37 @@ export default (props: UploadFileProps<string> & {
     });
 
   const
-    getUploadKey = (file: RcFile) => {
-      const suffix = file.name.split('.').pop(),
-        keys: string[] = [];
-      if (props.forceDirectory && props.directory) {
-        keys.push(props.directory)
-      } else {
-        if (appCode) {
-          keys.push(appCode)
-        }
-        if (tenantId) {
-          keys.push(tenantId)
-        }
-        if (props.directory) {
-          keys.push(props.directory)
-        }
-      }
-      keys.push(`${randomId(16)}.${suffix}`);
-      return `/${keys.join('/')}`.replace('//', '/');
-    },
-    beforeUpload = async (file: RcFile) => {
-      const maxSize = props.maxSize || (1024 * 1024 * 5);
-
-      if (file.size > maxSize) {
-        messageApi.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
-        return false;
-      }
-
-      await updateFile(file);
-      return false;
-    },
-    updateFile = async (file: RcFile) => {
-      const key = getUploadKey(file);
-      setLoading(true);
-      if (bucket === 'local') {
-        try {
-          const result = await updateFiles({
-            key,
-            bucket,
-            file,
-          })
-          if (result) {
-            props.onChange?.(result)
-            props.onChangePath?.(key);
-          }
-        } catch (error) {
-
-        }
-      }
-      setLoading(false)
-    },
     getValueFile = async () => {
       if (props.value) {
-        const result = await getFiles(props.value);
-        if (result?.id) {
+        const result = await parseStorageData(props.value, {
+          inBrowser: false,
+          endpoint: props.endpoint,
+          bucket: props.bucket
+        });
+        if (result) {
           setName(result.name)
+          setUrlSrc(result.url)
         }
-        if (bucket === 'local') {
-          const result = await getFilesRaw(props.value, 'url');
-          if (typeof result === 'string') {
-            setUrlSrc(result)
-          }
-        }
-      } else {
-        setUrlSrc(undefined)
       }
     },
     updateContent = async () => {
       if (props.value) {
-        const result = await getFilesRaw(props.value)
-        if (result && typeof result != 'string') {
-          const r = new FileReader()
-          r.readAsText(result, 'utf-8')
-          r.onload = () => {
-            if (iframeRef.current?.contentWindow) {
-              iframeRef.current.contentWindow.document.write(r.result as string)
-            } else if (iframeRef.current?.contentDocument) {
-              iframeRef.current.contentDocument.write(r.result as string)
+        const dataRes = await parseStorageData(props.value)
+        if (dataRes) {
+          const result = await getFileRaw(dataRes.path, {
+            endpoint: props.endpoint,
+            bucket: props.bucket
+          })
+          if (result) {
+            const content = await result.Body?.transformToString('utf-8')
+            const r = new FileReader()
+            r.readAsText(new Blob([content ?? '']), 'utf-8')
+            r.onload = () => {
+              if (iframeRef.current?.contentWindow) {
+                iframeRef.current.contentWindow.document.write(`<pre>${r.result}</pre>`)
+              } else if (iframeRef.current?.contentDocument) {
+                iframeRef.current.contentDocument.write(`<pre>${r.result}</pre>`)
+              }
             }
           }
         }
@@ -130,7 +80,38 @@ export default (props: UploadFileProps<string> & {
       <Upload
         accept={props.accept}
         showUploadList={false}
-        beforeUpload={beforeUpload}
+        beforeUpload={async (file: RcFile) => {
+          const maxSize = props.maxSize || (1024 * 1024 * 5);
+
+          if (file.size > maxSize) {
+            messageApi.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
+            return false;
+          }
+          setLoading(true);
+          const result = await uploadFile(file, props.directory, {
+            endpoint: props.endpoint,
+            bucket: props.bucket,
+            useFileName: props.useFileName,
+            custromFileName: props.custromFileName,
+          });
+          if (result?.path) {
+            const storageUlr = await getStorageUrl(result.path, {
+              endpoint: props.endpoint,
+              bucket: props.bucket
+            }),
+              url = await getFileUrl(result.path, {
+                endpoint: props.endpoint,
+                bucket: props.bucket
+              })
+            setName(file.name)
+            setUrlSrc(url)
+            props.onChange?.(storageUlr)
+          } else {
+            messageApi.error(locale.errorUpload);
+          }
+          setLoading(false);
+          return false;
+        }}
       >
         <Button loading={loading} icon={<UploadOutlined rev={undefined} />}>{locale.fileUpload}</Button>
       </Upload>
@@ -145,13 +126,12 @@ export default (props: UploadFileProps<string> & {
           setModal({ show: true })
         }}
         >{locale.tempViewer}</a>
-        <a target="_blank" href={urlSrc} download={name}>{locale.tempDown}</a>
+        <a target="_blank" href={urlSrc} download={name} rel="noopener noreferrer">{locale.tempDown}</a>
         {props.showDelBtn ? <Popconfirm
           title={locale.del}
           description={locale.confirmDel}
           onConfirm={() => {
             props.onChange?.()
-            props.onChangePath?.();
           }}
           okText="Yes"
           cancelText="No"
