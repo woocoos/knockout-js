@@ -12,6 +12,7 @@ let files: RcFile[] = [];
 
 export default (props: UploadFileProps<string[]>) => {
   const
+    [messageApi, contextHolder] = message.useMessage(),
     locale = useLocale("UploadFile"),
     [list, setList] = useState<UploadFile<UploadFileRes>[]>([]);
 
@@ -26,6 +27,7 @@ export default (props: UploadFileProps<string[]>) => {
             valueList.push({
               uid: `${i}${data.path}`,
               name: data.name,
+              fileName: data.name,
               response: data,
               url: data.url,
             })
@@ -69,65 +71,65 @@ export default (props: UploadFileProps<string[]>) => {
     };
   }, []);
 
-  return <Upload.Dragger
-    accept={props.accept}
-    beforeUpload={async (file: RcFile) => {
-      const maxSize = props.maxSize || 1024 * 5000;
-      if (file.size > maxSize) {
-        message.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
-        return false;
-      }
-
-
-      files.push(file)
-
-      clearTimeout(timeoutFn);
-      timeoutFn = setTimeout(async () => {
-        await runUploadFile();
-      }, 500)
-
-      return false;
-    }}
-    multiple={true}
-    fileList={list}
-    onRemove={(file: UploadFile<UploadFileRes>) => {
-      Modal.confirm({
-        title: locale.del,
-        content: `${locale.confirmDel}: ${file.name}`,
-        onOk: async () => {
-          const storageUrl = file.response?.storageUrl,
-            path = file.response?.path
-          if (storageUrl && path) {
-            const result = await delFile(path, {
-              endpoint: props.endpoint,
-              bucket: props.bucket
-            });
-            if (result) {
-              props.onChange?.(props.value?.filter(item => item != storageUrl) || [])
-            } else {
-              message.error(locale.errorDel);
-            }
-          } else {
-            props.onChange?.(props.value?.filter(item => item != storageUrl) || [])
-          }
+  return <>
+    {contextHolder}
+    <Upload.Dragger
+      accept={props.accept}
+      beforeUpload={async (file: RcFile) => {
+        const maxSize = props.maxSize || (1024 * 1024 * 5);
+        if (file.size > maxSize) {
+          messageApi.error(`${locale.fileSizeTip}: ${formatFileSize(maxSize)}`);
+          return false;
         }
-      })
-    }}
-  >
-    <br />
-    <div>
-      <UploadOutlined style={{ fontSize: 40 }} rev={undefined} />
-    </div>
-    <br />
-    <div>
-      <Typography.Text type="secondary">
-        {locale.clickOrDragUpload}
-      </Typography.Text>
-    </div>
-    <div>
-      <Typography.Text type="secondary">
-        {`${locale.supportExtension}: ${props.accept?.split(',.').join('、').replace('.', '')}`}
-      </Typography.Text>
-    </div>
-  </Upload.Dragger>
+        files.push(file)
+        clearTimeout(timeoutFn);
+        timeoutFn = setTimeout(async () => {
+          await runUploadFile();
+        }, 500)
+
+        return false;
+      }}
+      multiple={true}
+      fileList={list}
+      onRemove={(file: UploadFile<UploadFileRes>) => {
+        Modal.confirm({
+          title: locale.del,
+          content: `${locale.confirmDel}: ${file.name}`,
+          onOk: async () => {
+            const storageUrl = file.response?.storageUrl,
+              path = file.response?.path
+            if (storageUrl && path) {
+              const result = await delFile(path, {
+                endpoint: props.endpoint,
+                bucket: props.bucket
+              });
+              if (result) {
+                props.onChange?.(props.value?.filter(item => item != storageUrl) || [])
+              } else {
+                messageApi.error(locale.errorDel);
+              }
+            } else {
+              props.onChange?.(props.value?.filter(item => item != storageUrl) || [])
+            }
+          }
+        })
+      }}
+    >
+      <br />
+      <div>
+        <UploadOutlined style={{ fontSize: 40 }} rev={undefined} />
+      </div>
+      <br />
+      <div>
+        <Typography.Text type="secondary">
+          {locale.clickOrDragUpload}
+        </Typography.Text>
+      </div>
+      <div>
+        <Typography.Text type="secondary">
+          {`${locale.supportExtension}: ${props.accept?.split(',.').join('、').replace('.', '')}`}
+        </Typography.Text>
+      </div>
+    </Upload.Dragger>
+  </>
 }

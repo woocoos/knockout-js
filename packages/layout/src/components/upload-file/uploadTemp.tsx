@@ -16,7 +16,7 @@ export default (props: UploadFileProps<string> & {
 }) => {
   const
     locale = useLocale("UploadFile"),
-    [messageApi] = message.useMessage(),
+    [messageApi, contextHolder] = message.useMessage(),
     [loading, setLoading] = useState(false),
     iframeRef = useRef<HTMLIFrameElement>(null),
     [name, setName] = useState<string>(),
@@ -76,6 +76,7 @@ export default (props: UploadFileProps<string> & {
   }, [modal.show]);
 
   return <>
+    {contextHolder}
     <Space>
       <Upload
         accept={props.accept}
