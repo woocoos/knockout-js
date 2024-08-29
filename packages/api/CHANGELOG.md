@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.7
+
+### Patch Changes
+
+- 重构文件处理
+
 ## 0.1.6
 
 ### Patch Changes
