@@ -17,7 +17,7 @@ const documents = {
     "query apiAppId($id:GID!){\n  node(id: $id){\n    ... on App{\n      id,code,name,logo,status\n    }\n  }\n}": types.ApiAppIdDocument,
     "query apiAppDictByRefCode($refCodes: [String!]!){\n  appDictByRefCode(refCodes:$refCodes){\n    id,items{\n      id,code,name,refCode\n    }\n  }\n}": types.ApiAppDictByRefCodeDocument,
     "query apiAppDictItemByRefCode($refCode: String!){\n  appDictItemByRefCode(refCode:$refCode){\n    id,code,name,refCode\n  }\n}": types.ApiAppDictItemByRefCodeDocument,
-    "query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}": types.ApiFileIdentitiesDocument,
+    "query apiFileIdentities($first:Int, $orderBy: FileIdentityOrder,$where:FileIdentityWhereInput){\n  fileIdentities(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      node{\n        id,isDefault,tenantID,\n        source{\n          id,bucket,region,kind,endpoint,endpointImmutable,stsEndpoint,bucketURL\n        }\n      }\n    }\n  }\n}": types.ApiFileIdentitiesDocument,
     "query apiOrgIdList($ids:[GID!]!){\n  nodes(ids: $ids){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdListDocument,
     "query apiOrgId($id:GID!){\n  node(id: $id){\n    ... on Org{\n      id,code,name\n    }\n  }\n}": types.ApiOrgIdDocument,
     "query apiOrgGroupList($first: Int,$orderBy:OrgRoleOrder,$where:OrgRoleWhereInput){\n  orgGroups(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      cursor,node{\n        id,orgID,kind,name,comments\n      }\n    }\n  }\n}": types.ApiOrgGroupListDocument,
@@ -78,7 +78,7 @@ export function gql(source: "query apiAppDictItemByRefCode($refCode: String!){\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}"): (typeof documents)["query apiFileIdentities{\n  fileIdentitiesForOrg{\n    id,isDefault,tenantID,\n    source{\n      id,bucket,region,kind,endpoint,stsEndpoint,bucketURL\n    }\n  }\n}"];
+export function gql(source: "query apiFileIdentities($first:Int, $orderBy: FileIdentityOrder,$where:FileIdentityWhereInput){\n  fileIdentities(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      node{\n        id,isDefault,tenantID,\n        source{\n          id,bucket,region,kind,endpoint,endpointImmutable,stsEndpoint,bucketURL\n        }\n      }\n    }\n  }\n}"): (typeof documents)["query apiFileIdentities($first:Int, $orderBy: FileIdentityOrder,$where:FileIdentityWhereInput){\n  fileIdentities(first:$first,orderBy: $orderBy,where: $where){\n    totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }\n    edges{\n      node{\n        id,isDefault,tenantID,\n        source{\n          id,bucket,region,kind,endpoint,endpointImmutable,stsEndpoint,bucketURL\n        }\n      }\n    }\n  }\n}"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

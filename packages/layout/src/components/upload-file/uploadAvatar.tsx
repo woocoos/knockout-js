@@ -8,7 +8,7 @@ import { parseStorageUrl, getStorageUrl, uploadFile, getFileUrl } from "@knockou
 
 export default (props: UploadFileProps<string>) => {
   const locale = useLocale("UploadFile"),
-    [messageApi] = message.useMessage(),
+    [messageApi, contextHolder] = message.useMessage(),
     [loading, setLoading] = useState(false),
     [imgsrc, setImgsrc] = useState<string>();
 
@@ -79,5 +79,6 @@ export default (props: UploadFileProps<string>) => {
         }
       </Upload>
     </Spin>
+    {contextHolder}
   </div>
 }

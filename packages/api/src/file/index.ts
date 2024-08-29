@@ -153,8 +153,9 @@ export async function uploadFile(file: File, dir: string, options?: {
       key = options?.useFileName ?
         `${dir}/${file.name}`.split('/').filter((item) => item).join('/') :
         `${dir}/${options?.custromFileName ? options.custromFileName : Math.random().toString(36).substring(2)}.${suffix}`
-          .split('/').filter((item) => item).join('/'),
-      body = new Blob([file], { type: file.type }),
+          .split('/').filter((item) => item).join('/');
+
+    const body = new Blob([file], { type: file.type }),
       command = new PutObjectCommand({
         Bucket: s3Data.bucketUrl,
         Key: key,
@@ -177,6 +178,8 @@ export async function uploadFile(file: File, dir: string, options?: {
   }
   return null
 }
+
+
 
 
 /**

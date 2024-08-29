@@ -185,6 +185,49 @@ function getDictItems(refCodes: string | string[], forceReload?: boolean): Promi
 ```
 
 
+## getFileIdentitieList
+
+获取`FileIdentity`的分页接口
+
+```ts
+function getFileIdentitieList(gather: {
+    current?: number;
+    pageSize?: number;
+    where?: FileIdentityWhereInput;
+    orderBy?: FileIdentityOrder;
+}): Promise<{
+    __typename?: "FileIdentityConnection";
+    totalCount: number;
+    pageInfo: {
+        __typename?: "PageInfo";
+        hasNextPage: boolean;
+        hasPreviousPage: boolean;
+        startCursor?: any | null;
+        endCursor?: any | null;
+    };
+    edges?: Array<{
+        __typename?: "FileIdentityEdge";
+        node?: {
+            __typename?: "FileIdentity";
+            id: string;
+            isDefault: boolean;
+            tenantID: string;
+            source: {
+                __typename?: "FileSource";
+                id: string;
+                bucket: string;
+                region: string;
+                kind: FileSourceKind;
+                endpoint: string;
+                endpointImmutable: boolean;
+                stsEndpoint: string;
+                bucketURL: string;
+            };
+        } | null;
+    } | null> | null;
+} | undefined>
+```
+
 ## getFileSource
 
 获取当前组织的文件数据源，可配合awsS3操作使用,接口策略为`cache-first`
