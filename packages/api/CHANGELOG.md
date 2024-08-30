@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.8
+
+### Patch Changes
+
+- fix bucketURL 的判定
+
 ## 0.1.7
 
 ### Patch Changes

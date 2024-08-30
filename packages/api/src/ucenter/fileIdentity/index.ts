@@ -44,7 +44,7 @@ export async function getFileIdentitieList(gather: {
 
 /**
  * 获取 filesource信息
- * @param filter 不填写默认获取default
+ * @param filter 不填写默认获取default  filter.bucketUrl 是和 bucketUrl进行匹配 传递的可能是全路径
  * @returns
  */
 export async function getFileSource(filter?: {
@@ -53,11 +53,7 @@ export async function getFileSource(filter?: {
   bucketUrl?: string,
 },) {
   const where: FileIdentityWhereInput = {}
-  if (filter?.bucketUrl) {
-    where.hasSourceWith = [{
-      bucketURLContains: filter.bucketUrl
-    }]
-  } else if (filter?.endpoint && filter?.bucket) {
+  if (filter?.endpoint && filter?.bucket) {
     where.hasSourceWith = [{
       endpoint: filter.endpoint,
       bucket: filter.bucket
@@ -72,6 +68,12 @@ export async function getFileSource(filter?: {
     if (Object.keys(where).length) {
       // 有过滤条件就取第一条
       return result.edges[0]?.node
+    } else if (filter?.bucketUrl) {
+      return result.edges.find(edge => {
+        return edge?.node?.source?.bucketURL &&
+          filter.bucketUrl &&
+          filter.bucketUrl.indexOf(edge.node.source.bucketURL) == 0
+      })?.node
     } else {
       // 无过滤条件就取 default
       return result.edges.find(edge => edge?.node?.isDefault)?.node
