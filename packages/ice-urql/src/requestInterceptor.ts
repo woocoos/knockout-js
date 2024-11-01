@@ -82,6 +82,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         }
 
         error?.(err as AxiosError, msg)
+        return Promise.reject(err);
       },
     },
   }
