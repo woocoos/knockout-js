@@ -54,7 +54,8 @@
     "@aws-sdk/s3-request-presigner": "^3.613.0",
     "@swc/helpers": "^0.5.1",
     "crypto-js": "^4.1.1",
-    "graphql": "^16.6.0"
+    "graphql": "^16.6.0",
+    "react": "^17 || ^18"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^4.0.1",

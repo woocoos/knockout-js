@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.583.0",
-    "@ice/plugin-request": "^1.0.2",
-    "@ice/runtime": "^1.2.9",
     "@knockout-js/api": "workspace:*",
     "@knockout-js/ice-urql": "workspace:*",
     "@knockout-js/layout": "workspace:*",
@@ -20,12 +18,15 @@
     "tslib": "^2.4.0"
   },
   "devDependencies": {
-    "@ice/app": "^3.2.10",
-    "@ice/plugin-antd": "^1.0.1",
-    "@ice/plugin-auth": "^1.0.1",
-    "@ice/plugin-icestark": "^1.1.0",
-    "@ice/plugin-jsx-plus": "^1.0.2",
-    "@ice/plugin-store": "^1.1.1",
+    "@ice/app": "^3.4.12",
+    "@ice/plugin-antd": "^1.0.2",
+    "@ice/plugin-auth": "^1.0.2",
+    "@ice/plugin-icestark": "^1.1.1",
+    "@ice/plugin-jsx-plus": "^1.0.4",
+    "@ice/plugin-request": "^1.0.3",
+    "@ice/plugin-store": "^1.1.2",
+    "@ice/runtime": "^1.4.13",
+    "@ice/stark-app": "^1.5.0",
     "@types/react": "^18.0.0"
   }
 }
