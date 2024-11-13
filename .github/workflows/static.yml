@@ -32,13 +32,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 16.16.0
-
       - name: Setup pnpm
-        uses: pnpm/action-setup@v4.0.0
+        uses: wyvox/action-setup-pnpm@v3.1.0
+        with:
+          node-version: 20
+          node-registry-url: "https://registry.npmmirror.com"
+          # Override the default pnpm version, which defaults to the latest 8.x
+          pnpm-version: 9
 
       - name: Build
         run: |
