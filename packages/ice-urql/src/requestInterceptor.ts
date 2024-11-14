@@ -1,6 +1,5 @@
 import { Interceptors } from "@ice/plugin-request";
 import type { AxiosError, AxiosResponse } from "axios";
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
 
 interface ReqInterceptorOpts {
   /**
@@ -88,4 +87,67 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
   }
 
   return result;
+}
+
+
+/**
+ * 统一loginUrl的处理
+ * @param loginUrl
+ */
+export function goLogin(loginUrl: string, loginRedirectKey?: string) {
+  if (loginUrl.toLowerCase().startsWith("http")) {
+    const url = new URL(loginUrl);
+    if (location.pathname !== url.pathname || location.host != url.host) {
+      location.href = `${loginUrl}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+    }
+  } else {
+    if (location.pathname !== loginUrl) {
+      location.href = `${loginUrl}?${loginRedirectKey ?? 'redirect'}=${encodeURIComponent(location.href)}`
+    }
+  }
+}
+
+/**
+ * 签名模式
+ */
+export enum RequestHeaderAuthorizationMode {
+  KO = "ko_hmac"
+}
+
+/**
+ * 随机数
+ * @param length
+ * @returns
+ */
+function randomString(length: number) {
+  const str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  let result = '';
+  for (let i = length; i > 0; --i)
+    result += str[Math.floor(Math.random() * str.length)];
+  return result;
+}
+
+/**
+ * 根据不同模式获取请求头Authorization的处理
+ * @param token
+ * @param mode
+ * @returns
+ */
+export function getRequestHeaderAuthorization(token: string, mode?: RequestHeaderAuthorizationMode) {
+  const accessToken = `Bearer ${token}`;
+  if (mode === RequestHeaderAuthorizationMode.KO) {
+    const timestamp = (Date.now() / 1000).toFixed(0),
+      separator = ', ',
+      nonce = randomString(10),
+      signatures: string[] = [];
+    signatures.push(`noncestr=${nonce}`);
+    signatures.push(`timestamp=${timestamp}`);
+    signatures.push(`accessToken=${accessToken}`);
+    signatures.push(`url=${location.href.split('#')[0]}`);
+    const signature = signatures.sort((d1, d2) => d1 > d2 ? 1 : d1 < d2 ? -1 : 0).join('&');
+    return `KO-HMAC-SHA1 timestamp=${timestamp}${separator}nonce=${nonce}${separator}Signature=${CryptoJS.SHA1(
+      signature,
+    )}`
+  }
+  return accessToken;
 }

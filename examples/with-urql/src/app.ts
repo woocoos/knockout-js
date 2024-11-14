@@ -4,7 +4,7 @@ import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
 import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
-import { RequestHeaderAuthorizationMode } from '@knockout-js/ice-urql/request';
+// import { RequestHeaderAuthorizationMode } from '@knockout-js/ice-urql/request';
 import { instanceName } from '@knockout-js/api';
 
 const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',

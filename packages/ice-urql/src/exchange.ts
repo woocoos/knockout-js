@@ -4,7 +4,7 @@ import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchan
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./request.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./requestInterceptor.js";
 
 export interface AuthExchangeOpts {
   store: {

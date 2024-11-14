@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.6
+
+### Patch Changes
+
+- fix ice start error bug
+
 ## 0.1.5
 
 ### Patch Changes
