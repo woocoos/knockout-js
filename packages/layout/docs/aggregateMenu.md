@@ -22,43 +22,55 @@ createUrqlInstance([
 export default () => {
   const [open,setOpen] = useState(false);
  
-  const menuData = (appId,max) => {
+  const menuData = (appId,max,app) => {
     const data = [];
     for(let i =0;i<max;i++){
       data.push(
-         { id: `${appId}${i+1}`, name: `app${appId}-menu${i+1}`, route: `/${i}`, appID: appId,kind:AppMenuKind.Menu }
+         { 
+          id: `${appId}${i+1}`, name: `app${appId}-menu${i+1}`, route: `/${i}`, appID: appId,kind:AppMenuKind.Menu ,
+          app: app,
+        }
       )
     }
     return data;
   }
 
+  const apps:App[] = [
+    { id: '1', name: 'app1', code: 'app1' },
+    { id: '2', name: 'app2', code: 'app2-code' },
+    { id: '3', name: 'app3', code: 'app3-code' },
+    { id: '4', name: 'app4', code: 'app4-code' },
+    { id: '5', name: 'app5', code: 'app5-code' },
+    { id: '6', name: 'app6', code: 'app6-code' },
+    { id: '7', name: 'app7', code: 'app7-code' },
+  ]
   const dataSource = [
     {
-      app: { id: '1', name: 'app1', code: 'app1' } as App,
-      menu: menuData(1,8)
+      app: apps[0] ,
+      menu: menuData(1,8,apps[0])
     },
     {
-      app: { id: '2', name: 'app2', code: 'app2' } as App,
-      menu:menuData(2,4)
+      app: apps[1],
+      menu:menuData(2,4,apps[1])
     },
     {
-      app: { id: '3', name: 'app3', code: 'app3' } as App,
-      menu:menuData(3,18)
+      app: apps[2],
+      menu:menuData(3,18,apps[2])
     },
     {
-      app: { id: '4', name: 'app4', code: 'app4' } as App,
-      menu:menuData(4,14)
+      app: apps[3],
+      menu:menuData(4,14,apps[3])
     },
     {
-      app: { id: '5', name: 'app5', code: 'app5' } as App,
-      menu: menuData(5,8)
+      app: apps[4],
+      menu: menuData(5,8,apps[4])
     },
     {
-      app: { id: '6', name: 'app6', code: 'app6' } as App,
-      menu:menuData(6,10)
+      app: apps[5],
+      menu:menuData(6,10,apps[5])
     },
     {
-      app: { id: '7', name: 'app7', code: 'app7' } as App,
+      app: apps[6],
       menu:[]
     },
   ];

@@ -1,7 +1,4 @@
-import { CloseOutlined, DragOutlined, SearchOutlined, StarOutlined } from "@ant-design/icons";
-import { DndContext, KeyboardSensor, PointerSensor, closestCenter, useSensor, useSensors, } from "@dnd-kit/core";
-import { SortableContext, arrayMove, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { CSS } from '@dnd-kit/utilities';
+import { SearchOutlined, StarOutlined } from "@ant-design/icons";
 import { instanceName } from "@knockout-js/api";
 import { App, AppMenu, AppMenuKind, LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables, LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables, LayoutPkgUserMenuListQuery, LayoutPkgUserMenuListQueryVariables, LayoutPkgUserPreferenceQuery, LayoutPkgUserPreferenceQueryVariables } from "@knockout-js/api/ucenter";
 import { gql, mutation, paging, query } from "@knockout-js/ice-urql/request";
@@ -12,10 +9,13 @@ import { OpenWin } from "../icons";
 import { useLocale } from "../locale";
 import { useDark } from "../provider";
 import styles from "./index.module.css";
+import Collects from "./collects";
+import { arrayMove } from "@dnd-kit/sortable";
 
 const userMenuListQuery = gql(/* GraphQL */`query layoutPkgUserMenuList($appCode:String!){
   userMenus(appCode: $appCode){
-    id,name,route,appID,parentID,displaySort,kind
+    id,name,route,appID,parentID,displaySort,kind,
+    app{   id,name,code },
   }
 }`);
 
@@ -47,6 +47,13 @@ export type AggregateMenuDataSource = {
   menu: AppMenu[];
 }[]
 
+export type CollectsDataSource = {
+  id: string;
+  code: string;
+  name: string;
+  children: AppMenu[];
+}
+
 export interface AggregateMenuProps {
   /**
    * 弹出开关
@@ -70,63 +77,13 @@ export interface AggregateMenuProps {
   onClick?: (menuItem: AppMenu, app: App, isOpen?: boolean) => void;
 }
 
-/**
- * 排序拖拽使用的控件
- * https://docs.dndkit.com/
- * @param props
- * @returns
- */
-const DargItem = (props: {
-  value: AppMenu;
-  onDel: () => void;
-  onClick: (isOpen?: boolean) => void;
-}) => {
-  const id = `${props.value.id}-${props.value.appID}`;
-  const { setNodeRef, listeners, attributes, transform, transition } = useSortable({ id });
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
-
-  return <div
-    ref={setNodeRef}
-    style={style}
-    {...attributes}
-    className={styles.aggregateMenuDrawerMenuItem}
-    onClick={() => {
-      props.onClick();
-    }}
-  >
-    <div className={styles.aggregateMenuDrawerMenuItemName}>{props.value.name}</div>
-    <div className={styles.aggregateMenuDrawerMenuItemIcons}>
-      <Space>
-        <OpenWin className="anticon" onClick={(event) => {
-          event.stopPropagation();
-          props.onClick(true);
-        }} />
-        <CloseOutlined rev={undefined} onClick={(event) => {
-          event.stopPropagation();
-          props.onDel();
-        }} />
-        <DragOutlined rev={undefined}  {...listeners} className="dragIcon" />
-      </Space>
-    </div>
-  </div>
-}
-
 export default (props: AggregateMenuProps) => {
   const [all, setAll] = useState<AggregateMenuDataSource>([]),
     [filterList, setFilterList] = useState<AggregateMenuDataSource>([]),
-    [collects, setCollects] = useState<AppMenu[]>([]),
+    [collects, setCollects] = useState<CollectsDataSource[]>([]),
     [latelys, setLately] = useState<AppMenu[]>([]),
     locale = useLocale('AggregateMenu'),
-    isDark = useDark(),
-    sensors = useSensors(
-      useSensor(PointerSensor),
-      useSensor(KeyboardSensor, {
-        coordinateGetter: sortableKeyboardCoordinates,
-      })
-    );
+    isDark = useDark();
 
   const
     request = useCallback(async () => {
@@ -163,14 +120,25 @@ export default (props: AggregateMenuProps) => {
       if (preferenceResult.data?.orgUserPreference?.id) {
         const menuFavorite = preferenceResult.data.orgUserPreference.menuFavorite,
           menuRecent = preferenceResult.data.orgUserPreference.menuRecent,
-          collectsList: AppMenu[] = [],
+          collectsList: CollectsDataSource[] = [],
           latelyList: AppMenu[] = [];
         if (menuFavorite) {
           menuFavorite.forEach(id => {
             for (let i in newAll) {
-              const menuItem = newAll[i].menu.find(item => item.id == id);
+              const allItem = newAll[i];
+              const menuItem = allItem.menu.find(item => item.id == id);
               if (menuItem) {
-                collectsList.push(menuItem);
+                const collectItem = collectsList.find(item => item.id == allItem.app.id);
+                if (collectItem) {
+                  collectItem.children.push(menuItem);
+                } else {
+                  collectsList.push({
+                    id: allItem.app.id,
+                    code: allItem.app.code,
+                    name: allItem.app.name,
+                    children: [menuItem]
+                  });
+                }
                 break;
               }
             }
@@ -193,7 +161,7 @@ export default (props: AggregateMenuProps) => {
         setLately(latelyList);
       }
     }, []),
-    requestFavorite = async (list: AppMenu[]) => {
+    saveFavorite = async (list: AppMenu[]) => {
       // 异步存储收藏
       await mutation<LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables>(userPreferenceMut, {
         input: {
@@ -203,7 +171,7 @@ export default (props: AggregateMenuProps) => {
         instanceName: instanceName.UCENTER,
       });
     },
-    requestRecent = async (ids: string[]) => {
+    saveRecentMenu = async (ids: string[]) => {
       // 异步存储访问菜单记录
       await mutation<LayoutPkgSaveUserPreferenceMutation, LayoutPkgSaveUserPreferenceMutationVariables>(userPreferenceMut, {
         input: {
@@ -213,8 +181,14 @@ export default (props: AggregateMenuProps) => {
         instanceName: instanceName.UCENTER,
       });
     },
+    // 是否已收藏
     checkCollect = useCallback((menuItem: AppMenu) => {
-      return !!collects.find(item => item.id === menuItem.id && item.appID === menuItem.appID);
+      const collectItem = collects.find(item => item.id === menuItem.appID);
+      if (collectItem) {
+        return !!collectItem.children.find(item => item.id === menuItem.id)
+      } else {
+        return false
+      }
     }, [collects]),
     onClickItem = async (menuItem: AppMenu, isOpen?: boolean) => {
       const allApp = all.find(allItem => allItem.app.id == menuItem.appID);
@@ -226,10 +200,40 @@ export default (props: AggregateMenuProps) => {
         }
         latelyList.unshift(menuItem);
         latelyList.splice(6);
-        await requestRecent(latelyList.map(item => item.id));
+        await saveRecentMenu(latelyList.map(item => item.id));
         setLately(latelyList);
         props.onClick?.(menuItem, allApp.app, isOpen);
       }
+    },
+    // 移除或者添加收藏
+    updateCollects = (menuItem: AppMenu, isRemove?: boolean) => {
+      const collectItem = collects.find(item => item.id === menuItem.appID);
+      if (collectItem) {
+        if (isRemove) {
+          collectItem.children = collectItem.children.filter(item => item.id !== menuItem.id);
+          if (collectItem.children.length === 0) {
+            collects.splice(collects.findIndex(item => item.id === collectItem.id), 1);
+          }
+        } else {
+          collectItem.children.push(menuItem);
+        }
+      } else {
+        if (!isRemove) {
+          collects.push({
+            id: menuItem.appID ?? '',
+            code: menuItem.app?.code ?? '',
+            name: menuItem.app?.name ?? '',
+            children: [menuItem]
+          });
+        }
+      }
+      setCollects([...collects]);
+      // 处理保存数据
+      const saveFavoriteList: AppMenu[] = [];
+      collects.forEach(item => {
+        saveFavoriteList.push(...item.children)
+      });
+      saveFavorite(saveFavoriteList)
     },
     menuItemRender = (menuItem: AppMenu) => {
       return <div
@@ -248,14 +252,12 @@ export default (props: AggregateMenuProps) => {
             }} />
             <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={async (event) => {
               event.stopPropagation();
-              let collectList: AppMenu[] = [];
+              const collectList: AppMenu[] = [];
               if (checkCollect(menuItem)) {
-                collectList = collects.filter(c => !(c.id === menuItem.id && c.appID === menuItem.appID))
+                updateCollects(menuItem, true)
               } else {
-                collectList = [...collects, menuItem]
+                updateCollects(menuItem)
               }
-              await requestFavorite(collectList)
-              setCollects(collectList);
             }} />
           </Space>
         </div>
@@ -288,38 +290,44 @@ export default (props: AggregateMenuProps) => {
         <div style={{ width: 240 }} className={styles.aggregateMenuDrawerMenu}>
           {/* 收藏 */}
           {collects.length ?
-            <DndContext sensors={sensors}
-              collisionDetection={closestCenter}
-              onDragEnd={(event) => {
+            <Collects
+              dataSource={collects}
+              onDragEnd={(event, type) => {
                 const { active, over } = event;
                 if (over && active.id !== over.id) {
                   setCollects((items) => {
-                    const oldIndex = items.findIndex(oItem => `${oItem.id}-${oItem.appID}` == active.id);
-                    const newIndex = items.findIndex(nItem => `${nItem.id}-${nItem.appID}` == over.id);
-                    const collectList = arrayMove(items, oldIndex, newIndex);
-                    requestFavorite(collectList);
+                    let collectList: CollectsDataSource[] = []
+                    if (type === 'app') {
+                      const oldIndex = items.findIndex(oItem => oItem.id == active.id);
+                      const newIndex = items.findIndex(nItem => nItem.id == over.id);
+                      collectList = arrayMove(items, oldIndex, newIndex);
+                    } else if (type === 'menu') {
+                      const activeAppId = `${active.id}`.split('-')[0];
+                      const activeItem = items.find(item => item.id == activeAppId);
+                      if (activeItem) {
+                        const oldIndex = activeItem.children.findIndex(oItem => `${activeAppId}-${oItem.id}` == active.id);
+                        const newIndex = activeItem.children.findIndex(nItem => `${activeAppId}-${nItem.id}` == over.id);
+                        activeItem.children = arrayMove(activeItem.children, oldIndex, newIndex);
+                      }
+                      collectList = [...items]
+                    }
+                    const saveFavoriteList: AppMenu[] = [];
+                    collectList.forEach(item => {
+                      saveFavoriteList.push(...item.children)
+                    });
+                    console.log(saveFavoriteList)
+                    saveFavorite(saveFavoriteList)
                     return collectList;
                   });
                 }
               }}
-            >
-              <SortableContext items={collects.map(item => `${item.id}-${item.appID}`)} strategy={verticalListSortingStrategy}>
-                {
-                  collects.map(item => (<DargItem
-                    key={`c${item.id}-${item.appID}`}
-                    value={item}
-                    onDel={async () => {
-                      const collectList = collects.filter(c => !(c.id === item.id && c.appID === item.appID))
-                      await requestFavorite(collectList);
-                      setCollects(collectList);
-                    }}
-                    onClick={(isOpen) => {
-                      onClickItem(item, isOpen)
-                    }}
-                  />))
-                }
-              </SortableContext>
-            </DndContext>
+              onDel={async item => {
+                updateCollects(item, true)
+              }}
+              onClick={(item, isOpen) => {
+                onClickItem(item, isOpen)
+              }}
+            />
             : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={locale.notText} />
           }
         </div>
