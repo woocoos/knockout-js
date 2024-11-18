@@ -68,6 +68,10 @@ export interface LayoutProps {
   */
   proLayoutProps?: ProLayoutProps;
   /**
+   * 顶部插槽，往前语言切换前面添加
+   */
+  actionsBeforeRender?: ReactNode[];
+  /**
    * 菜单点击返回 (item: MenuDataItem,isOpen?: boolean) => void;
    */
   onClickMenuItem?: (
@@ -155,6 +159,9 @@ const Layout = (props: LayoutProps) => {
         }}
         actionsRender={() => {
           const actions: ReactNode[] = [];
+          if(props.actionsBeforeRender){
+            actions.push(...props.actionsBeforeRender);
+          }
           if (props.i18nProps) {
             actions.push(<I18nDropdown {...props.i18nProps} />)
           }
