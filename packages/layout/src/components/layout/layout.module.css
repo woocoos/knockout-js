@@ -19,6 +19,12 @@
   padding: 0;
 }
 
+.layout :global(.ant-layout-sider-children>div) {
+  scrollbar-width   : none;
+  -ms-overflow-style: none;
+}
+
+
 :global(.ant-menu-item-active) .menuIconPopup {
   display: block;
 }
@@ -28,10 +34,10 @@
 }
 
 .menuIconPopup {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: 16px;
+  display   : none;
+  position  : absolute;
+  top       : 50%;
+  right     : 16px;
   margin-top: -6px;
 }
 
