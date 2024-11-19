@@ -80,11 +80,59 @@ export default () => {
                   icon: <IconFont type="yakIcon-home" />,
                 },
                 {
+                  name: "工作台2",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台3",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台4",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台5",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台6",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台7",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台8",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台9",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
+                  name: "工作台10",
+                  path: "/",
+                  icon: <IconFont type="yakIcon-home" />,
+                },
+                {
                   name: "菜单1",
                   icon:  <IconFont type="yakIcon-daiyue" /> ,
                   children: [
                     {
                       name: "菜单1-1",
+                      path: "/",
+                    },{
+                      name: "菜单1-2",
                       path: "/",
                     },
                   ],

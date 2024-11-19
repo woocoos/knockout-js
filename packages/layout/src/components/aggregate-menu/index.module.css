@@ -119,6 +119,42 @@
   padding-left: 16px;
 }
 
+.aggregateMenuDrawerAppItem {
+  height     : 40px;
+  line-height: 40px;
+  padding    : 0 10px 0 16px;
+  display    : flex;
+}
+
+.aggregateMenuDrawerAppItem:hover .aggregateMenuDrawerAppItemIcons {
+  display: block;
+}
+
+.aggregateMenuDrawerAppItemIcons {
+  display: none;
+}
+
+.aggregateMenuDrawerAppItemIcons :global(.anticon) {
+  color: #c1c1c1;
+}
+
+.aggregateMenuDrawerAppItemIcons :global(.dragIcon) {
+  cursor: all-scroll;
+}
+
+.aggregateMenuDrawerAppItemIcons :global(.anticon):hover {
+  color: #8c8c8c;
+}
+
+.aggregateMenuDrawerAppItemName {
+  flex         : auto;
+  text-overflow: ellipsis;
+  white-space  : nowrap;
+  overflow     : hidden;
+  font-weight  : bold;
+  color        : #ff6a00;
+}
+
 .aggregateMenuDrawerMenuItem {
   height     : 40px;
   line-height: 40px;
@@ -141,6 +177,10 @@
 
 .aggregateMenuDrawerMenuItemIcons :global(.anticon) {
   color: #c1c1c1;
+}
+
+.aggregateMenuDrawerMenuItemIcons :global(.dragIcon) {
+  cursor: all-scroll;
 }
 
 .aggregateMenuDrawerMenuItemIcons :global(.anticon):hover {

@@ -83,10 +83,10 @@ const DargAppItem = (props: {
       ref={setNodeRef}
       style={style}
       {...attributes}
-      className={styles.aggregateMenuDrawerMenuItem}
+      className={styles.aggregateMenuDrawerAppItem}
     >
-      <div className={styles.aggregateMenuDrawerMenuItemName}>{props.app.name}</div>
-      <div className={styles.aggregateMenuDrawerMenuItemIcons}>
+      <div className={styles.aggregateMenuDrawerAppItemName}>{props.app.name}</div>
+      <div className={styles.aggregateMenuDrawerAppItemIcons}>
         <Space>
           <DragOutlined rev={undefined}  {...listeners} className="dragIcon" />
         </Space>
