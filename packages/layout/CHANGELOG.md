@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.9
+
+### Patch Changes
+
+- enhance layout
+
 ## 0.1.8
 
 ### Patch Changes

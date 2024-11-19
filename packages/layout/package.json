@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/layout",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "组件功能描述",
   "files": [
     "esm",
