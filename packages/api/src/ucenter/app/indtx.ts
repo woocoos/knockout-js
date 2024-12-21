@@ -26,7 +26,7 @@ const appIdQuery = gql(/* GraphQL */`query apiAppId($id:GID!){
  */
 export async function getApps(appIds: (string | number)[]) {
   const result = await query(appIdListQuery, {
-    ids: appIds.map(id => gid('app', id))
+    ids: appIds.map(id => gid('App', id))
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
@@ -47,7 +47,7 @@ export async function getApps(appIds: (string | number)[]) {
  */
 export async function getApp(appId: (string | number)) {
   const result = await query(appIdQuery, {
-    id: gid('app', appId)
+    id: gid('App', appId)
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",

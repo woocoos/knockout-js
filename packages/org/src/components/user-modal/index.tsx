@@ -195,7 +195,7 @@ export default (props: UserModalProps) => {
           }
         } else if (props.orgId) {
           const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
-            gid: gid('org', props.orgId),
+            gid: gid('Org', props.orgId),
             first: params.pageSize,
             where,
           }, params.current || 1, { instanceName: instanceName.UCENTER });

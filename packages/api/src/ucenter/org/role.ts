@@ -67,7 +67,7 @@ export async function getOrgGroupList(
  */
 export async function getOrgRoles(orgRoleIds: (string | number)[]) {
   const result = await query(orgRoleIdListQuery, {
-    ids: orgRoleIds.map(id => gid('org_role', id)),
+    ids: orgRoleIds.map(id => gid('OrgRole', id)),
     requestPolicy: "cache-first",
   }, {
     instanceName: instanceName.UCENTER,
@@ -88,7 +88,7 @@ export async function getOrgRoles(orgRoleIds: (string | number)[]) {
  */
 export async function getOrgRole(orgRoleId: (string | number)) {
   const result = await query(orgRoleIdQuery, {
-    id: gid('org_role', orgRoleId),
+    id: gid('OrgRole', orgRoleId),
     requestPolicy: "cache-first",
   }, {
     instanceName: instanceName.UCENTER,

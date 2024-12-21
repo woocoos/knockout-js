@@ -138,7 +138,7 @@ const OrgSelect = (props: OrgSelectProps) => {
         setKeyword(data?.name);
       } else {
         query<OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables>(orgInfoQuery, {
-          gid: gid('org', props.value),
+          gid: gid('Org', props.value),
         }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'Org') {
             setInfo(result.data.node as Org);
@@ -186,7 +186,7 @@ const OrgSelect = (props: OrgSelectProps) => {
             if (keywordStr) {
               if (props.appId) {
                 const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-                  gid: gid('app', props.appId), first, where, orderBy,
+                  gid: gid('App', props.appId), first, where, orderBy,
                 }, 1, { instanceName: instanceName.UCENTER });
                 if (result.data?.node?.__typename === 'App') {
                   result.data.node.orgs.edges?.forEach(item => {

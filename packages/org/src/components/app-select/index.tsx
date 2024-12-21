@@ -123,7 +123,7 @@ export default (props: AppSelectProps) => {
         setKeyword(data?.name);
       } else {
         query<OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables>(appInfoQuery, {
-          gid: gid('app', props.value),
+          gid: gid('App', props.value),
         }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'App') {
             setInfo(result.data.node as App);
@@ -163,7 +163,7 @@ export default (props: AppSelectProps) => {
             if (keywordStr) {
               if (props.orgId) {
                 const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-                  gid: gid('org', props.orgId),
+                  gid: gid('Org', props.orgId),
                   first: 15,
                   where: {
                     nameContains: keywordStr,

@@ -152,7 +152,7 @@ export default (props: OrgModalProps) => {
         where.pathHasPrefix = props.orgId ? `${props.orgId}/` : undefined
         if (props.appId) {
           const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-            gid: gid('app', props.appId),
+            gid: gid('App', props.appId),
             first: params.pageSize,
             where,
             orderBy,

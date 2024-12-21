@@ -62,7 +62,7 @@ export async function userPermissions(appCode: string, headers?: Record<string, 
  */
 export async function getUsers(userIds: (string | number)[]) {
   const result = await query(userIdListQuery, {
-    ids: userIds.map(id => gid('user', id))
+    ids: userIds.map(id => gid('User', id))
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
@@ -83,7 +83,7 @@ export async function getUsers(userIds: (string | number)[]) {
  */
 export async function getUser(userId: (string | number)) {
   const result = await query(userIdQuery, {
-    id: gid('user', userId)
+    id: gid('User', userId)
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",

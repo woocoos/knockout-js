@@ -33,7 +33,7 @@ export default () => {
     <div>
       <button onClick={async () => {
         const result = await query(nodeQuery, {
-          gid: gid('user', 1),
+          gid: gid('User', 1),
         }, { instanceName: 'msg' });
         console.log(result)
       }}>普通请求</button>

@@ -148,7 +148,7 @@ const OrgSelect = (props: UserSelectProps) => {
         setKeyword(data?.displayName);
       } else {
         query<OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables>(userInfoQuery, {
-          gid: gid('user', props.value),
+          gid: gid('User', props.value),
         }, { instanceName: instanceName.UCENTER }).then(result => {
           if (result.data?.node?.__typename === 'User') {
             setInfo(result.data.node as User);
@@ -209,7 +209,7 @@ const OrgSelect = (props: UserSelectProps) => {
                 }
               } else if (props.orgId) {
                 const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
-                  gid: gid('org', props.orgId),
+                  gid: gid('Org', props.orgId),
                   first,
                   where,
                 }, 1, { instanceName: instanceName.UCENTER });

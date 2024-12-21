@@ -35,7 +35,7 @@ export async function getOrgUserList(
 ) {
   const result = await paging(
     orgUserListQuery, {
-    gid: gid('org', orgId),
+    gid: gid('Org', orgId),
     first: gather.pageSize || 20,
     where: gather.where,
     orderBy: gather.orderBy,

@@ -142,7 +142,7 @@ export default (props: AppModalProps) => {
           where.kindIn = filter.kind as AppKind[]
           if (props.orgId) {
             const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-              gid: gid('org', props.orgId),
+              gid: gid('Org', props.orgId),
               first: params.pageSize,
               where,
             }, params.current || 1, { instanceName: instanceName.UCENTER });

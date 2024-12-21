@@ -26,7 +26,7 @@ const orgIdQuery = gql(/* GraphQL */`query apiOrgId($id:GID!){
  */
 export async function getOrgs(orgIds: (string | number)[]) {
   const result = await query(orgIdListQuery, {
-    ids: orgIds.map(id => gid('org', id))
+    ids: orgIds.map(id => gid('Org', id))
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
@@ -47,7 +47,7 @@ export async function getOrgs(orgIds: (string | number)[]) {
  */
 export async function getOrg(orgId: (string | number)) {
   const result = await query(orgIdQuery, {
-    id: gid('org', orgId)
+    id: gid('Org', orgId)
   }, {
     instanceName: instanceName.UCENTER,
     requestPolicy: "cache-first",
