@@ -20,7 +20,7 @@ export default () => {
 
   return (
     <div>
-      使用gid后的结果：{gid('org',2)}
+      使用gid后的结果：{gid('Org',2)}
     </div>
   );
 };

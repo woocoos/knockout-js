@@ -1,5 +1,14 @@
 # @knockout-js/org
 
+## 0.1.8
+
+### Patch Changes
+
+- adjust:gid type
+- Updated dependencies
+  - @knockout-js/api@0.1.9
+  - @knockout-js/layout@0.1.10
+
 ## 0.1.7
 
 ### Patch Changes
