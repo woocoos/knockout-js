@@ -122,7 +122,13 @@ export const requestConfig = defineRequestConfig(() => {
           }
         }
       },
-      login: '/login'
+      login: '/login',
+      error: (err, str) => {
+        debugger;
+        if (str) {
+          console.error(str)
+        }
+      }
     }),
   }
 });

@@ -2,6 +2,7 @@ import store from "@/store"
 import { gid } from "@knockout-js/api"
 import { gql, subscription, query } from "@knockout-js/ice-urql/request"
 import { DictText } from "@knockout-js/org"
+import { request } from "ice"
 
 const
   subQuery = gql`subscription{
@@ -37,6 +38,10 @@ export default () => {
         }, { instanceName: 'msg' });
         console.log(result)
       }}>普通请求</button>
+      <button onClick={async () => {
+        const result = await request.post('/mock-api/error-400')
+        console.log(result)
+      }}>ice request</button>
     </div>
     <br />
     <div>
