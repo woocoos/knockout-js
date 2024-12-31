@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.10
+
+### Patch Changes
+
+- update aws-sdk
+
 ## 0.1.9
 
 ### Patch Changes

@@ -1,5 +1,14 @@
 # @knockout-js/org
 
+## 0.1.9
+
+### Patch Changes
+
+- update aws-sdk
+- Updated dependencies
+  - @knockout-js/api@0.1.10
+  - @knockout-js/layout@0.1.11
+
 ## 0.1.8
 
 ### Patch Changes
