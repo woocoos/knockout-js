@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.11
+
+### Patch Changes
+
+- 更精确的完善 ResponseContentDisposition
+
 ## 0.1.10
 
 ### Patch Changes

@@ -250,7 +250,7 @@ export async function getFileRaw(path: string, options?: {
  * 获取文件url
  * @param path
  * @param options.expiresIn  default 3600
- * @param options.inBrowser  是否在浏览器中展示
+ * @param options.inBrowser  true:浏览器内|false:下载|undefault:默认不处理
  * @param options.endpoint   default 是默认fileSource isDefault=true 的endpoint
  * @param options.bucket     default 是默认fileSource isDefault=true 的bucket
  * @returns
@@ -270,11 +270,11 @@ export async function getFileUrl(path: string, options?: {
       Bucket: s3Data.bucketUrl,
       Key: path,
       ResponseContentEncoding: "utf-8",
-    }
-    if (options?.inBrowser) {
-      input.ResponseContentDisposition = 'inline'
-    } else {
-      input.ResponseContentDisposition = 'attachment'
+    }, filename = path.split('?')[0].split('/').pop()
+    if (options?.inBrowser === true) {
+      input.ResponseContentDisposition = `inline; filename="${filename}"`
+    } else if (options?.inBrowser === false) {
+      input.ResponseContentDisposition = `attachment; filename="${filename}"`
     }
     return await getSignedUrl(
       s3Data.client,
