@@ -33,18 +33,26 @@ export default (props: LeavePromptProps) => {
   }, [props.pathname]);
 
   useEffect(() => {
-    window.addEventListener('beforeunload', (event: BeforeUnloadEvent) => {
+    const beforeunloadFn = (event: BeforeUnloadEvent) => {
       if (when === true) {
         return;
       }
       event.preventDefault();
       event.returnValue = leave.leavePromptTip;
       return leave.leavePromptTip;
-    });
+    },
+      customFn = (event: CustomEventInit<boolean>) => {
+        when = event.detail || false;
+      }
 
-    window.addEventListener(eventName, (event: CustomEventInit<boolean>) => {
-      when = event.detail || false;
-    });
+    window.addEventListener('beforeunload', beforeunloadFn);
+
+    window.addEventListener(eventName, customFn);
+
+    return () => {
+      window.removeEventListener('beforeunload', beforeunloadFn);
+      window.removeEventListener(eventName, customFn);
+    };
   }, []);
 
   return <>
