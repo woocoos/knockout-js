@@ -15,6 +15,7 @@ import { CollectsDataSource } from ".";
  * @returns
  */
 const DargMenuItem = (props: {
+  key?: string;
   value: AppMenu;
   onDel: () => void;
   onClick: (isOpen?: boolean) => void;
@@ -27,6 +28,7 @@ const DargMenuItem = (props: {
   };
 
   return <div
+    key={props.key}
     ref={setNodeRef}
     style={style}
     {...attributes}

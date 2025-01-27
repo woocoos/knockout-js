@@ -42,9 +42,11 @@ export type AggregateMenuLocale = {
   searchPlaceholder: string;
 }
 
+type AppMenuAndChildren = AppMenu & { children?: AppMenuAndChildren[] }
+
 export type AggregateMenuDataSource = {
   app: App;
-  menu: AppMenu[];
+  menu: AppMenuAndChildren[];
 }[]
 
 export type CollectsDataSource = {
@@ -104,7 +106,7 @@ export default (props: AggregateMenuProps) => {
           const menu = menuResult.data.userMenus.sort((d1, d2) => {
             const d1Sort = d1.displaySort || 0, d2Sort = d2.displaySort || 0;
             return d1.parentID < d2.parentID ? -1 : d1.parentID > d2.parentID ? 1 : d1Sort < d2Sort ? -1 : d1Sort > d2Sort ? 1 : 0;
-          }) as AppMenu[];
+          }) as AppMenuAndChildren[];
           newAll.push({
             app: apps[i],
             menu: treeFormatList(listFormatTreeData(menu, undefined, { key: 'id', parentId: 'parentID' })),
@@ -252,7 +254,6 @@ export default (props: AggregateMenuProps) => {
             }} />
             <StarOutlined rev={undefined} className={checkCollect(menuItem) ? 'collect' : ''} onClick={async (event) => {
               event.stopPropagation();
-              const collectList: AppMenu[] = [];
               if (checkCollect(menuItem)) {
                 updateCollects(menuItem, true)
               } else {
@@ -273,119 +274,117 @@ export default (props: AggregateMenuProps) => {
     }
   }, [props.dataSource]);
 
-  return <>
-    <Drawer
-      title={locale.title}
-      maskClosable={false}
-      placement="left"
-      width={1060}
-      {...props.drawerProps}
-      className={`${styles.aggregateMenuDrawer} ${isDark ? styles.aggregateMenuDark : ''}`}
-      open={props.open}
-      onClose={() => {
-        props.onChangeOpen?.(false);
-      }}
-    >
-      <div className={styles.aggregateMenuDrawerRow}>
-        <div style={{ width: 240 }} className={styles.aggregateMenuDrawerMenu}>
-          {/* 收藏 */}
-          {collects.length ?
-            <Collects
-              dataSource={collects}
-              onDragEnd={(event, type) => {
-                const { active, over } = event;
-                if (over && active.id !== over.id) {
-                  setCollects((items) => {
-                    let collectList: CollectsDataSource[] = []
-                    if (type === 'app') {
-                      const oldIndex = items.findIndex(oItem => oItem.id == active.id);
-                      const newIndex = items.findIndex(nItem => nItem.id == over.id);
-                      collectList = arrayMove(items, oldIndex, newIndex);
-                    } else if (type === 'menu') {
-                      const activeAppId = `${active.id}`.split('-')[0];
-                      const activeItem = items.find(item => item.id == activeAppId);
-                      if (activeItem) {
-                        const oldIndex = activeItem.children.findIndex(oItem => `${activeAppId}-${oItem.id}` == active.id);
-                        const newIndex = activeItem.children.findIndex(nItem => `${activeAppId}-${nItem.id}` == over.id);
-                        activeItem.children = arrayMove(activeItem.children, oldIndex, newIndex);
-                      }
-                      collectList = [...items]
+  return <Drawer
+    title={locale.title}
+    maskClosable={false}
+    placement="left"
+    width={1060}
+    {...props.drawerProps}
+    className={`${styles.aggregateMenuDrawer} ${isDark ? styles.aggregateMenuDark : ''}`}
+    open={props.open}
+    onClose={() => {
+      props.onChangeOpen?.(false);
+    }}
+  >
+    <div className={styles.aggregateMenuDrawerRow}>
+      <div style={{ width: 240 }} className={styles.aggregateMenuDrawerMenu}>
+        {/* 收藏 */}
+        {collects.length ?
+          <Collects
+            dataSource={collects}
+            onDragEnd={(event, type) => {
+              const { active, over } = event;
+              if (over && active.id !== over.id) {
+                setCollects((items) => {
+                  let collectList: CollectsDataSource[] = []
+                  if (type === 'app') {
+                    const oldIndex = items.findIndex(oItem => oItem.id == active.id);
+                    const newIndex = items.findIndex(nItem => nItem.id == over.id);
+                    collectList = arrayMove(items, oldIndex, newIndex);
+                  } else if (type === 'menu') {
+                    const activeAppId = `${active.id}`.split('-')[0];
+                    const activeItem = items.find(item => item.id == activeAppId);
+                    if (activeItem) {
+                      const oldIndex = activeItem.children.findIndex(oItem => `${activeAppId}-${oItem.id}` == active.id);
+                      const newIndex = activeItem.children.findIndex(nItem => `${activeAppId}-${nItem.id}` == over.id);
+                      activeItem.children = arrayMove(activeItem.children, oldIndex, newIndex);
                     }
-                    const saveFavoriteList: AppMenu[] = [];
-                    collectList.forEach(item => {
-                      saveFavoriteList.push(...item.children)
-                    });
-                    console.log(saveFavoriteList)
-                    saveFavorite(saveFavoriteList)
-                    return collectList;
+                    collectList = [...items]
+                  }
+                  const saveFavoriteList: AppMenu[] = [];
+                  collectList.forEach(item => {
+                    saveFavoriteList.push(...item.children)
                   });
-                }
-              }}
-              onDel={async item => {
-                updateCollects(item, true)
-              }}
-              onClick={(item, isOpen) => {
-                onClickItem(item, isOpen)
-              }}
-            />
-            : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={locale.notText} />
-          }
+                  saveFavorite(saveFavoriteList)
+                  return collectList;
+                });
+              }
+            }}
+            onDel={async item => {
+              updateCollects(item, true)
+            }}
+            onClick={(item, isOpen) => {
+              onClickItem(item, isOpen)
+            }}
+          />
+          : <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={locale.notText} />
+        }
+      </div>
+      <div style={{ width: 820 }}>
+        {/* 过滤 */}
+        <div className={styles.aggregateMenuDrawerAllInput}>
+          <Input
+            variant="borderless"
+            prefix={<SearchOutlined rev={undefined} />}
+            placeholder={locale.searchPlaceholder}
+            onChange={(event) => {
+              const keyword = event.target.value;
+              if (keyword) {
+                const fList = all.map(f => {
+                  return {
+                    app: f.app,
+                    menu: f.menu.filter(fMenuItem => fMenuItem.name.indexOf(keyword) > -1),
+                  };
+                }).filter(f => f.menu.length);
+                setFilterList(fList);
+              } else {
+                setFilterList([...all]);
+              }
+            }}
+          />
         </div>
-        <div style={{ width: 820 }}>
-          {/* 过滤 */}
-          <div className={styles.aggregateMenuDrawerAllInput}>
-            <Input
-              bordered={false}
-              prefix={<SearchOutlined rev={undefined} />}
-              placeholder={locale.searchPlaceholder}
-              onChange={(event) => {
-                const keyword = event.target.value;
-                if (keyword) {
-                  const fList = all.map(f => {
-                    return {
-                      app: f.app,
-                      menu: f.menu.filter(fMenuItem => fMenuItem.name.indexOf(keyword) > -1),
-                    };
-                  }).filter(f => f.menu.length);
-                  setFilterList(fList);
-                } else {
-                  setFilterList([...all]);
-                }
-              }}
-            />
-          </div>
-          {/* 最近访问 */}
-          {latelys.length ?
-            <div className={styles.aggregateMenuLatelys}>
-              <div className={styles.aggregateMenuDrawerAllMenuItemDir}>{locale.latelyTitle}</div>
-              <div className={styles.aggregateMenuLatelysColumn}>
-                {latelys.map(menuItem => (
+        {/* 最近访问 */}
+        {latelys.length ?
+          <div className={styles.aggregateMenuLatelys}>
+            <div className={styles.aggregateMenuDrawerAllMenuItemDir}>{locale.latelyTitle}</div>
+            <div className={styles.aggregateMenuLatelysColumn}>
+              {latelys.map(menuItem => (
+                menuItemRender(menuItem)
+              ))}
+            </div>
+          </div> : <></>
+        }
+        {/* all应用菜单 */}
+        <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
+          <div className={styles.aggregateMenuDrawerAllMenuColumn}>
+            {filterList.map(item => (item.menu.length ?
+              <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>
+                <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
+                {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
                   menuItemRender(menuItem)
+                  : <div
+                    key={`${menuItem.appID}-${menuItem.id}`}
+                    className={styles.aggregateMenuDrawerAllMenuItemDir}
+                  >
+                    {menuItem.name}
+                  </div>
                 ))}
               </div>
-            </div> : <></>
-          }
-          {/* all应用菜单 */}
-          <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
-            <div className={styles.aggregateMenuDrawerAllMenuColumn}>
-              {filterList.map(item => (item.menu.length ?
-                <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>
-                  <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
-                  {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
-                    menuItemRender(menuItem)
-                    : <div
-                      key={`${menuItem.appID}-${menuItem.id}`}
-                      className={styles.aggregateMenuDrawerAllMenuItemDir}
-                    >
-                      {menuItem.name}
-                    </div>
-                  ))}
-                </div>
-                : <></>))}
-            </div>
+              : <span key={item.app.code} style={{ display: 'none' }}></span>))}
           </div>
         </div>
       </div>
-    </Drawer>
-  </>
+    </div>
+  </Drawer>
+
 }
