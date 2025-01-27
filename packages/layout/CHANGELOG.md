@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.14
+
+### Patch Changes
+
+- 升级 ucenter
+- Updated dependencies
+  - @knockout-js/api@0.1.13
+
 ## 0.1.13
 
 ### Patch Changes
