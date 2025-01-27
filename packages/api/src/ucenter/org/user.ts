@@ -11,7 +11,7 @@ const orgUserListQuery = gql(/* GraphQL */`query apiOrgUserList($gid: GID!,$firs
         totalCount,pageInfo{ hasNextPage,hasPreviousPage,startCursor,endCursor }
         edges{
           cursor,node{
-            id,displayName,email
+            id,displayName
           }
         }
       }

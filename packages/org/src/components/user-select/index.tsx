@@ -71,7 +71,7 @@ export interface UserSelectProps {
 const userInfoQuery = gql(/* GraphQL */`query orgPkgUserInfo($gid: GID!){
   node(id:$gid){
     ... on User{
-      id,displayName,email,mobile
+      id,displayName,contact{email,mobile}
     }
   }
 }`);
@@ -83,7 +83,7 @@ const userListQuery = gql(/* GraphQL */`query userList($first: Int,$orderBy:User
     edges{
       cursor,node{
         id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-        email,mobile,userType,creationType,registerIP,status,comments
+        userType,creationType,registerIP,status,comments,contact{email,mobile}
       }
     }
   }
@@ -98,7 +98,7 @@ const orgUserListQuery = gql(/* GraphQL */`query orgUserList($gid: GID!,$first: 
         edges{
           cursor,node{
             id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-            email,mobile,userType,creationType,registerIP,status,comments
+            userType,creationType,registerIP,status,comments,contact{email,mobile}
           }
         }
       }
@@ -112,7 +112,7 @@ const orgRoleUserListQuery = gql(/* GraphQL */`query orgRoleUserList($roleId: ID
     edges{
       cursor,node{
         id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-        email,mobile,userType,creationType,registerIP,status,comments
+        userType,creationType,registerIP,status,comments,contact{email,mobile}
       }
     }
   }
@@ -187,8 +187,22 @@ const OrgSelect = (props: UserSelectProps) => {
             const os: BaseOptionType[] = [],
               first = 15,
               where: UserWhereInput = {
-                displayNameContains: keywordStr,
+                or: [
+                  { displayNameContains: keywordStr },
+                  { principalNameContains: keywordStr },
+                  {
+                    hasAddressesWith: [
+                      { emailContains: keywordStr }
+                    ]
+                  },
+                  {
+                    hasAddressesWith: [
+                      { mobileContains: keywordStr }
+                    ]
+                  }
+                ]
               };
+            where.userType = props.userType
             if (keywordStr) {
               if (props.orgRoleId) {
                 const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {

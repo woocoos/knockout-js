@@ -73,7 +73,7 @@ const userListQuery = gql(/* GraphQL */`query userList($first: Int,$orderBy:User
     edges{
       cursor,node{
         id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-        email,mobile,userType,creationType,registerIP,status,comments
+        userType,creationType,registerIP,status,comments,contact{email,mobile}
       }
     }
   }
@@ -89,7 +89,7 @@ const orgUserListQuery = gql(/* GraphQL */`query orgUserList($gid: GID!,$first: 
         edges{
           cursor,node{
             id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-            email,mobile,userType,creationType,registerIP,status,comments
+            userType,creationType,registerIP,status,comments,contact{email,mobile}
           }
         }
       }
@@ -103,7 +103,7 @@ const orgRoleUserListQuery = gql(/* GraphQL */`query orgRoleUserList($roleId: ID
     edges{
       cursor,node{
         id,createdBy,createdAt,updatedBy,updatedAt,principalName,displayName,
-        email,mobile,userType,creationType,registerIP,status,comments
+        userType,creationType,registerIP,status,comments,contact{email,mobile}
       }
     }
   }
@@ -129,11 +129,17 @@ export default (props: UserModalProps) => {
         title: locale.email,
         dataIndex: 'email',
         width: 120,
+        renderText(_text, record) {
+          return <div>{record.contact?.email}</div>;
+        },
       },
       {
         title: locale.mobile,
         dataIndex: 'mobile',
         width: 160,
+        renderText(_text, record) {
+          return <div>{record.contact?.mobile}</div>;
+        },
       },
       {
         title: locale.status,
@@ -176,8 +182,19 @@ export default (props: UserModalProps) => {
         where.userType = props.userType;
         where.principalNameContains = params.principalName;
         where.displayNameContains = params.displayName;
-        where.emailContains = params.email;
-        where.mobileContains = params.mobile;
+        if (params.email || params.mobile) {
+          where.hasAddressesWith = [];
+          if (params.email) {
+            where.hasAddressesWith.push(
+              { emailContains: params.email }
+            )
+          }
+          if (params.mobile) {
+            where.hasAddressesWith.push(
+              { mobileContains: params.mobile }
+            )
+          }
+        }
         where.statusIn = filter.status as UserSimpleStatus[] | null;
         if (props.orgRoleId) {
           const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
