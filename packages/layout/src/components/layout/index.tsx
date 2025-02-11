@@ -159,7 +159,7 @@ const Layout = (props: LayoutProps) => {
         }}
         actionsRender={() => {
           const actions: ReactNode[] = [];
-          if(props.actionsBeforeRender){
+          if (props.actionsBeforeRender) {
             actions.push(...props.actionsBeforeRender);
           }
           if (props.i18nProps) {
@@ -170,7 +170,7 @@ const Layout = (props: LayoutProps) => {
           }
           actions.push(<TenantDropdown {...props.tenantProps} />)
           actions.push(<AvatarDropdown {...props.avatarProps} />)
-          if (props.themeSwitchProps) {
+          if (props.themeSwitchProps && !props.themeSwitchProps.isHide) {
             actions.push(<ThemeSwitch {...props.themeSwitchProps} />)
           }
           return actions;

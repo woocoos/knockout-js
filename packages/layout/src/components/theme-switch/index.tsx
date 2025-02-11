@@ -13,23 +13,23 @@ export interface ThemeSwitchProps {
    */
   value: boolean;
   /**
+   * 隐藏不显示切换
+   */
+  isHide?: boolean;
+  /**
    * 值变更事件 (value: boolean) => void;
    */
-  onChange: (value: boolean) => void;
+  onChange?: (value: boolean) => void;
 }
 
-const ThemeSwitch: React.FC<ThemeSwitchProps> = (props: ThemeSwitchProps) => {
-  return <span className={styles.action}>
+export default (props: ThemeSwitchProps) => {
+  return props.isHide ? <></> : <span className={styles.action}>
     <span>{
       props.value ? <Moon onClick={() => {
-        props.onChange(false)
-
+        props.onChange?.(false)
       }} /> : <Sun onClick={() => {
-        props.onChange(true)
-
+        props.onChange?.(true)
       }} />}
     </span>
   </span>
 };
-
-export default ThemeSwitch;

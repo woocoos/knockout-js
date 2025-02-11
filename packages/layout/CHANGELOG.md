@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.17
+
+### Patch Changes
+
+- 可隐藏主题切换
+
 ## 0.1.16
 
 ### Patch Changes
