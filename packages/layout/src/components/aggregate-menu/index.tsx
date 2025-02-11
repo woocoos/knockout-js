@@ -86,7 +86,6 @@ export default (props: AggregateMenuProps) => {
     [latelys, setLately] = useState<AppMenu[]>([]),
     locale = useLocale('AggregateMenu'),
     isDark = useDark();
-
   const
     request = useCallback(async () => {
       const appsResult = await paging<LayoutPkgUserAppListQuery, LayoutPkgUserAppListQueryVariables>(userAppsQuery, {}, 1, {
@@ -365,7 +364,7 @@ export default (props: AggregateMenuProps) => {
           </div> : <></>
         }
         {/* all应用菜单 */}
-        <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 164px)" : "calc(100% - 52px)" }}>
+        <div className={styles.aggregateMenuDrawerAllMenu} style={{ height: latelys.length ? "calc(100% - 166px)" : "calc(100% - 54px)" }}>
           <div className={styles.aggregateMenuDrawerAllMenuColumn}>
             {filterList.map(item => (item.menu.length ?
               <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>

@@ -5,10 +5,10 @@ sidebar_label: AggregateMenu
 本 Demo 演示用法。
 
 ```tsx preview
-import { AggregateMenu,Provider } from "@knockout-js/layout";
+import { AggregateMenu,CollectProviders } from "@knockout-js/layout";
 import { useState } from "react";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
-import { Button } from "antd";
+import { Button,Space } from "antd";
 import { App, AppMenu, AppMenuKind } from "@knockout-js/api/ucenter";
 import { adminxApi } from "./assets/api";
 
@@ -21,6 +21,7 @@ createUrqlInstance([
 
 export default () => {
   const [open,setOpen] = useState(false);
+  const [darkOpen,setDarkOpen] = useState(false);
  
   const menuData = (appId,max,app) => {
     const data = [];
@@ -78,8 +79,11 @@ export default () => {
 
   return (
     <div >
+      <Space>
       <Button onClick={()=> {setOpen(!open)}}>显示</Button>
-      <Provider tenantId="1">
+      <Button onClick={()=> {setDarkOpen(!darkOpen)}}>显示黑色主题</Button>
+      </Space>
+      <CollectProviders tenantId="1">
         <AggregateMenu
           open={open}
           dataSource={dataSource}
@@ -88,7 +92,17 @@ export default () => {
             console.log(menuIten,app)
           }}
         />
-      </Provider>
+      </CollectProviders>
+      <CollectProviders tenantId="1" dark={true}>
+        <AggregateMenu
+          open={darkOpen}
+          dataSource={dataSource}
+          onChangeOpen={setDarkOpen}
+          onClick={(menuIten,app) => {
+            console.log(menuIten,app)
+          }}
+        />
+      </CollectProviders>
     </div>
   );
 };

@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.16
+
+### Patch Changes
+
+- 黑色主题处理
+
 ## 0.1.15
 
 ### Patch Changes
