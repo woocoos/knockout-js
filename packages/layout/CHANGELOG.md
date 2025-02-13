@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.18
+
+### Patch Changes
+
+- 增加参数设置
+
 ## 0.1.17
 
 ### Patch Changes

@@ -38,7 +38,12 @@ export interface LayoutProps {
   /**
    * 聚合菜单
    */
-  aggregateMenuProps?: AggregateMenuProps;
+  aggregateMenuProps?: AggregateMenuProps & {
+    /**
+     * 开启聚合菜单的图标样式设置
+     */
+    openIconStyle?: React.CSSProperties;
+  };
   /**
    * I18nDropdown组件对应的参数
    */
@@ -115,7 +120,7 @@ const Layout = (props: LayoutProps) => {
           return <>
             {typeof props.aggregateMenuProps?.open === 'boolean' ? <BarsOutlined
               rev={undefined}
-              style={{ fontSize: 20, marginRight: 10 }}
+              style={{ fontSize: 20, marginRight: 10, ...props.aggregateMenuProps?.openIconStyle }}
               onClick={() => {
                 props.aggregateMenuProps?.onChangeOpen?.(true);
               }}

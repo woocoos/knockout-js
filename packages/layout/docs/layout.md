@@ -31,7 +31,7 @@ const IconFont = createFromIconfontCN({
 
 export default () => {
   const location = useLocation();
-
+  
   const [tenantId, setTenantId] = useState("1");
   const [theme, setTheme] = useState(false);
 
@@ -58,7 +58,7 @@ export default () => {
         themeSwitchProps={{
           value: theme,
           onChange: setTheme,
-        }}
+        }}       
         msgProps={{
           onItemClick:(data) => {
             console.log('msg-item',data)
@@ -160,6 +160,7 @@ import { useLocation } from "@docusaurus/router";
 import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { createFromIconfontCN } from "@ant-design/icons";
 import { adminxApi,iconFontScriptUrl } from "./assets/api";
+import { aggregateMenuDataSource } from "./assets/data";
 
 createUrqlInstance([
   {
@@ -202,6 +203,7 @@ export default () => {
         }}
         aggregateMenuProps={{
           open:open,
+          dataSource: aggregateMenuDataSource,
           onChangeOpen:setOpen,
           onClick:(menuItem,app)=>{
             console.log(menuItem,app)
