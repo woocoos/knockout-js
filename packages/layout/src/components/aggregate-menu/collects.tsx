@@ -15,7 +15,7 @@ import { CollectsDataSource } from ".";
  * @returns
  */
 const DargMenuItem = (props: {
-  key?: string;
+  id?: string;
   value: AppMenu;
   onDel: () => void;
   onClick: (isOpen?: boolean) => void;
@@ -28,7 +28,7 @@ const DargMenuItem = (props: {
   };
 
   return <div
-    key={props.key}
+    key={props.id}
     ref={setNodeRef}
     style={style}
     {...attributes}
@@ -109,6 +109,7 @@ const DargAppItem = (props: {
             props.app.children.map(item => (
               <DargMenuItem
                 key={`${props.app.id}-${item.id}`}
+                id={`${props.app.id}-${item.id}`}
                 value={item}
                 onDel={() => {
                   props.onDel?.(item)
