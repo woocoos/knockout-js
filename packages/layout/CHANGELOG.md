@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.20
+
+### Patch Changes
+
+- fix props.key warn
+
 ## 0.1.19
 
 ### Patch Changes
