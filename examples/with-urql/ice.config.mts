@@ -8,6 +8,9 @@ import icestark from '@ice/plugin-icestark';
 import urqlPlugin from '@knockout-js/ice-urql';
 
 const NODE_ENV = process.env.NODE_ENV,
+  ICE_FILES_URL = process.env.ICE_FILES_URL,
+  ICE_MSG_URL = process.env.ICE_MSG_URL,
+  ICE_ADMINX_URL = process.env.ICE_ADMINX_URL,
   minify = NODE_ENV === 'production' ? 'swc' : false;
 
 export default defineConfig(() => ({
@@ -37,9 +40,19 @@ export default defineConfig(() => ({
   ],
   proxy: {
     "/api-s3": {
-      target: "http://127.0.0.1:10070/",
+      target: ICE_FILES_URL,
       changeOrigin: true,
       pathRewrite: { [`^/api-s3`]: '' },
+    },
+    "/api-adminx": {
+      target: ICE_ADMINX_URL,
+      changeOrigin: true,
+      pathRewrite: { [`^/api-adminx`]: '' },
+    },
+    "/api-msg": {
+      target: ICE_MSG_URL,
+      changeOrigin: true,
+      pathRewrite: { [`^/api-msg`]: '' },
     }
   }
 }));

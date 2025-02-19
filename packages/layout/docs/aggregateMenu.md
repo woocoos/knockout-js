@@ -11,6 +11,7 @@ import { createUrqlInstance } from "@knockout-js/ice-urql/request";
 import { Button,Space } from "antd";
 import { App, AppMenu, AppMenuKind } from "@knockout-js/api/ucenter";
 import { adminxApi } from "./assets/api";
+import "./assets/test.css";
 
 createUrqlInstance([
   {

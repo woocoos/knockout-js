@@ -2,7 +2,8 @@ import { DeleteObjectCommand, GetObjectCommand, GetObjectCommandInput, PutObject
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { request } from "@ice/plugin-request/request";
 import { getFileSource } from "..";
-
+import OSS from "ali-oss";
+import { FileSourceKind } from "../gql/ucenter/graphql";
 // aws sdk 文档
 // https://docs.aws.amazon.com/zh_cn/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
 
@@ -53,9 +54,11 @@ let stsApi = '/api-s3/oss/sts'
 
 const
   awsS3Data: Record<string, {
-    stsData: AwsS3StsData | null,
-    bucketUrl: string,
-    client: S3Client,
+    stsData: AwsS3StsData | null
+    bucketUrl: string
+    kind: FileSourceKind
+    client: S3Client
+    aliClient?: OSS
   } | undefined> = {}
 
 /**
@@ -129,6 +132,7 @@ async function getAwsS3Data(options?: {
             awsS3Data[key] = {
               stsData,
               bucketUrl: fburl,
+              kind: filesource.source.kind,
               client: new S3Client({
                 region: fr,
                 credentials: {
@@ -137,7 +141,15 @@ async function getAwsS3Data(options?: {
                   sessionToken: stsData.sessionToken
                 },
                 bucketEndpoint: true
-              })
+              }),
+              aliClient: filesource.source.kind === FileSourceKind.AliOss ? new OSS({
+                region: fr,
+                bucket: fb,
+                accessKeyId: stsData.accessKeyId,
+                accessKeySecret: stsData.secretAccessKey,
+                stsToken: stsData.sessionToken,
+                refreshSTSTokenInterval: (new Date(stsData.expiration)).getTime() - Date.now(),
+              }) : undefined
             }
           }
         } catch (error) {
@@ -276,26 +288,43 @@ export async function getFileUrl(path: string, options?: AwsS3GetFileOptions) {
     bucket: options?.bucket
   })
   if (s3Data) {
-    const input: GetObjectCommandInput = {
-      Bucket: s3Data.bucketUrl,
-      Key: path,
-    }, filename = path.split('?')[0].split('/').pop()
-    if (options?.contentEncoding) {
-      input.ResponseContentEncoding = options.contentEncoding
-    }
-    if (options?.inBrowser === true) {
-      input.ResponseContentDisposition = `inline; filename="${filename}"`
-    } else if (options?.inBrowser === false) {
-      input.ResponseContentDisposition = `attachment; filename="${filename}"`
-    }
-    return await getSignedUrl(
-      s3Data.client,
-      new GetObjectCommand(input),
-      {
-        expiresIn: options?.expiresIn ?? 3600
+    const filename = path.split('?')[0].split('/').pop()
+    if (s3Data.kind === FileSourceKind.AliOss) {
+      const input: OSS.SignatureUrlOptions = {}
+      input.expires = options?.expiresIn ?? 3600
+      if (options?.inBrowser === true) {
+        input.response = {
+          'content-disposition': `inline; filename="${filename}"`
+        }
+      } else {
+        input.response = {
+          'content-disposition': `attachment; filename="${filename}"`
+        }
       }
-    )
+      return s3Data.aliClient?.signatureUrl(path, input)
+    } else {
+      const input: GetObjectCommandInput = {
+        Bucket: s3Data.bucketUrl,
+        Key: path,
+      }
+      if (options?.contentEncoding) {
+        input.ResponseContentEncoding = options.contentEncoding
+      }
+      if (options?.inBrowser === true) {
+        input.ResponseContentDisposition = `inline; filename="${filename}"`
+      } else if (options?.inBrowser === false) {
+        input.ResponseContentDisposition = `attachment; filename="${filename}"`
+      }
+      return await getSignedUrl(
+        s3Data.client,
+        new GetObjectCommand(input),
+        {
+          expiresIn: options?.expiresIn ?? 3600
+        }
+      )
+    }
   }
+  return null
 }
 
 /**

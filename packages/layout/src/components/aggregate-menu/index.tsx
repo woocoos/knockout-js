@@ -239,7 +239,7 @@ export default (props: AggregateMenuProps) => {
     menuItemRender = (menuItem: AppMenu) => {
       return <div
         key={`${menuItem.id}-${menuItem.appID}`}
-        className={styles.aggregateMenuDrawerAllMenuItem}
+        className={`${styles.aggregateMenuDrawerAllMenuItem} drawerAllMenuItem`}
         onClick={() => {
           onClickItem(menuItem)
         }}
@@ -368,7 +368,7 @@ export default (props: AggregateMenuProps) => {
           <div className={styles.aggregateMenuDrawerAllMenuColumn}>
             {filterList.map(item => (item.menu.length ?
               <div key={item.app.code} className={styles.aggregateMenuDrawerAllMenuColumnItem}>
-                <div className={styles.aggregateMenuDrawerAllAppTitle}>{item.app.name}</div>
+                <div className={`${styles.aggregateMenuDrawerAllAppTitle} drawerAllAppTitle`}>{item.app.name}</div>
                 {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
                   menuItemRender(menuItem)
                   : <div

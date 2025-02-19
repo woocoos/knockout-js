@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.19
+
+### Patch Changes
+
+- 引入 ali-oss 和开放聚合菜单方便外部修改颜色的 css
+- Updated dependencies
+  - @knockout-js/api@0.1.14
+
 ## 0.1.18
 
 ### Patch Changes

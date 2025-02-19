@@ -9,10 +9,7 @@ import { instanceName } from '@knockout-js/api';
 
 const ICE_DEV_TOKEN = process.env.ICE_DEV_TOKEN ?? '',
   ICE_DEV_TID = process.env.ICE_DEV_TID ?? '',
-  ICE_UCENTER_URL = process.env.ICE_UCENTER_URL ?? '',
-  ICE_MSG_URL = process.env.ICE_MSG_URL ?? '',
   ICE_MSG_WS_URL = process.env.ICE_MSG_WS_URL ?? ''
-// ICE_APP_CODE = process.env.ICE_APP_CODE ?? '',
 
 
 export default {
@@ -79,11 +76,11 @@ export const urqlConfig = defineUrqlConfig([
   },
   {
     instanceName: instanceName.UCENTER,
-    url: ICE_UCENTER_URL,
+    url: '/api-adminx/graphql/query',
   },
   {
     instanceName: instanceName.MSGCENTER,
-    url: ICE_MSG_URL,
+    url: '/api-msg/graphql/query',
   },
 ])
 

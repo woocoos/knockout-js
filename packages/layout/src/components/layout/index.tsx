@@ -13,7 +13,7 @@ import { OpenWin } from '../icons';
 import { IconFontProps } from '@ant-design/icons/lib/components/IconFont';
 import { logoBase64 } from './logo';
 import AggregateMenu, { AggregateMenuProps } from '../aggregate-menu';
-import { BarsOutlined } from '@ant-design/icons';
+import { MenuOutlined } from '@ant-design/icons';
 import { listFormatTreeData } from '../_util';
 import { instanceName } from '@knockout-js/api';
 
@@ -118,7 +118,7 @@ const Layout = (props: LayoutProps) => {
         className={styles.layout}
         headerTitleRender={(logo, title) => {
           return <>
-            {typeof props.aggregateMenuProps?.open === 'boolean' ? <BarsOutlined
+            {typeof props.aggregateMenuProps?.open === 'boolean' ? <MenuOutlined
               rev={undefined}
               style={{ fontSize: 20, marginRight: 10, ...props.aggregateMenuProps?.openIconStyle }}
               onClick={() => {

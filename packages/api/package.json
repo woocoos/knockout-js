@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/api",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Knockout API",
   "files": [
     "esm",
@@ -53,11 +53,13 @@
     "@aws-sdk/client-s3": "3.717.0",
     "@aws-sdk/s3-request-presigner": "3.717.0",
     "@swc/helpers": "^0.5.1",
+    "ali-oss": "6.22.0",
     "crypto-js": "^4.1.1",
     "graphql": "^16.6.0",
     "react": "^17 || ^18"
   },
   "devDependencies": {
+    "@types/ali-oss": "6.16.11",
     "@graphql-codegen/cli": "^4.0.1",
     "@graphql-codegen/client-preset": "^4.0.0",
     "@graphql-codegen/schema-ast": "^4.0.0",
