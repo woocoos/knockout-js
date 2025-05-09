@@ -66,13 +66,18 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
   return urqlAuthExchange(async utilities => {
     return {
       addAuthToOperation(operation) {
-        const { token, tenantId } = store.getState();
-        return token
-          ? utilities.appendHeaders(operation, {
-            'Authorization': getRequestHeaderAuthorization(token, headerMode),
-            'X-Tenant-ID': `${tenantId}`,
-          })
-          : operation;
+        const { token, tenantId } = store.getState(), headers: Record<string, string> = {};
+        const fetchOptions = operation.context.fetchOptions
+        if (typeof fetchOptions != 'function') {
+          const fetchHeaders = fetchOptions?.headers as Record<string, string> | undefined;
+          if (!fetchHeaders?.['Authorization'] && token) {
+            headers['Authorization'] = getRequestHeaderAuthorization(token, headerMode);
+          }
+          if (!fetchHeaders?.['X-Tenant-ID'] && tenantId) {
+            headers['X-Tenant-ID'] = `${tenantId}`;
+          }
+        }
+        return utilities.appendHeaders(operation, headers);
       },
       didAuthError(err) {
         if (err?.response?.status === 401) {
