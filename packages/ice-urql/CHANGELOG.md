@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.7
+
+### Patch Changes
+
+- fix urql header
+
 ## 0.1.6
 
 ### Patch Changes
