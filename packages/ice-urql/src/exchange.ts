@@ -47,6 +47,10 @@ export interface AuthExchangeOpts {
    */
   loginRedirectKey?: string;
   /**
+   * 在header上扩展租户id的key 兼容旧版本
+   */
+  tenantIdExtendKeys?: string[];
+  /**
    * 异常处理
    * @param error
    * @returns
@@ -61,7 +65,7 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, login, loginRedirectKey, error, headerMode } = handler
+  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
@@ -75,6 +79,11 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
           }
           if (!fetchHeaders?.['X-Tenant-ID'] && tenantId) {
             headers['X-Tenant-ID'] = `${tenantId}`;
+          }
+          if (tenantId && tenantIdExtendKeys?.length) {
+            tenantIdExtendKeys.forEach(key => {
+              headers[key] = `${tenantId}`;
+            })
           }
         }
         return utilities.appendHeaders(operation, headers);
