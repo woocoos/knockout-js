@@ -95,3 +95,31 @@ export async function getUser(userId: (string | number)) {
 
   return null;
 }
+
+const cacheUser: Record<string, User | undefined> = {}
+
+/**
+ * 获取用户对象
+ * @param id
+ * @returns
+ */
+export const getCacheUser = async (id: string) => {
+  if (!cacheUser[id]) {
+    const result = await getUser(id)
+    if (result) {
+      cacheUser[id] = result as User
+    }
+  }
+  return cacheUser[id]
+}
+
+/**
+ * 批量初始化
+ * @param ids
+ */
+export const batchInitCacheUser = async (ids: string[]) => {
+  const cacheIds = Object.keys(cacheUser)
+  const needIds = ids.filter(id => !cacheIds.includes(id))
+  const result = await getUsers(needIds)
+  result.forEach(item => cacheUser[item.id] = item as User)
+}

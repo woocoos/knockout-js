@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.15
+
+### Patch Changes
+
+- 增加内存缓存处理
+
 ## 0.1.14
 
 ### Patch Changes
