@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.16
+
+### Patch Changes
+
+- 增加币别获取
+
 ## 0.1.15
 
 ### Patch Changes

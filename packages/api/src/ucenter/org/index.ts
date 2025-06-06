@@ -6,7 +6,7 @@ import { Org } from '../../gql/ucenter/graphql';
 const orgIdListQuery = gql(/* GraphQL */`query apiOrgIdList($ids:[GID!]!){
   nodes(ids: $ids){
     ... on Org{
-      id,code,name
+      id,code,name,localCurrency
     }
   }
 }`)
@@ -14,7 +14,7 @@ const orgIdListQuery = gql(/* GraphQL */`query apiOrgIdList($ids:[GID!]!){
 const orgIdQuery = gql(/* GraphQL */`query apiOrgId($id:GID!){
   node(id: $id){
     ... on Org{
-      id,code,name
+      id,code,name,localCurrency
     }
   }
 }`)
