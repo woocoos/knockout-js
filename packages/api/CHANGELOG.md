@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.17
+
+### Patch Changes
+
+- export cacheUser
+
 ## 0.1.16
 
 ### Patch Changes

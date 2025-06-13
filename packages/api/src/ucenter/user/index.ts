@@ -96,7 +96,7 @@ export async function getUser(userId: (string | number)) {
   return null;
 }
 
-const cacheUser: Record<string, User | undefined> = {}
+export const cacheUser: Record<string, User | undefined> = {}
 
 /**
  * 获取用户对象
