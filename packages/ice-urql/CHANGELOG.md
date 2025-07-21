@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.9
+
+### Patch Changes
+
+- 扩展 headers key
+
 ## 0.1.8
 
 ### Patch Changes

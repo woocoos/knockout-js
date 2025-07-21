@@ -26,6 +26,10 @@ interface ReqInterceptorOpts {
    */
   loginRedirectKey?: string;
   /**
+   * 在header上扩展租户id的key 兼容旧版本
+   */
+  tenantIdExtendKeys?: string[];
+  /**
    * 异常处理
    * @param error
    * @returns
@@ -39,7 +43,7 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error, headerMode } = option;
+  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
@@ -48,8 +52,16 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
           if (!config.headers['Authorization']) {
             config.headers['Authorization'] = token ? getRequestHeaderAuthorization(token, headerMode) : ''
           }
-          if (!config.headers['X-Tenant-ID']) {
-            config.headers['X-Tenant-ID'] = tenantId
+          if (!config.headers['X-Tenant-ID'] && tenantId) {
+            config.headers['X-Tenant-ID'] = `${tenantId}`
+          }
+          if (tenantId && tenantIdExtendKeys?.length) {
+            tenantIdExtendKeys.forEach(key => {
+              if (!config.headers) {
+                config.headers = {}
+              }
+              config.headers[key] = `${tenantId}`;
+            })
           }
         }
         return config;
