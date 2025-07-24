@@ -14,7 +14,6 @@ import {
 } from 'urql';
 import { CustomClientOptions, RequestConfig } from "./types";
 import { authExchange, subExchange } from './exchange.js';
-import CryptoJS from 'crypto-js';
 
 export const gql = urqlGql;
 
@@ -22,6 +21,25 @@ export const urqlInstances: Record<string, {
   client: Client;
   config: CustomClientOptions;
 }> = {};
+
+/**
+*
+* Ko自定义的一些headers
+*/
+export const KoHeaders = {
+  /**
+   * 自动轮询请求头,告诉日志不重复收集
+   */
+  autoLoop: {
+    "Request-Polling": "true"
+  },
+  /**
+   * 请求后端时不缓存
+   */
+  noCache: {
+    "Cache-Control": "no-cache"
+  },
+} as const
 
 /**
  * 创建default client

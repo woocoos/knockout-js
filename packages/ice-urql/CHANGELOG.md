@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.10
+
+### Patch Changes
+
+- 增加自定义的 koheaders
+
 ## 0.1.9
 
 ### Patch Changes
