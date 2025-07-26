@@ -1,5 +1,8 @@
 import { Interceptors } from "@ice/plugin-request";
 import type { AxiosError, AxiosResponse } from "axios";
+import { i18n } from 'i18next';
+import { CombinedError } from "urql";
+import { sprintf } from 'sprintf-js';
 
 interface ReqInterceptorOpts {
   /**
@@ -30,6 +33,10 @@ interface ReqInterceptorOpts {
    */
   tenantIdExtendKeys?: string[];
   /**
+   * 多语言处理支持，对异常处理进行多语言处理
+   */
+  i18n?: i18n;
+  /**
    * 异常处理
    * @param error
    * @returns
@@ -43,7 +50,7 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys } = option;
+  const { store, login, loginRedirectKey, error, i18n, headerMode, tenantIdExtendKeys } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
@@ -72,7 +79,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
-            error?.(response as AxiosResponse, response.data.errors?.[0]?.message)
+            error?.(response as AxiosResponse, koErrorFormat(response as AxiosResponse, i18n))
           }
         }
         return response;
@@ -83,16 +90,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
             goLogin(login, loginRedirectKey);
           }
         }
-
-        const errRes = err?.response as AxiosResponse<{
-          errors: { message: string }[]
-        }, any>
-        let msg = errRes?.statusText;
-        if (errRes?.data?.errors?.[0]?.message) {
-          msg = errRes?.data?.errors?.[0]?.message;
-        }
-
-        error?.(err as AxiosError, msg)
+        error?.(err as AxiosError, koErrorFormat(err as AxiosError<KoAxiosError, any>, i18n))
         return Promise.reject(err);
       },
     },
@@ -163,3 +161,66 @@ export function getRequestHeaderAuthorization(token: string, mode?: RequestHeade
   }
   return accessToken;
 }
+
+interface KoAxiosError {
+  errors?: {
+    code?: string | number;
+    message: string;
+    meta?: Record<string, string | number> | (string | number)[];
+  }[];
+}
+
+/**
+ * 对异常进行处理
+ * @param error
+ * @param errorStr
+ * @returns
+ */
+export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosResponse<KoAxiosError, any> | CombinedError, i18nlang?: i18n) => {
+  let messages: string[] = [];
+  let i18nData: {
+    [key: string]: string;
+  } | undefined;
+  if (i18nlang) {
+    i18nData = i18nlang?.getDataByLanguage(i18nlang.language)?.['translation']
+  }
+  if ((error as CombinedError)?.graphQLErrors?.length > 0) {
+    // graphql异常
+    const gqlErr = (error as CombinedError).graphQLErrors[0]
+    const errorCode = gqlErr?.extensions?.code as string | undefined;
+    if (errorCode && i18nData?.[errorCode]) {
+      messages.push(i18nData[errorCode])
+    } else if (gqlErr.extensions.meta) {
+      if (Array.isArray(gqlErr.extensions.meta)) {
+        messages.push(sprintf(gqlErr.message, ...gqlErr.extensions.meta))
+      } else if (i18nlang) {
+        messages.push(i18nlang.t(gqlErr.message, gqlErr.extensions.meta))
+      }
+    }
+    if (messages.length === 0) {
+      messages.push((error as CombinedError).toString().replace('[Network] ', '').replace('[GraphQL] ', ''))
+    }
+  } else {
+    // Axios异常
+    const response = (error as AxiosError<KoAxiosError, any>)?.response ?? (error as AxiosResponse<KoAxiosError, any>)
+    if (response?.data?.errors?.length) {
+      const koAxiosErr = response.data.errors[0]
+      if (koAxiosErr.code && i18nData?.[koAxiosErr.code]) {
+        messages.push(i18nData?.[koAxiosErr.code])
+      } else if (koAxiosErr.meta) {
+        if (Array.isArray(koAxiosErr.meta)) {
+          messages.push(sprintf(koAxiosErr.message, ...koAxiosErr.meta))
+        } else if (i18nlang) {
+          messages.push(i18nlang.t(koAxiosErr.message, koAxiosErr.meta))
+        }
+      }
+    }
+    if (messages.length === 0 && response?.statusText) {
+      messages.push(response.statusText)
+    }
+    if (messages.length === 0 && (error as AxiosError<KoAxiosError, any>).message) {
+      messages.push((error as AxiosError<KoAxiosError, any>).message)
+    }
+  }
+  return messages.length > 0 ? messages.join(' ') : undefined;
+};

@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.11
+
+### Patch Changes
+
+- 异常处理
+
 ## 0.1.10
 
 ### Patch Changes

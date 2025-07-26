@@ -4,7 +4,8 @@ import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchan
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin } from "./requestInterceptor.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin, koErrorFormat } from "./requestInterceptor.js";
+import { i18n } from 'i18next';
 
 export interface AuthExchangeOpts {
   store: {
@@ -38,6 +39,10 @@ export interface AuthExchangeOpts {
    */
   refreshApi: string;
   /**
+   * 多语言处理支持
+   */
+  i18n?: i18n;
+  /**
    * 登陆地址
    */
   login?: string;
@@ -65,7 +70,7 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
+  const { store, beforeRefreshTime, refreshApi, i18n, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
@@ -95,7 +100,7 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
             return false;
           }
         }
-        return error?.(err, err.toString().replace('[Network] ', '').replace('[GraphQL] ', '')) ?? false;
+        return error?.(err, koErrorFormat(err, i18n)) ?? false;
       },
       async refreshAuth() {
         const { refreshToken } = store.getState();
