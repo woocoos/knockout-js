@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.12
+
+### Patch Changes
+
+- 扩展翻译能力
+
 ## 0.1.11
 
 ### Patch Changes

@@ -198,7 +198,12 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
       }
     }
     if (messages.length === 0) {
-      messages.push((error as CombinedError).toString().replace('[Network] ', '').replace('[GraphQL] ', ''))
+      const errStr = (error as CombinedError).toString().replace('[Network] ', '').replace('[GraphQL] ', '')
+      if (i18nlang) {
+        messages.push(i18nlang.t(errStr))
+      } else {
+        messages.push(errStr)
+      }
     }
   } else {
     // Axios异常
@@ -216,10 +221,18 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
       }
     }
     if (messages.length === 0 && response?.statusText) {
-      messages.push(response.statusText)
+      if (i18nlang) {
+        messages.push(i18nlang.t(response.statusText))
+      } else {
+        messages.push(response.statusText)
+      }
     }
     if (messages.length === 0 && (error as AxiosError<KoAxiosError, any>).message) {
-      messages.push((error as AxiosError<KoAxiosError, any>).message)
+      if (i18nlang) {
+        messages.push(i18nlang.t((error as AxiosError<KoAxiosError, any>).message))
+      } else {
+        messages.push((error as AxiosError<KoAxiosError, any>).message)
+      }
     }
   }
   return messages.length > 0 ? messages.join(' ') : undefined;

@@ -1,6 +1,6 @@
 {
   "name": "@knockout-js/ice-urql",
-  "version": "0.1.11",
+  "version": "0.1.12",
   "description": "urql plugin for ice",
   "license": "MIT",
   "type": "module",
