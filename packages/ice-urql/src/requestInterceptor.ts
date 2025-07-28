@@ -189,7 +189,13 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
     const gqlErr = (error as CombinedError).graphQLErrors[0]
     const errorCode = gqlErr?.extensions?.code as string | undefined;
     if (errorCode && i18nData?.[errorCode]) {
-      messages.push(i18nData[errorCode])
+      if (gqlErr.extensions.meta) {
+        if (Array.isArray(gqlErr.extensions.meta)) {
+          messages.push(sprintf(i18nData[errorCode], ...gqlErr.extensions.meta))
+        }
+      } else {
+        messages.push(i18nData[errorCode])
+      }
     } else if (gqlErr.extensions.meta) {
       if (Array.isArray(gqlErr.extensions.meta)) {
         messages.push(sprintf(gqlErr.message, ...gqlErr.extensions.meta))
@@ -211,7 +217,13 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
     if (response?.data?.errors?.length) {
       const koAxiosErr = response.data.errors[0]
       if (koAxiosErr.code && i18nData?.[koAxiosErr.code]) {
-        messages.push(i18nData?.[koAxiosErr.code])
+        if (koAxiosErr.meta) {
+          if (Array.isArray(koAxiosErr.meta)) {
+            messages.push(sprintf(i18nData?.[koAxiosErr.code], ...koAxiosErr.meta))
+          }
+        } else {
+          messages.push(i18nData?.[koAxiosErr.code])
+        }
       } else if (koAxiosErr.meta) {
         if (Array.isArray(koAxiosErr.meta)) {
           messages.push(sprintf(koAxiosErr.message, ...koAxiosErr.meta))
