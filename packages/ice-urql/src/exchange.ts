@@ -24,6 +24,10 @@ export interface AuthExchangeOpts {
      * @returns
      */
     setStateToken: (token: string) => void;
+    /**
+     * 获取i18n实例
+     */
+    getI18n?: () => i18n
   };
   /**
    * 签名模式
@@ -38,10 +42,6 @@ export interface AuthExchangeOpts {
    * token刷新api
    */
   refreshApi: string;
-  /**
-   * 多语言处理支持
-   */
-  i18n?: i18n;
   /**
    * 登陆地址
    */
@@ -70,7 +70,7 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, i18n, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
+  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
@@ -100,7 +100,7 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
             return false;
           }
         }
-        return error?.(err, koErrorFormat(err, i18n)) ?? false;
+        return error?.(err, koErrorFormat(err, store.getI18n?.())) ?? false;
       },
       async refreshAuth() {
         const { refreshToken } = store.getState();

@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.14
+
+### Patch Changes
+
+- fix 避免某些场景无法获取 i18n 的问题
+
 ## 0.1.13
 
 ### Patch Changes

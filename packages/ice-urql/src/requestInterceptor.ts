@@ -18,6 +18,10 @@ interface ReqInterceptorOpts {
       token: string;
       tenantId: string;
     },
+    /**
+     * 获取i18n实例
+     */
+    getI18n?: () => i18n
   };
   /**
   * 登陆地址
@@ -33,10 +37,6 @@ interface ReqInterceptorOpts {
    */
   tenantIdExtendKeys?: string[];
   /**
-   * 多语言处理支持，对异常处理进行多语言处理
-   */
-  i18n?: i18n;
-  /**
    * 异常处理
    * @param error
    * @returns
@@ -50,7 +50,7 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error, i18n, headerMode, tenantIdExtendKeys } = option;
+  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
@@ -79,7 +79,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
-            error?.(response as AxiosResponse, koErrorFormat(response as AxiosResponse, i18n))
+            error?.(response as AxiosResponse, koErrorFormat(response as AxiosResponse, store.getI18n?.()))
           }
         }
         return response;
@@ -90,7 +90,7 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
             goLogin(login, loginRedirectKey);
           }
         }
-        error?.(err as AxiosError, koErrorFormat(err as AxiosError<KoAxiosError, any>, i18n))
+        error?.(err as AxiosError, koErrorFormat(err as AxiosError<KoAxiosError, any>, store.getI18n?.()))
         return Promise.reject(err);
       },
     },
