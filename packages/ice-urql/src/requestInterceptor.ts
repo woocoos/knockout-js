@@ -162,45 +162,78 @@ export function getRequestHeaderAuthorization(token: string, mode?: RequestHeade
   return accessToken;
 }
 
-interface KoAxiosError {
-  errors?: {
-    code?: string | number;
-    message: string;
-    meta?: Record<string, string | number> | (string | number)[];
-  }[];
+export interface KoErr {
+  code?: string | number;
+  message?: string;
+  meta?: Record<string, string | number> | (string | number)[];
 }
 
 /**
- * 对异常进行处理
+ * 针对ko的异常进行处理
+ * @param error
+ * @param i18nlang
+ * @returns
+ */
+export const KoErrFormat = (error?: KoErr, i18nlang?: i18n) => {
+  if (!error) {
+    return undefined
+  }
+  let msg: string | undefined,
+    i18nData: {
+      [key: string]: string;
+    } | undefined;
+  if (i18nlang) {
+    i18nData = i18nlang?.getDataByLanguage(i18nlang.language)?.['translation']
+  }
+  if (error.code && i18nData?.[error.code]) {
+    if (error.meta) {
+      if (Array.isArray(error.meta)) {
+        msg = sprintf(i18nData?.[error.code], ...error.meta)
+      }
+    } else {
+      msg = i18nData?.[error.code]
+    }
+  } else if (error.message && error.meta) {
+    if (Array.isArray(error.meta)) {
+      msg = sprintf(error.message, ...error.meta)
+    } else if (i18nlang) {
+      msg = i18nlang.t(error.message, error.meta).toString()
+    }
+  } else if (error.message) {
+    if (i18nlang) {
+      msg = i18nlang.t(error.message).toString()
+    } else {
+      msg = error.message
+    }
+  }
+  return msg
+}
+
+export interface KoAxiosError {
+  errors?: KoErr[];
+}
+
+/**
+ * 对请求异常进行处理
  * @param error
  * @param errorStr
  * @returns
  */
 export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosResponse<KoAxiosError, any> | CombinedError, i18nlang?: i18n) => {
   let messages: string[] = [];
-  let i18nData: {
-    [key: string]: string;
-  } | undefined;
-  if (i18nlang) {
-    i18nData = i18nlang?.getDataByLanguage(i18nlang.language)?.['translation']
-  }
   if ((error as CombinedError)?.graphQLErrors?.length > 0) {
     // graphql异常
     const gqlErr = (error as CombinedError).graphQLErrors[0]
-    const errorCode = gqlErr?.extensions?.code as string | undefined;
-    if (errorCode && i18nData?.[errorCode]) {
-      if (gqlErr.extensions.meta) {
-        if (Array.isArray(gqlErr.extensions.meta)) {
-          messages.push(sprintf(i18nData[errorCode], ...gqlErr.extensions.meta))
-        }
-      } else {
-        messages.push(i18nData[errorCode])
-      }
-    } else if (gqlErr.extensions.meta) {
-      if (Array.isArray(gqlErr.extensions.meta)) {
-        messages.push(sprintf(gqlErr.message, ...gqlErr.extensions.meta))
-      } else if (i18nlang) {
-        messages.push(i18nlang.t(gqlErr.message, gqlErr.extensions.meta))
+    const errorCode = gqlErr?.extensions?.code as KoErr['code'];
+    const errorMeta = gqlErr?.extensions?.meta as KoErr['meta'];
+    if (errorMeta || errorCode) {
+      const kefStr = KoErrFormat({
+        code: errorCode,
+        message: errorCode ? undefined : gqlErr.message,
+        meta: errorMeta,
+      }, i18nlang)
+      if (kefStr) {
+        messages.push(kefStr)
       }
     }
     if (messages.length === 0) {
@@ -215,21 +248,9 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
     // Axios异常
     const response = (error as AxiosError<KoAxiosError, any>)?.response ?? (error as AxiosResponse<KoAxiosError, any>)
     if (response?.data?.errors?.length) {
-      const koAxiosErr = response.data.errors[0]
-      if (koAxiosErr.code && i18nData?.[koAxiosErr.code]) {
-        if (koAxiosErr.meta) {
-          if (Array.isArray(koAxiosErr.meta)) {
-            messages.push(sprintf(i18nData?.[koAxiosErr.code], ...koAxiosErr.meta))
-          }
-        } else {
-          messages.push(i18nData?.[koAxiosErr.code])
-        }
-      } else if (koAxiosErr.meta) {
-        if (Array.isArray(koAxiosErr.meta)) {
-          messages.push(sprintf(koAxiosErr.message, ...koAxiosErr.meta))
-        } else if (i18nlang) {
-          messages.push(i18nlang.t(koAxiosErr.message, koAxiosErr.meta))
-        }
+      const errStr = KoErrFormat(response.data.errors[0], i18nlang)
+      if (errStr) {
+        messages.push(errStr)
       }
     }
     if (messages.length === 0 && response?.statusText) {

@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.15
+
+### Patch Changes
+
+- 拆分处理让外部方便调用 KoErrFormat
+
 ## 0.1.14
 
 ### Patch Changes
