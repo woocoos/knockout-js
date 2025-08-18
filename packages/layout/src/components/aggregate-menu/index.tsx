@@ -286,7 +286,7 @@ export default (props: AggregateMenuProps) => {
     }}
   >
     <div className={styles.aggregateMenuDrawerRow}>
-      <div style={{ width: 240 }} className={styles.aggregateMenuDrawerMenu}>
+      <div style={{ width: 240, overflow: 'auto' }} className={styles.aggregateMenuDrawerMenu}>
         {/* 收藏 */}
         {collects.length ?
           <Collects

@@ -80,7 +80,7 @@ const DargAppItem = (props: {
     transition,
   };
 
-  return <div>
+  return <div style={{ overflow: 'hidden' }}>
     <div
       ref={setNodeRef}
       style={style}

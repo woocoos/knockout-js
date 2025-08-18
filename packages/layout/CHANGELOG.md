@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.22
+
+### Patch Changes
+
+- fix aggregate-menu scroll
+
 ## 0.1.21
 
 ### Patch Changes
