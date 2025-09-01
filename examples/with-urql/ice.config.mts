@@ -8,16 +8,14 @@ import icestark from '@ice/plugin-icestark';
 import urqlPlugin from '@knockout-js/ice-urql';
 
 const NODE_ENV = process.env.NODE_ENV,
-  ICE_FILES_URL = process.env.ICE_FILES_URL,
-  ICE_MSG_URL = process.env.ICE_MSG_URL,
-  ICE_ADMINX_URL = process.env.ICE_ADMINX_URL,
+  ICE_PROXY_API = process.env.ICE_PROXY_API,
   minify = NODE_ENV === 'production' ? 'swc' : false;
 
 export default defineConfig(() => ({
   ssg: false,
   minify,
   codeSplitting: 'page-vendors',
-  compileDependencies: NODE_ENV === 'development' ? [/@urql\/*/, /@smithy\/core/] : true,
+  compileDependencies: NODE_ENV === 'development' ? [] : true,
   routes: {
     ignoreFiles: [
       '**/components/**',   // 添加此配置忽略components被解析成路由组件
@@ -39,20 +37,19 @@ export default defineConfig(() => ({
     }),
   ],
   proxy: {
-    "/api-s3": {
-      target: ICE_FILES_URL,
+    "/api-resource": {
+      target: ICE_PROXY_API,
       changeOrigin: true,
-      pathRewrite: { [`^/api-s3`]: '' },
+      // pathRewrite: { [`^/api-adminx`]: '' },
     },
-    "/api-adminx": {
-      target: ICE_ADMINX_URL,
+    [`/api-gateway/`]: {
+      target: ICE_PROXY_API,
       changeOrigin: true,
-      pathRewrite: { [`^/api-adminx`]: '' },
     },
     "/api-msg": {
-      target: ICE_MSG_URL,
+      target: ICE_PROXY_API,
       changeOrigin: true,
-      pathRewrite: { [`^/api-msg`]: '' },
+      // pathRewrite: { [`^/api-msg`]: '' },
     }
   }
 }));

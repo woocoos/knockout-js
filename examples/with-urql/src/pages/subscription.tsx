@@ -1,5 +1,5 @@
 import store from "@/store"
-import { gid } from "@knockout-js/api"
+import { gid, instanceName } from "@knockout-js/api"
 import { gql, subscription, query } from "@knockout-js/ice-urql/request"
 import { DictText } from "@knockout-js/org"
 import { request } from "ice"
@@ -57,6 +57,43 @@ export default () => {
       <button onClick={async () => {
         userDispatchers.updateToken(testToken);
       }}>切换token</button>
+    </div>
+    <br />
+    <div>
+      <button onClick={async () => {
+        const result = await query(`query userInfo($gid: GID!) {
+            node(id: $gid) {
+              ... on User {
+                id
+                principalName
+                displayName
+              }
+              __typename
+            }
+          }`, {
+          "gid": "VXNlcjox"
+        }, { instanceName: instanceName.UCENTER });
+        console.log(result)
+      }}>测试可用</button>
+    </div>
+    <br />
+    <div>
+      <button onClick={async () => {
+        const result = await query(`query listDatesUnTrade($dates: [LocalDate]) {
+            listDatesUnTrade(dateList: $dates) {
+              date
+              noTradeList
+              halfDayList
+              __typename
+            }
+          }`, {
+          "dates": [
+            "2025-09-01",
+            "2025-09-02",
+          ]
+        }, { instanceName: 'meta_gql' });
+        console.log(result)
+      }}>测试异常</button>
     </div>
 
   </>

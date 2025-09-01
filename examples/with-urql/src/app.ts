@@ -63,7 +63,11 @@ export const urqlConfig = defineUrqlConfig([
           },
           setStateToken: (newToken) => {
             store.dispatch.user.updateToken(newToken)
-          }
+          },
+        },
+        error: (err, errstr) => {
+          console.error(errstr)
+          return false;
         },
         login: '/login',
         refreshApi: "/api-auth/login/refresh-token"
@@ -76,11 +80,15 @@ export const urqlConfig = defineUrqlConfig([
   },
   {
     instanceName: instanceName.UCENTER,
-    url: '/api-adminx/graphql/query',
+    url: '/api-resource/graphql/query',
   },
   {
     instanceName: instanceName.MSGCENTER,
     url: '/api-msg/graphql/query',
+  },
+  {
+    instanceName: 'meta_gql',
+    url: `/api-gateway/gql/meta_gql`,
   },
 ])
 

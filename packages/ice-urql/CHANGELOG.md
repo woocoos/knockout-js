@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.16
+
+### Patch Changes
+
+- 底层 urql 升级
+
 ## 0.1.15
 
 ### Patch Changes
