@@ -55,6 +55,11 @@ export default defineConfig(() => ({
       target: ICE_PROXY_API,
       changeOrigin: true,
       // pathRewrite: { [`^/api-msg`]: '' },
+    },
+    "/mock-api": {
+      target: ICE_PROXY_API,
+      changeOrigin: true,
+      // pathRewrite: { [`^/api-msg`]: '' },
     }
   }
 }));

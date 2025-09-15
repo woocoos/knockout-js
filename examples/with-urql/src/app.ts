@@ -2,7 +2,7 @@ import { defineDataLoader } from '@ice/runtime';
 import { defineAuthConfig } from '@ice/plugin-auth/esm/types';
 import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
-import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
+import { defineUrqlConfig, KoAxiosError, koErrTraceId, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
 // import { RequestHeaderAuthorizationMode } from '@knockout-js/ice-urql/request';
 import { instanceName } from '@knockout-js/api';
@@ -67,8 +67,11 @@ export const urqlConfig = defineUrqlConfig([
           },
         },
         error: (err, errstr) => {
-          console.error(errstr)
+          console.log(errstr)
           return false;
+        },
+        errTraceId: {
+          isShow: true,
         },
         login: '/login',
         refreshApi: "/api-auth/login/refresh-token"
@@ -133,8 +136,10 @@ export const requestConfig = defineRequestConfig(() => {
         }
       },
       login: '/login',
+      errTraceId: {
+        isShow: true,
+      },
       error: (err, str) => {
-        debugger;
         if (str) {
           console.error(str)
         }

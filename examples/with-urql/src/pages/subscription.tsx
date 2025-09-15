@@ -85,7 +85,7 @@ export default () => {
             listDatesUnTrade(dateList: $dates) {
               date
               noTradeList
-              halfDayList
+              halfDayLis
               __typename
             }
           }`, {
