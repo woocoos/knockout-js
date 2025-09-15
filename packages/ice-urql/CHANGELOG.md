@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.17
+
+### Patch Changes
+
+- 使用 urql 4 版本
+
 ## 0.1.16
 
 ### Patch Changes
