@@ -4,7 +4,7 @@ import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchan
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin, koErrorFormat } from "./requestInterceptor.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin, koErrTraceId, koErrorFormat } from "./requestInterceptor.js";
 import { i18n } from 'i18next';
 
 export interface AuthExchangeOpts {
@@ -61,6 +61,20 @@ export interface AuthExchangeOpts {
    * @returns
    */
   error?: (error: CombinedError, errStr?: string) => boolean;
+  /**
+   * 异常追踪id的配置
+   */
+  errTraceId?: {
+    /**
+     * 是否显示错误traceId
+     */
+    isShow: boolean
+    /**
+      * response.status
+      * 默认过滤掉200状态码 如有需要的请自行添加[200,400,...]
+      */
+    exclusionStatus?: number[]
+  }
 }
 
 /**
@@ -70,7 +84,7 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, headerMode } = handler
+  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, errTraceId, headerMode } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
@@ -100,7 +114,16 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
             return false;
           }
         }
-        return error?.(err, koErrorFormat(err, store.getI18n?.())) ?? false;
+        let errStr = koErrorFormat(err, store.getI18n?.())
+        if (errTraceId?.isShow) {
+          const traceId = koErrTraceId(err, {
+            exclusionStatus: errTraceId.exclusionStatus
+          })
+          if (traceId) {
+            errStr = `${traceId} ${errStr}`
+          }
+        }
+        return error?.(err, errStr) ?? false;
       },
       async refreshAuth() {
         const { refreshToken } = store.getState();

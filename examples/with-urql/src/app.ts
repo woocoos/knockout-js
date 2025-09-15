@@ -2,7 +2,7 @@ import { defineDataLoader } from '@ice/runtime';
 import { defineAuthConfig } from '@ice/plugin-auth/esm/types';
 import { defineStoreConfig } from '@ice/plugin-store/esm/types';
 import { defineRequestConfig } from '@ice/plugin-request/esm/types';
-import { defineUrqlConfig, requestInterceptor } from "@knockout-js/ice-urql/types";
+import { defineUrqlConfig, KoAxiosError, koErrTraceId, requestInterceptor } from "@knockout-js/ice-urql/types";
 import store from './store';
 // import { RequestHeaderAuthorizationMode } from '@knockout-js/ice-urql/request';
 import { instanceName } from '@knockout-js/api';
@@ -37,6 +37,7 @@ export const urqlConfig = defineUrqlConfig([
   {
     instanceName: 'default',
     url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
+    timeout: 10,
     exchangeOpt: {
       subOpts: {
         url: ICE_MSG_WS_URL,
@@ -66,12 +67,15 @@ export const urqlConfig = defineUrqlConfig([
           },
         },
         error: (err, errstr) => {
-          console.error(errstr)
+          console.log(errstr)
           return false;
+        },
+        errTraceId: {
+          isShow: true,
         },
         login: '/login',
         refreshApi: "/api-auth/login/refresh-token"
-      }
+      },
     }
   },
   {
@@ -81,6 +85,10 @@ export const urqlConfig = defineUrqlConfig([
   {
     instanceName: instanceName.UCENTER,
     url: '/api-resource/graphql/query',
+  },
+  {
+    instanceName: "mock-adminx",
+    url: '/mock-api-adminx/graphql/query',
   },
   {
     instanceName: instanceName.MSGCENTER,
@@ -128,8 +136,10 @@ export const requestConfig = defineRequestConfig(() => {
         }
       },
       login: '/login',
+      errTraceId: {
+        isShow: true,
+      },
       error: (err, str) => {
-        debugger;
         if (str) {
           console.error(str)
         }

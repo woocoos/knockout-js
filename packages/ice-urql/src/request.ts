@@ -49,8 +49,28 @@ export const KoHeaders = {
 function createDefaultClient(config: CustomClientOptions) {
   const defaultOpt: ClientOptions = {
     url: config.url,
+    fetch: (url, options) => {
+      return new Promise((resolve, reject) => {
+        let signal: AbortSignal | undefined
+        // 由于TS验证问题 外部无法传递一个timeout在options中，无法对单独位置的请求设置超时目前只能通过现有方式实现
+        if (config.timeout && options?.body) {
+          try {
+            const body = JSON.parse(options.body as string)
+            const kind = body.query.split(' ')[0]
+            if (kind === 'query') {
+              signal = AbortSignal.timeout(config.timeout * 1000)
+            }
+          } catch (error) {
+          }
+        }
+        fetch(url, { ...options, signal }).then(resolve).catch(reject)
+      });
+    },
     requestPolicy: config.requestPolicy ?? 'cache-and-network',
     exchanges: [],
+  }
+  if (config?.fetch) {
+    defaultOpt.fetch = config.fetch;
   }
   if (config.exchanges) {
     defaultOpt.exchanges = config.exchanges;

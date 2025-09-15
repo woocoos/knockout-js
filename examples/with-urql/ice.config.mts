@@ -22,8 +22,8 @@ export default defineConfig(() => ({
     ],
   },
   externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM',
+    // 'react': 'React',
+    // 'react-dom': 'ReactDOM',
   },
   plugins: [
     icestark({ type: 'child' }),
@@ -47,6 +47,16 @@ export default defineConfig(() => ({
       changeOrigin: true,
     },
     "/api-msg": {
+      target: ICE_PROXY_API,
+      changeOrigin: true,
+      // pathRewrite: { [`^/api-msg`]: '' },
+    },
+    "/mock-api-adminx": {
+      target: ICE_PROXY_API,
+      changeOrigin: true,
+      // pathRewrite: { [`^/api-msg`]: '' },
+    },
+    "/mock-api": {
       target: ICE_PROXY_API,
       changeOrigin: true,
       // pathRewrite: { [`^/api-msg`]: '' },
