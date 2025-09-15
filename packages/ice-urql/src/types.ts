@@ -1,4 +1,4 @@
-import { Exchange, MapExchangeOpts, RequestPolicy } from 'urql';
+import { ClientOptions, Exchange, MapExchangeOpts, RequestPolicy } from 'urql';
 import { AuthExchangeOpts, SubExchangeOpts } from './exchange';
 
 export * from './requestInterceptor.js'
@@ -17,6 +17,11 @@ export interface CustomClientOptions {
    */
   requestPolicy?: RequestPolicy;
   /**
+   * 请求超时时间 秒为单位 只针对query设置超时
+   * 默认不启用超时
+   */
+  timeout?: number;
+  /**
    * 自定义exchanges
    */
   exchanges?: Exchange[];
@@ -27,7 +32,11 @@ export interface CustomClientOptions {
     authOpts?: AuthExchangeOpts,
     mapOpts?: MapExchangeOpts,
     subOpts?: SubExchangeOpts,
-  }
+  },
+  /**
+   * 自定义fetch
+   */
+  fetch?: ClientOptions['fetch']
 }
 
 export type RequestConfig = CustomClientOptions | CustomClientOptions[];

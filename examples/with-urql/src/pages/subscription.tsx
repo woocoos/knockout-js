@@ -72,7 +72,9 @@ export default () => {
             }
           }`, {
           "gid": "VXNlcjox"
-        }, { instanceName: instanceName.UCENTER });
+        }, {
+          instanceName: "mock-adminx",
+        });
         console.log(result)
       }}>测试可用</button>
     </div>

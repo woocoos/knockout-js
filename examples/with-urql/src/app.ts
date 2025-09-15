@@ -37,6 +37,7 @@ export const urqlConfig = defineUrqlConfig([
   {
     instanceName: 'default',
     url: 'https://trygql.formidable.dev/graphql/basic-pokedex',
+    timeout: 10,
     exchangeOpt: {
       subOpts: {
         url: ICE_MSG_WS_URL,
@@ -71,7 +72,7 @@ export const urqlConfig = defineUrqlConfig([
         },
         login: '/login',
         refreshApi: "/api-auth/login/refresh-token"
-      }
+      },
     }
   },
   {
@@ -81,6 +82,10 @@ export const urqlConfig = defineUrqlConfig([
   {
     instanceName: instanceName.UCENTER,
     url: '/api-resource/graphql/query',
+  },
+  {
+    instanceName: "mock-adminx",
+    url: '/mock-api-adminx/graphql/query',
   },
   {
     instanceName: instanceName.MSGCENTER,
