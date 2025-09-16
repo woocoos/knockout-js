@@ -42,6 +42,20 @@ interface ReqInterceptorOpts {
    * @returns
    */
   error?: (error: AxiosError | AxiosResponse, errStr?: string) => void;
+  /**
+   * 异常追踪id的配置
+   */
+  errTraceId?: {
+    /**
+     * 是否显示错误traceId
+     */
+    isShow: boolean
+    /**
+      * response.status
+      * 默认过滤掉200状态码 如有需要的请自行添加[200,400,...]
+      */
+    exclusionStatus?: number[]
+  }
 }
 
 /**
@@ -50,7 +64,7 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys } = option;
+  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys, errTraceId } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
@@ -79,7 +93,16 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         if (response?.status === 200 && response?.data?.errors) {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
-            error?.(response as AxiosResponse, koErrorFormat(response as AxiosResponse, store.getI18n?.()))
+            let errStr = koErrorFormat(response as AxiosResponse, store.getI18n?.())
+            if (errTraceId?.isShow) {
+              const traceId = koErrTraceId(response as AxiosResponse, {
+                exclusionStatus: errTraceId.exclusionStatus
+              })
+              if (traceId) {
+                errStr = `${traceId} ${errStr}`
+              }
+            }
+            error?.(response as AxiosResponse, errStr)
           }
         }
         return response;
@@ -90,7 +113,16 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
             goLogin(login, loginRedirectKey);
           }
         }
-        error?.(err as AxiosError, koErrorFormat(err as AxiosError<KoAxiosError, any>, store.getI18n?.()))
+        let errStr = koErrorFormat(err as AxiosError<KoAxiosError, any>, store.getI18n?.())
+        if (errTraceId?.isShow) {
+          const traceId = koErrTraceId(err as AxiosError<KoAxiosError, any>, {
+            exclusionStatus: errTraceId.exclusionStatus
+          })
+          if (traceId) {
+            errStr = `${traceId} ${errStr}`
+          }
+        }
+        error?.(err as AxiosError, errStr)
         return Promise.reject(err);
       },
     },
@@ -270,3 +302,47 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
   }
   return messages.length > 0 ? messages.join(' ') : undefined;
 };
+
+const traceIds = ['x-trace-id', 'X-Trace-Id']
+
+/**
+ * 异常traceId的获取
+ * @param error
+ * @param filters
+ * @returns
+ */
+export const koErrTraceId = (
+  error: AxiosError<KoAxiosError, any> | AxiosResponse<KoAxiosError, any> | CombinedError,
+  filters?: {
+    /**
+     * response.status
+     * 默认过滤掉200状态码 如有需要的请自行添加[200,400,...]
+     */
+    exclusionStatus?: number[]
+  },
+) => {
+  const exclusionStatus = filters?.exclusionStatus ?? [200]
+  let traceId: string | undefined
+  if ((error as CombinedError)?.graphQLErrors?.length > 0) {
+    const response = (error as CombinedError)?.response
+    if (!exclusionStatus.includes(response.status)) {
+      for (const key of traceIds) {
+        traceId = response?.headers.get(key)
+        if (traceId) {
+          break
+        }
+      }
+    }
+  } else {
+    const response = (error as AxiosError<KoAxiosError, any>)?.response ?? (error as AxiosResponse<KoAxiosError, any>)
+    if (!exclusionStatus.includes(response.status)) {
+      for (const key of traceIds) {
+        traceId = response.headers?.[key]
+        if (traceId) {
+          break
+        }
+      }
+    }
+  }
+  return traceId
+}

@@ -72,7 +72,9 @@ export default () => {
             }
           }`, {
           "gid": "VXNlcjox"
-        }, { instanceName: instanceName.UCENTER });
+        }, {
+          instanceName: "mock-adminx",
+        });
         console.log(result)
       }}>测试可用</button>
     </div>
@@ -83,7 +85,7 @@ export default () => {
             listDatesUnTrade(dateList: $dates) {
               date
               noTradeList
-              halfDayList
+              halfDayLis
               __typename
             }
           }`, {
