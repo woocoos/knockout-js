@@ -1,6 +1,5 @@
-import { AutoComplete, Input, ModalProps } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
-import { SearchProps } from "antd/lib/input";
+import { AutoComplete, Button, Input, InputProps, ModalProps, Space } from 'antd';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import OrgModal from '../org-modal';
 import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables, OrgWhereInput } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
@@ -9,6 +8,7 @@ import { ProTableProps } from '@ant-design/pro-components';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
+import { SearchOutlined } from '@ant-design/icons';
 
 // fix publish error: Property 'kind' of exported interface has or is using private name 'OrgKind'.
 enum OrgKind {
@@ -47,9 +47,9 @@ export interface OrgSelectProps {
    */
   where?: OrgWhereInput;
   /**
-   * ant SearchProps api
+   * ant InputProps api
    */
-  searchProps?: SearchProps;
+  inputProps?: InputProps;
   /**
    * ant ModalProps api
    */
@@ -58,6 +58,10 @@ export interface OrgSelectProps {
    * ProTable api
    */
   proTableProps?: ProTableProps<Org, Record<string, any>, 'text'>;
+  /**
+   * 禁用时替换search的显示位置
+   */
+  suffix?: ReactNode;
   /**
   * 有缓存列表可以快速提供初始化值配合value传入的是id处理
   */
@@ -112,11 +116,12 @@ const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrd
   }
 }`);
 
-let searchTimeoutFn: NodeJS.Timeout | undefined = undefined;
 
 const OrgSelect = (props: OrgSelectProps) => {
   const locale = useLocale('OrgSelect'),
+    searchTimeoutFn = useRef<NodeJS.Timeout | undefined>(undefined),
     [info, setInfo] = useState<Org>(),
+    [loading, setLoading] = useState(false),
     [keyword, setKeyword] = useState<string>(),
     [options, setOptions] = useState<BaseOptionType[]>([]),
     [open, setOpen] = useState(false);
@@ -158,81 +163,91 @@ const OrgSelect = (props: OrgSelectProps) => {
 
   return (
     <>
-      <AutoComplete
-        className={styles.autoComplete}
-        value={keyword}
-        options={options}
-        allowClear={!props.disabled}
-        disabled={props.disabled}
-        onClear={() => {
-          setValue();
-          setOptions([]);
-        }}
-        onBlur={() => {
-          setKeyword(info?.name);
-        }}
-        onSelect={(v, option) => {
-          setValue(option.info);
-        }}
-        onSearch={async (keywordStr) => {
-          setKeyword(keywordStr);
-          clearTimeout(searchTimeoutFn);
-          searchTimeoutFn = setTimeout(async () => {
-            const os: BaseOptionType[] = [],
-              first = 15,
-              where = {
-                ...props.where,
-                nameContains: keywordStr,
-              },
-              orderBy = {
-                direction: OrderDirection.Asc,
-                field: OrgOrderField.DisplaySort,
-              };
-            if (keywordStr) {
-              if (props.appId) {
-                const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-                  gid: gid('App', props.appId), first, where, orderBy,
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.node?.__typename === 'App') {
-                  result.data.node.orgs.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.name,
-                        value: item.node.id,
-                        info: item.node,
-                      })
-                    }
-                  })
-                }
-              } else {
-                const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
-                  first, where, orderBy,
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.organizations.totalCount) {
-                  result.data.organizations.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.name,
-                        value: item.node.id,
-                        info: item.node,
-                      })
-                    }
-                  })
+      <Space.Compact style={{ width: '100%' }}>
+        <AutoComplete
+          className={styles.autoComplete}
+          value={keyword}
+          options={options}
+          allowClear={!props.disabled}
+          disabled={props.disabled}
+          onClear={() => {
+            setValue();
+            setOptions([]);
+          }}
+          onBlur={() => {
+            setKeyword(info?.name);
+          }}
+          onSelect={(v, option) => {
+            setValue(option.info);
+          }}
+          onSearch={async (keywordStr) => {
+            setKeyword(keywordStr);
+            clearTimeout(searchTimeoutFn.current);
+            searchTimeoutFn.current = setTimeout(async () => {
+              const os: BaseOptionType[] = [],
+                first = 15,
+                where = {
+                  ...props.where,
+                  nameContains: keywordStr,
+                },
+                orderBy = {
+                  direction: OrderDirection.Asc,
+                  field: OrgOrderField.DisplaySort,
+                };
+              if (keywordStr) {
+                setLoading(true)
+                if (props.appId) {
+                  const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
+                    gid: gid('App', props.appId), first, where, orderBy,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.node?.__typename === 'App') {
+                    result.data.node.orgs.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.name,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
+                  }
+                } else {
+                  const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
+                    first, where, orderBy,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.organizations.totalCount) {
+                    result.data.organizations.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.name,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
+                  }
                 }
               }
-            }
-            setOptions(os);
-          }, 500)
-        }}
-      >
-        <Input.Search
-          placeholder={locale.placeholder}
-          {...props.searchProps}
-          onSearch={() => {
-            setOpen(true);
+              setLoading(false)
+              setOptions(os);
+            }, 500)
           }}
-        />
-      </AutoComplete>
+        >
+          <Input
+            placeholder={locale.placeholder}
+            {...props.inputProps}
+          />
+        </AutoComplete>
+        {
+          props.disabled ? props.suffix : <Button
+            loading={loading}
+            icon={<SearchOutlined />}
+            onClick={() => {
+              setOpen(true);
+            }}
+          />
+        }
+      </Space.Compact>
       <OrgModal
         open={open}
         orgId={props.orgId}

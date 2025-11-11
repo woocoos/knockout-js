@@ -1,6 +1,5 @@
-import { AutoComplete, Input, ModalProps } from 'antd';
-import { useCallback, useEffect, useState } from 'react';
-import { SearchProps } from "antd/lib/input";
+import { AutoComplete, Button, Input, InputProps, ModalProps, Space } from 'antd';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import UserModal from '../user-modal';
 import { OrgPkgUserInfoQuery, OrgPkgUserInfoQueryVariables, OrgRoleUserListQuery, OrgRoleUserListQueryVariables, OrgUserListQuery, OrgUserListQueryVariables, User, UserListQuery, UserListQueryVariables, UserUserType as UcenterUserUserType, UserWhereInput, } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
@@ -9,6 +8,7 @@ import { ProTableProps } from '@ant-design/pro-components';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
+import { SearchOutlined } from '@ant-design/icons';
 
 // fix publish error: Property 'userType' of exported interface has or is using private name 'UserUserType'
 enum UserUserType {
@@ -47,9 +47,9 @@ export interface UserSelectProps {
    */
   where?: UserWhereInput;
   /**
-   * ant SearchProps api
+   * ant InputProps api
    */
-  searchProps?: SearchProps;
+  inputProps?: InputProps;
   /**
    * ant ModalProps api
    */
@@ -59,8 +59,12 @@ export interface UserSelectProps {
    */
   proTableProps?: ProTableProps<User, Record<string, any>, 'text'>;
   /**
-* 有缓存列表可以快速提供初始化值配合value传入的是id处理
-*/
+   * 禁用时替换search的显示位置
+   */
+  suffix?: ReactNode;
+  /**
+  * 有缓存列表可以快速提供初始化值配合value传入的是id处理
+  */
   dataSource?: User[];
   /**
    * changeValue=id: onChange的第一个参数值就为id的值
@@ -79,7 +83,6 @@ const userInfoQuery = gql(/* GraphQL */`query orgPkgUserInfo($gid: GID!){
     }
   }
 }`);
-
 
 const userListQuery = gql(/* GraphQL */`query userList($first: Int,$orderBy:UserOrder,$where:UserWhereInput){
   users(first:$first,orderBy: $orderBy,where: $where){
@@ -122,11 +125,11 @@ const orgRoleUserListQuery = gql(/* GraphQL */`query orgRoleUserList($roleId: ID
   }
 }`);
 
-let searchTimeoutFn: NodeJS.Timeout | undefined = undefined;
-
 const OrgSelect = (props: UserSelectProps) => {
   const locale = useLocale('UserSelect'),
+    searchTimeoutFn = useRef<NodeJS.Timeout | undefined>(undefined),
     [info, setInfo] = useState<User>(),
+    [loading, setLoading] = useState(false),
     [keyword, setKeyword] = useState<string>(),
     [options, setOptions] = useState<BaseOptionType[]>([]),
     [open, setOpen] = useState(false);
@@ -168,112 +171,121 @@ const OrgSelect = (props: UserSelectProps) => {
 
   return (
     <>
-      <AutoComplete
-        className={styles.autoComplete}
-        value={keyword}
-        options={options}
-        allowClear={!props.disabled}
-        disabled={props.disabled}
-        onClear={() => {
-          setValue();
-          setOptions([]);
-        }}
-        onBlur={() => {
-          setKeyword(info?.displayName);
-        }}
-        onSelect={(v, option) => {
-          setValue(option.info);
-        }}
-        onSearch={async (keywordStr) => {
-          setKeyword(keywordStr);
-          clearTimeout(searchTimeoutFn);
-          searchTimeoutFn = setTimeout(async () => {
-            const os: BaseOptionType[] = [],
-              first = 15,
-              where: UserWhereInput = {
-                ...props.where,
-                or: [
-                  { displayNameContains: keywordStr },
-                  { principalNameContains: keywordStr },
-                  {
-                    hasAddressesWith: [
-                      { emailContains: keywordStr }
-                    ]
-                  },
-                  {
-                    hasAddressesWith: [
-                      { mobileContains: keywordStr }
-                    ]
+      <Space.Compact style={{ width: '100%' }}>
+        <AutoComplete
+          className={styles.autoComplete}
+          value={keyword}
+          options={options}
+          allowClear={!props.disabled}
+          disabled={props.disabled}
+          onClear={() => {
+            setValue();
+            setOptions([]);
+          }}
+          onBlur={() => {
+            setKeyword(info?.displayName);
+          }}
+          onSelect={(v, option) => {
+            setValue(option.info);
+          }}
+          onSearch={async (keywordStr) => {
+            setKeyword(keywordStr);
+            clearTimeout(searchTimeoutFn.current);
+            searchTimeoutFn.current = setTimeout(async () => {
+              const os: BaseOptionType[] = [],
+                first = 15,
+                where: UserWhereInput = {
+                  ...props.where,
+                  or: [
+                    { displayNameContains: keywordStr },
+                    { principalNameContains: keywordStr },
+                    {
+                      hasAddressesWith: [
+                        { emailContains: keywordStr }
+                      ]
+                    },
+                    {
+                      hasAddressesWith: [
+                        { mobileContains: keywordStr }
+                      ]
+                    }
+                  ]
+                };
+              where.userType = props.userType
+              if (keywordStr) {
+                setLoading(true)
+                if (props.orgRoleId) {
+                  const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
+                    roleId: props.orgRoleId,
+                    first,
+                    where,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.orgRoleUsers.totalCount) {
+                    result.data.orgRoleUsers.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.displayName,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
                   }
-                ]
-              };
-            where.userType = props.userType
-            if (keywordStr) {
-              if (props.orgRoleId) {
-                const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
-                  roleId: props.orgRoleId,
-                  first,
-                  where,
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.orgRoleUsers.totalCount) {
-                  result.data.orgRoleUsers.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.displayName,
-                        value: item.node.id,
-                        info: item.node,
-                      })
-                    }
-                  })
-                }
-              } else if (props.orgId) {
-                const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
-                  gid: gid('Org', props.orgId),
-                  first,
-                  where,
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.node?.__typename === 'Org') {
-                  result.data.node.users.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.displayName,
-                        value: item.node.id,
-                        info: item.node,
-                      })
-                    }
-                  })
-                }
-              } else {
-                const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
-                  first,
-                  where,
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.users.totalCount) {
-                  result.data.users.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.displayName,
-                        value: item.node.id,
-                        info: item.node,
-                      })
-                    }
-                  })
+                } else if (props.orgId) {
+                  const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
+                    gid: gid('Org', props.orgId),
+                    first,
+                    where,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.node?.__typename === 'Org') {
+                    result.data.node.users.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.displayName,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
+                  }
+                } else {
+                  const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
+                    first,
+                    where,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.users.totalCount) {
+                    result.data.users.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.displayName,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
+                  }
                 }
               }
-
-            }
-            setOptions(os);
-          }, 500)
-        }}
-      >
-        <Input.Search
-          placeholder={locale.placeholder}
-          {...props.searchProps}
-          onSearch={() => {
-            setOpen(true);
+              setLoading(false)
+              setOptions(os);
+            }, 500)
           }}
-        />
-      </AutoComplete>
+        >
+          <Input
+            placeholder={locale.placeholder}
+            {...props.inputProps}
+          />
+        </AutoComplete>
+        {
+          props.disabled ? props.suffix : <Button
+            loading={loading}
+            icon={<SearchOutlined />}
+            onClick={() => {
+              setOpen(true);
+            }}
+          />
+        }
+      </Space.Compact>
       <UserModal
         open={open}
         orgId={props.orgId}

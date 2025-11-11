@@ -1,14 +1,14 @@
-import { AutoComplete, Input, ModalProps } from 'antd';
+import { AutoComplete, Button, Input, InputProps, ModalProps, Space } from 'antd';
 import ModalApp from '../app-modal';
-import { useCallback, useEffect, useState } from 'react';
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import { App, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
-import { SearchProps } from 'antd/es/input';
 import { ProTableProps } from '@ant-design/pro-components';
 import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import { BaseOptionType } from 'antd/es/select';
 import styles from '../assets/autoComplete.module.css';
+import { SearchOutlined } from '@ant-design/icons';
 
 export interface AppSelectLocale {
   placeholder: string;
@@ -33,9 +33,9 @@ export interface AppSelectProps {
    */
   where?: AppWhereInput;
   /**
-   * ant SearchProps api
+   * ant InputProps api
    */
-  searchProps?: SearchProps;
+  inputProps?: InputProps;
   /**
    * ant ModalProps api
    */
@@ -44,6 +44,10 @@ export interface AppSelectProps {
    * ProTable api
    */
   proTableProps?: ProTableProps<App, Record<string, any>, 'text'>;
+  /**
+   * 禁用时替换search的显示位置
+   */
+  suffix?: ReactNode;
   /**
    * 有缓存列表可以快速提供初始化值配合value传入的是id处理
    */
@@ -93,18 +97,15 @@ const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrd
   }
 }`);
 
-let searchTimeoutFn: NodeJS.Timeout | undefined = undefined;
 
 export default (props: AppSelectProps) => {
   const locale = useLocale('AppSelect'),
+    searchTimeoutFn = useRef<NodeJS.Timeout | undefined>(undefined),
     [info, setInfo] = useState<App>(),
+    [loading, setLoading] = useState(false),
     [keyword, setKeyword] = useState<string>(),
     [options, setOptions] = useState<BaseOptionType[]>([]),
-    [modal, setModal] = useState<{
-      open: boolean;
-    }>({
-      open: false,
-    });
+    [open, setOpen] = useState(false);
 
   const setValue = useCallback((original?: App) => {
     if (original) {
@@ -143,85 +144,93 @@ export default (props: AppSelectProps) => {
 
   return (
     <>
-      <AutoComplete
-        className={styles.autoComplete}
-        value={keyword}
-        options={options}
-        allowClear={!props.disabled}
-        disabled={props.disabled}
-        onClear={() => {
-          setValue();
-          setOptions([]);
-        }}
-        onBlur={() => {
-          setKeyword(info?.name);
-        }}
-        onSelect={(v, option) => {
-          setValue(option.info);
-        }}
-        onSearch={async (keywordStr) => {
-          setKeyword(keywordStr);
-          clearTimeout(searchTimeoutFn);
-          searchTimeoutFn = setTimeout(async () => {
-            const os: BaseOptionType[] = [];
-            if (keywordStr) {
-              if (props.orgId) {
-                const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-                  gid: gid('Org', props.orgId),
-                  first: 15,
-                  where: {
-                    ...props.where,
-                    nameContains: keywordStr,
-                  }
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.node?.__typename === 'Org') {
-                  result.data.node.apps.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.name,
-                        value: item.node.id,
-                        info: item.node,
-                      })
+      <Space.Compact style={{ width: '100%' }}>
+        <AutoComplete
+          className={styles.autoComplete}
+          value={keyword}
+          options={options}
+          allowClear={!props.disabled}
+          disabled={props.disabled}
+          onClear={() => {
+            setValue();
+            setOptions([]);
+          }}
+          onBlur={() => {
+            setKeyword(info?.name);
+          }}
+          onSelect={(v, option) => {
+            setValue(option.info);
+          }}
+          onSearch={async (keywordStr) => {
+            setKeyword(keywordStr);
+            clearTimeout(searchTimeoutFn.current);
+            searchTimeoutFn.current = setTimeout(async () => {
+              const os: BaseOptionType[] = [];
+              if (keywordStr) {
+                setLoading(true)
+                if (props.orgId) {
+                  const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+                    gid: gid('Org', props.orgId),
+                    first: 15,
+                    where: {
+                      ...props.where,
+                      nameContains: keywordStr,
                     }
-                  })
-                }
-              } else {
-                const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
-                  first: 15,
-                  where: {
-                    ...props.where,
-                    nameContains: keywordStr,
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.node?.__typename === 'Org') {
+                    result.data.node.apps.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.name,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
                   }
-                }, 1, { instanceName: instanceName.UCENTER });
-                if (result.data?.apps.totalCount) {
-                  result.data.apps.edges?.forEach(item => {
-                    if (item?.node) {
-                      os.push({
-                        label: item.node.name,
-                        value: item.node.id,
-                        info: item.node,
-                      })
+                } else {
+                  const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
+                    first: 15,
+                    where: {
+                      ...props.where,
+                      nameContains: keywordStr,
                     }
-                  })
+                  }, 1, { instanceName: instanceName.UCENTER });
+                  if (result.data?.apps.totalCount) {
+                    result.data.apps.edges?.forEach(item => {
+                      if (item?.node) {
+                        os.push({
+                          label: item.node.name,
+                          value: item.node.id,
+                          info: item.node,
+                        })
+                      }
+                    })
+                  }
                 }
               }
-            }
-            setOptions(os);
-          }, 500)
-        }}
-      >
-        <Input.Search
-          placeholder={locale.placeholder}
-          {...props.searchProps}
-          onSearch={(v, event) => {
-            event?.stopPropagation();
-            modal.open = true;
-            setModal({ ...modal });
+              setLoading(false)
+              setOptions(os);
+            }, 500)
           }}
-        />
-      </AutoComplete>
+        >
+          <Input
+            placeholder={locale.placeholder}
+            {...props.inputProps}
+          />
+        </AutoComplete>
+        {
+          props.disabled ? props.suffix : <Button
+            loading={loading}
+            icon={<SearchOutlined />}
+            onClick={() => {
+              setOpen(true);
+            }}
+          />
+        }
+      </Space.Compact>
       <ModalApp
-        open={modal.open}
+        open={open}
         title={locale.title}
         modalProps={props.modalProps}
         where={props.where}
@@ -231,8 +240,7 @@ export default (props: AppSelectProps) => {
           if (selectData?.length) {
             setValue(selectData[0])
           }
-          modal.open = false;
-          setModal({ ...modal });
+          setOpen(false);
         }}
       />
     </>
