@@ -30,6 +30,10 @@ export interface AppModalProps {
    */
   orgId?: string;
   /**
+   * 查询条件
+   */
+  where?: AppWhereInput;
+  /**
    * 弹框标题
    */
   title?: string;
@@ -136,7 +140,9 @@ export default (props: AppModalProps) => {
         columns={columns}
         request={async (params, sort, filter) => {
           const table = { data: [] as App[], success: true, total: 0 },
-            where: AppWhereInput = {};
+            where: AppWhereInput = {
+              ...props.where,
+            };
           where.nameContains = params.name;
           where.codeContains = params.code;
           where.kindIn = filter.kind as AppKind[]

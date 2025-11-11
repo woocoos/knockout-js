@@ -47,6 +47,10 @@ export interface UserModalProps {
    */
   orgRoleId?: string;
   /**
+   * 查询条件
+   */
+  where?: UserWhereInput;
+  /**
    * ant ModalProps api
    */
   modalProps?: ModalProps;
@@ -178,7 +182,9 @@ export default (props: UserModalProps) => {
       columns={columns}
       request={async (params, sort, filter) => {
         const table = { data: [] as User[], success: true, total: 0 },
-          where: UserWhereInput = {};
+          where: UserWhereInput = {
+            ...props.where,
+          };
         where.userType = props.userType;
         where.principalNameContains = params.principalName;
         where.displayNameContains = params.displayName;

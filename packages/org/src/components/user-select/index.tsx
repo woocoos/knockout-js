@@ -43,6 +43,10 @@ export interface UserSelectProps {
    */
   userType?: UserUserType;
   /**
+   * 查询条件
+   */
+  where?: UserWhereInput;
+  /**
    * ant SearchProps api
    */
   searchProps?: SearchProps;
@@ -187,6 +191,7 @@ const OrgSelect = (props: UserSelectProps) => {
             const os: BaseOptionType[] = [],
               first = 15,
               where: UserWhereInput = {
+                ...props.where,
                 or: [
                   { displayNameContains: keywordStr },
                   { principalNameContains: keywordStr },
@@ -275,6 +280,7 @@ const OrgSelect = (props: UserSelectProps) => {
         orgRoleId={props.orgRoleId}
         userType={props.userType}
         title={locale.title}
+        where={props.where}
         modalProps={props.modalProps}
         proTableProps={props.proTableProps}
         onClose={(selectData) => {

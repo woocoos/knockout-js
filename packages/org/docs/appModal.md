@@ -45,12 +45,13 @@ export default () => {
 
 ## props
 
-| 属性            | 描述                                                          | 类型                  | 必填 | 默认值 |
-|---------------|-------------------------------------------------------------|---------------------|----|-----|
-| open          | 显示弹框                                                        | boolean             | ✅  | -   |
-| orgId         | orgId授权的应用                                                  | string              | ❌  | -   |
-| title         | 弹框标题                                                        | string              | ❌  | -   |
-| isMultiple    | 多选                                                          | boolean             | ❌  | -   |
-| modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps          | ❌  | -   |
-| proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps       | ❌  | -   |
-| onClose       | 返回选中                                                        | (data?:App[])=>void | ✅  | -   |
+| 属性          | 描述                                                          | 类型                | 必填 | 默认值 |
+| ------------- | ------------------------------------------------------------- | ------------------- | ---- | ------ |
+| open          | 显示弹框                                                      | boolean             | ✅    | -      |
+| orgId         | orgId授权的应用                                               | string              | ❌    | -      |
+| title         | 弹框标题                                                      | string              | ❌    | -      |
+| where         | 查询条件                                                      | AppWhereInput       | ❌    | -      |
+| isMultiple    | 多选                                                          | boolean             | ❌    | -      |
+| modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps          | ❌    | -      |
+| proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps       | ❌    | -      |
+| onClose       | 返回选中                                                      | (data?:App[])=>void | ✅    | -      |

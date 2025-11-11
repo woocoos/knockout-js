@@ -47,14 +47,15 @@ export default () => {
 
 | 属性          | 描述                                                          | 类型                              | 必填 | 默认值 |
 | ------------- | ------------------------------------------------------------- | --------------------------------- | ---- | ------ |
-| value         | 值可使用整个User对象或id作为值                                | User &#124; User['id']            | -    | -      |
-| disabled      | 禁用                                                          | boolean                           | -    | -      |
-| orgId         | orgId的用户                                                   | string                            | -    | -      |
-| orgRoleId     | orgRoleId的用户                                               | string                            | -    | -      |
-| userType      | 过滤用户类型                                                  | UserUserType                      | -    | -      |
-| searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps                       | -    | -      |
-| modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps                        | -    | -      |
-| proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps                     | -    | -      |
+| value         | 值可使用整个User对象或id作为值                                | User &#124; User['id']            | ❌    | -      |
+| disabled      | 禁用                                                          | boolean                           | ❌    | -      |
+| orgId         | orgId的用户                                                   | string                            | ❌    | -      |
+| orgRoleId     | orgRoleId的用户                                               | string                            | ❌    | -      |
+| userType      | 过滤用户类型                                                  | UserUserType                      | ❌    | -      |
+| where         | 查询条件                                                      | UserWhereInput                    | ❌    | -      |
+| searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps                       | ❌    | -      |
+| modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps                        | ❌    | -      |
+| proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps                     | ❌    | -      |
 | dataSource    | 外部数据源提供应用列表配合value是id的时候初始化数据           | User[]                            | ❌    | -      |
 | changeValue   | 会改变onChange的第一个参数的值                                | keyof User                        | ❌    | -      |
-| onChange      | changeValue=id时value的值为id，默认value是User                | (value?:any,original?:User)=>void | -    | -      |
+| onChange      | changeValue=id时value的值为id，默认value是User                | (value?:any,original?:User)=>void | ❌    | -      |
