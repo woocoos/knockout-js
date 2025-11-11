@@ -42,6 +42,10 @@ export interface OrgModalProps {
    */
   kind: OrgKind;
   /**
+   * 查询条件
+   */
+  where?: OrgWhereInput;
+  /**
    * 多选
    */
   isMultiple?: boolean;
@@ -141,7 +145,9 @@ export default (props: OrgModalProps) => {
       columns={columns}
       request={async (params) => {
         const table = { data: [] as Org[], success: true, total: 0 },
-          where: OrgWhereInput = {},
+          where: OrgWhereInput = {
+            ...props.where,
+          },
           orderBy = {
             direction: OrderDirection.Asc,
             field: OrgOrderField.DisplaySort,

@@ -51,6 +51,7 @@ export default () => {
 | value         | 值可使用整个App对象或id作为值                                 | App  &#124; App['id']            | ❌    | -      |
 | disabled      | 禁用                                                          | boolean                          | ❌    | -      |
 | orgId         | orgId授权的应用                                               | string                           | ❌    | -      |
+| where         | 查询条件                                                      | AppWhereInput                    | ❌    | -      |
 | searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps                      | ❌    | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps                       | ❌    | -      |
 | proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps                    | ❌    | -      |

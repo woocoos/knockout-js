@@ -1,7 +1,7 @@
 import { AutoComplete, Input, ModalProps } from 'antd';
 import ModalApp from '../app-modal';
 import { useCallback, useEffect, useState } from 'react';
-import { App, AppListQuery, AppListQueryVariables, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { App, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { SearchProps } from 'antd/es/input';
@@ -28,6 +28,10 @@ export interface AppSelectProps {
    * orgId授权的应用
    */
   orgId?: string;
+  /**
+   * 查询条件
+   */
+  where?: AppWhereInput;
   /**
    * ant SearchProps api
    */
@@ -166,6 +170,7 @@ export default (props: AppSelectProps) => {
                   gid: gid('Org', props.orgId),
                   first: 15,
                   where: {
+                    ...props.where,
                     nameContains: keywordStr,
                   }
                 }, 1, { instanceName: instanceName.UCENTER });
@@ -184,6 +189,7 @@ export default (props: AppSelectProps) => {
                 const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
                   first: 15,
                   where: {
+                    ...props.where,
                     nameContains: keywordStr,
                   }
                 }, 1, { instanceName: instanceName.UCENTER });
@@ -218,6 +224,7 @@ export default (props: AppSelectProps) => {
         open={modal.open}
         title={locale.title}
         modalProps={props.modalProps}
+        where={props.where}
         proTableProps={props.proTableProps}
         orgId={props.orgId}
         onClose={(selectData) => {

@@ -53,6 +53,7 @@ export default () => {
 | orgId         | 根据orgId过滤pathHasPrefix                                    | string                           | ❌    | -      |
 | appId         | appId授权的组织列表                                           | string                           | ❌    | -      |
 | kind          | 类型                                                          | OrgKind                          | ✅    | -      |
+| where         | 查询条件                                                      | OrgWhereInput                    | ❌    | -      |
 | searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps                      | ❌    | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps                       | ❌    | -      |
 | proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps                    | ❌    | -      |

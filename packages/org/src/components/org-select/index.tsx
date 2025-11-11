@@ -2,7 +2,7 @@ import { AutoComplete, Input, ModalProps } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import { SearchProps } from "antd/lib/input";
 import OrgModal from '../org-modal';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables, OrgWhereInput } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-components';
@@ -42,6 +42,10 @@ export interface OrgSelectProps {
    * 类型
    */
   kind: OrgKind;
+  /**
+   * 查询条件
+   */
+  where?: OrgWhereInput;
   /**
    * ant SearchProps api
    */
@@ -177,6 +181,7 @@ const OrgSelect = (props: OrgSelectProps) => {
             const os: BaseOptionType[] = [],
               first = 15,
               where = {
+                ...props.where,
                 nameContains: keywordStr,
               },
               orderBy = {
@@ -233,6 +238,7 @@ const OrgSelect = (props: OrgSelectProps) => {
         orgId={props.orgId}
         appId={props.appId}
         kind={props.kind}
+        where={props.where}
         title={locale.title}
         modalProps={props.modalProps}
         proTableProps={props.proTableProps}
