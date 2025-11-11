@@ -54,7 +54,8 @@ export default () => {
 | appId         | appId授权的组织列表                                           | string                           | ❌    | -      |
 | kind          | 类型                                                          | OrgKind                          | ✅    | -      |
 | where         | 查询条件                                                      | OrgWhereInput                    | ❌    | -      |
-| searchProps   | [参考](https://ant.design/components/input-cn#api)            | SearchProps                      | ❌    | -      |
+| suffix        | 禁用时替换search的显示位置                                    | ReactNode                        | ❌    | -      |
+| inputProps    | [参考](https://ant.design/components/input-cn#api)            | InputProps                       | ❌    | -      |
 | modalProps    | [参考](https://ant.design/components/modal-cn#api)            | ModalProps                       | ❌    | -      |
 | proTableProps | [参考](https://procomponents.ant.design/components/table#api) | ProTableProps                    | ❌    | -      |
 | dataSource    | 外部数据源提供应用列表配合value是id的时候初始化数据           | Org[]                            | ❌    | -      |

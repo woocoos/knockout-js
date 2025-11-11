@@ -1,7 +1,3 @@
 .autoComplete {
   width: 100%;
 }
-
-.autoComplete :global(.ant-select-clear) {
-  right: 40px;
-}
