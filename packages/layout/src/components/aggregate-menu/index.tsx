@@ -342,7 +342,7 @@ export default (props: AggregateMenuProps) => {
                 const fList = all.map(f => {
                   return {
                     app: f.app,
-                    menu: f.menu.filter(fMenuItem => fMenuItem.name.indexOf(keyword) > -1),
+                    menu: f.menu.filter(fMenuItem => fMenuItem.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1),
                   };
                 }).filter(f => f.menu.length);
                 setFilterList(fList);
