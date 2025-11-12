@@ -1,5 +1,13 @@
 # @knockout-js/org
 
+## 0.1.15
+
+### Patch Changes
+
+- 优化处理
+- Updated dependencies
+  - @knockout-js/layout@0.1.25
+
 ## 0.1.14
 
 ### Patch Changes
