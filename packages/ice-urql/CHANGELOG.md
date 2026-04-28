@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.19
+
+### Patch Changes
+
+- add appendHeaders
+
 ## 0.1.18
 
 ### Patch Changes
