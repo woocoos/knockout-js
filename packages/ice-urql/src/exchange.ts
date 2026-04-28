@@ -30,6 +30,10 @@ export interface AuthExchangeOpts {
     getI18n?: () => i18n
   };
   /**
+   * 添加额外的headers
+   */
+  appendHeaders?: () => Record<string, string>;
+  /**
    * 签名模式
    */
   headerMode?: RequestHeaderAuthorizationMode;
@@ -84,12 +88,15 @@ export interface AuthExchangeOpts {
  */
 export function authExchange(handler: AuthExchangeOpts): Exchange {
 
-  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, errTraceId, headerMode } = handler
+  const { store, beforeRefreshTime, refreshApi, tenantIdExtendKeys, login, loginRedirectKey, error, errTraceId, headerMode, appendHeaders } = handler
 
   return urqlAuthExchange(async utilities => {
     return {
       addAuthToOperation(operation) {
-        const { token, tenantId } = store.getState(), headers: Record<string, string> = {};
+        const { token, tenantId } = store.getState(), headers: Record<string, string> = {
+          ...appendHeaders?.()
+        };
+        console.log('appendHeaders', headers, appendHeaders?.())
         const fetchOptions = operation.context.fetchOptions
         if (typeof fetchOptions != 'function') {
           const fetchHeaders = fetchOptions?.headers as Record<string, string> | undefined;
@@ -104,6 +111,7 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
               headers[key] = `${tenantId}`;
             })
           }
+
         }
         return utilities.appendHeaders(operation, headers);
       },
@@ -153,6 +161,10 @@ export interface SubExchangeOpts {
    * 链接socket的地址
    */
   url: string;
+  /**
+  * 添加额外的headers
+  */
+  appendHeaders?: () => Record<string, string>;
   store: {
     /**
      * 获取需要的数据
@@ -173,7 +185,7 @@ export interface SubExchangeOpts {
  * @returns
  */
 export function subExchange(handler: SubExchangeOpts): Exchange {
-  const { url, store } = handler,
+  const { url, store, appendHeaders } = handler,
     createClient = () => {
       return wsClient({
         url,
@@ -181,6 +193,7 @@ export function subExchange(handler: SubExchangeOpts): Exchange {
           const { token, tenantId, appCode, deviceId } = store.getState();
           cacheToken = token;
           return {
+            ...appendHeaders?.(),
             'Authorization': `Bearer ${token}`,
             'X-Tenant-ID': tenantId,
             appCode,

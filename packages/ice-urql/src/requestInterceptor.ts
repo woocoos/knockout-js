@@ -3,6 +3,7 @@ import type { AxiosError, AxiosResponse } from "axios";
 import { i18n } from 'i18next';
 import { CombinedError } from "urql";
 import { sprintf } from 'sprintf-js';
+import CryptoJS from "crypto-js";
 
 interface ReqInterceptorOpts {
   /**
@@ -23,6 +24,10 @@ interface ReqInterceptorOpts {
      */
     getI18n?: () => i18n
   };
+  /**
+  * 添加额外的headers
+  */
+  appendHeaders?: () => Record<string, string>;
   /**
   * 登陆地址
   */
@@ -64,26 +69,28 @@ interface ReqInterceptorOpts {
  * @returns
  */
 export const requestInterceptor = (option: ReqInterceptorOpts) => {
-  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys, errTraceId } = option;
+  const { store, login, loginRedirectKey, error, headerMode, tenantIdExtendKeys, errTraceId, appendHeaders } = option;
   const result: Interceptors = {
     request: {
       onConfig(config) {
         const { token, tenantId } = store.getState();
-        if (config.headers) {
-          if (!config.headers['Authorization']) {
-            config.headers['Authorization'] = token ? getRequestHeaderAuthorization(token, headerMode) : ''
-          }
-          if (!config.headers['X-Tenant-ID'] && tenantId) {
-            config.headers['X-Tenant-ID'] = `${tenantId}`
-          }
-          if (tenantId && tenantIdExtendKeys?.length) {
-            tenantIdExtendKeys.forEach(key => {
-              if (!config.headers) {
-                config.headers = {}
-              }
-              config.headers[key] = `${tenantId}`;
-            })
-          }
+        config.headers = {
+          ...config.headers,
+          ...appendHeaders?.()
+        }
+        if (!config.headers['Authorization']) {
+          config.headers['Authorization'] = token ? getRequestHeaderAuthorization(token, headerMode) : ''
+        }
+        if (!config.headers['X-Tenant-ID'] && tenantId) {
+          config.headers['X-Tenant-ID'] = `${tenantId}`
+        }
+        if (tenantId && tenantIdExtendKeys?.length) {
+          tenantIdExtendKeys.forEach(key => {
+            if (!config.headers) {
+              config.headers = {}
+            }
+            config.headers[key] = `${tenantId}`;
+          })
         }
         return config;
       },

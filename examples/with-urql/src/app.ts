@@ -66,6 +66,11 @@ export const urqlConfig = defineUrqlConfig([
             store.dispatch.user.updateToken(newToken)
           },
         },
+        appendHeaders() {
+          return {
+            'x-data': `${Date.now()}`,
+          }
+        },
         error: (err, errstr) => {
           console.log(errstr)
           return false;
@@ -127,6 +132,11 @@ export const requestConfig = defineRequestConfig(() => {
   console.log('defineRequestConfig')
   return {
     interceptors: requestInterceptor({
+      appendHeaders() {
+        return {
+          'x-data': `${Date.now()}`,
+        }
+      },
       store: {
         getState: () => {
           return {
