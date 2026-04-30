@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.20
+
+### Patch Changes
+
+- remove delete
+
 ## 0.1.19
 
 ### Patch Changes

@@ -96,7 +96,6 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
         const { token, tenantId } = store.getState(), headers: Record<string, string> = {
           ...appendHeaders?.()
         };
-        console.log('appendHeaders', headers, appendHeaders?.())
         const fetchOptions = operation.context.fetchOptions
         if (typeof fetchOptions != 'function') {
           const fetchHeaders = fetchOptions?.headers as Record<string, string> | undefined;
