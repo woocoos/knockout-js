@@ -37,7 +37,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@tsconfig/docusaurus": "^2.0.0",
-    "antd": "^5.6.3",
+    "antd": "^5.24.1",
     "clsx": "^1.2.1",
     "eslint": "^8.0.0",
     "jsdom": "^22.1.0",

@@ -44,6 +44,21 @@ export type AggregateMenuLocale = {
 
 type AppMenuAndChildren = AppMenu & { children?: AppMenuAndChildren[] }
 
+/** 查找目录下第一个有路由的菜单项（递归查找子目录） */
+const findDirFirstRoute = (dirId: string, menuList: AppMenuAndChildren[]): AppMenu | undefined => {
+  const children = menuList.filter(item => item.parentID === dirId);
+  for (const child of children) {
+    if (child.kind === AppMenuKind.Menu && child.route) {
+      return child;
+    }
+    if (child.kind === AppMenuKind.Dir) {
+      const found = findDirFirstRoute(child.id, menuList);
+      if (found) return found;
+    }
+  }
+  return undefined;
+}
+
 export type AggregateMenuDataSource = {
   app: App;
   menu: AppMenuAndChildren[];
@@ -262,6 +277,37 @@ export default (props: AggregateMenuProps) => {
           </Space>
         </div>
       </div>
+    },
+    dirItemRender = (dirItem: AppMenu, menuList: AppMenuAndChildren[]) => {
+      // 从原始完整数据中查找子路由，避免搜索过滤后找不到子菜单
+      const originalApp = all.find(a => a.app.id === dirItem.appID);
+      const fullMenuList = originalApp ? originalApp.menu : menuList;
+      const firstRoute = findDirFirstRoute(dirItem.id, fullMenuList);
+      if (!firstRoute) {
+        return <div
+          key={`${dirItem.appID}-${dirItem.id}`}
+          className={styles.aggregateMenuDrawerAllMenuItemDir}
+        >
+          {dirItem.name}
+        </div>;
+      }
+      return <div
+        key={`${dirItem.appID}-${dirItem.id}`}
+        className={`${styles.aggregateMenuDrawerAllMenuItemDir} ${styles.aggregateMenuDrawerAllMenuItemDirClickable}`}
+        onClick={() => {
+          onClickItem(firstRoute)
+        }}
+      >
+        <div className={styles.aggregateMenuDrawerAllMenuItemName} style={{ fontWeight: 'bold' }}>{dirItem.name}</div>
+        <div className={styles.aggregateMenuDrawerAllMenuItemIcons}>
+          <Space>
+            <OpenWin className="anticon" onClick={(event) => {
+              event.stopPropagation();
+              onClickItem(firstRoute, true)
+            }} />
+          </Space>
+        </div>
+      </div>;
     }
 
   useEffect(() => {
@@ -371,12 +417,7 @@ export default (props: AggregateMenuProps) => {
                 <div className={`${styles.aggregateMenuDrawerAllAppTitle} drawerAllAppTitle`}>{item.app.name}</div>
                 {item.menu.map(menuItem => (menuItem.kind === AppMenuKind.Menu ?
                   menuItemRender(menuItem)
-                  : <div
-                    key={`${menuItem.appID}-${menuItem.id}`}
-                    className={styles.aggregateMenuDrawerAllMenuItemDir}
-                  >
-                    {menuItem.name}
-                  </div>
+                  : dirItemRender(menuItem, item.menu)
                 ))}
               </div>
               : <span key={item.app.code} style={{ display: 'none' }}></span>))}

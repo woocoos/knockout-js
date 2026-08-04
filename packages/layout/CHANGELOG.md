@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.26
+
+### Patch Changes
+
+- 优化聚合菜单
+
 ## 0.1.25
 
 ### Patch Changes

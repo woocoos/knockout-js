@@ -1,7 +1,7 @@
 import { Outlet, useLocation } from '@ice/runtime';
 import { Layout } from '@knockout-js/layout';
 import { history } from 'ice';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import defaultAvatar from '@/assets/images/default-avatar.png';
 import { monitorKeyChange } from '@/pkg/localStore';
 import store from '@/store';
@@ -13,6 +13,7 @@ export default () => {
     msgRef = useRef<MsgDropdownRef>(null),
     [userState, userDispatcher] = store.useModel('user'),
     [appState, appDispatcher] = store.useModel('app'),
+    [open, setOpen] = useState(false),
     tenantList = [
       { id: '1', name: 'tenant 1' },
       { id: '2', name: 'tenant 2' },
@@ -94,6 +95,13 @@ export default () => {
           msgRef.current?.setShowDot();
           appDispatcher.updateDarkMode(value);
         },
+      }}
+      aggregateMenuProps={{
+        open: open,
+        onChangeOpen: setOpen,
+        onClick: async (menuItem, app, isOpen) => {
+          console.log(menuItem, app, isOpen)
+        }
       }}
       proLayoutProps={{
         [process.env.ICE_CORE_MODE === 'development' ? 'menu' : '']: {
