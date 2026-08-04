@@ -144,8 +144,13 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
       willAuthError() {
         const { token } = store.getState();
         if (token) {
-          const jwt = jwtDcode<JwtPayload>(token);
-          if (((jwt.exp || 0) * 1000 - (beforeRefreshTime || 0)) < Date.now()) {
+          try {
+            const jwt = jwtDcode<JwtPayload>(token);
+            if (((jwt.exp || 0) * 1000 - (beforeRefreshTime || 0)) < Date.now()) {
+              return true;
+            }
+          } catch {
+            // token 不是有效 JWT，视为需要刷新
             return true;
           }
         }

@@ -17,10 +17,26 @@ import { authExchange, subExchange } from './exchange.js';
 
 export const gql = urqlGql;
 
+/**
+ * 兜底URL，在 createUrqlInstance 执行前防止 client 为 undefined
+ * 参考 @ice/plugin-request 的模式：模块加载时即创建可用实例
+ */
+const FALLBACK_URL = typeof window !== 'undefined'
+  ? window.location.origin
+  : 'http://localhost';
+
 export const urqlInstances: Record<string, {
   client: Client;
   config: CustomClientOptions;
-}> = {};
+}> = {
+  default: {
+    client: createClient({
+      url: FALLBACK_URL,
+      exchanges: [cacheExchange, fetchExchange],
+    }),
+    config: { url: FALLBACK_URL, instanceName: 'default' },
+  },
+};
 
 /**
 *
@@ -94,7 +110,15 @@ function createDefaultClient(config: CustomClientOptions) {
 }
 
 /**
+ * 设置实例（替换已有的 fallback 或更新已有实例）
+ */
+function setInstance(name: string, client: Client, config: CustomClientOptions) {
+  urqlInstances[name] = { client, config };
+}
+
+/**
  * 根据配置处理实例的创建
+ * 参考 @ice/plugin-request 模式：模块加载时已有 fallback，这里负责替换为真实配置
  * @param reqConf
  */
 export function createUrqlInstance(reqConf: RequestConfig) {
@@ -109,36 +133,25 @@ export function createUrqlInstance(reqConf: RequestConfig) {
 
     reqConf.forEach((config) => {
       if (config.exchanges) {
-        urqlInstances[config.instanceName] = {
-          client: createClient({
-            url: config.url,
-            requestPolicy: 'cache-and-network',
-            exchanges: config.exchanges,
-          }),
-          config,
-        }
+        setInstance(config.instanceName, createClient({
+          url: config.url,
+          requestPolicy: 'cache-and-network',
+          exchanges: config.exchanges,
+        }), config);
       } else {
-        urqlInstances[config.instanceName] = {
-          client: defaultClient,
-          config,
-        }
+        // 复用 defaultClient，但保存自己的 config（保留 url 等配置）
+        setInstance(config.instanceName, defaultClient, config);
       }
     });
   } else {
     if (reqConf.exchanges) {
-      urqlInstances['default'] = {
-        client: createClient({
-          url: reqConf.url,
-          requestPolicy: 'cache-and-network',
-          exchanges: reqConf.exchanges,
-        }),
-        config: reqConf,
-      }
+      setInstance('default', createClient({
+        url: reqConf.url,
+        requestPolicy: 'cache-and-network',
+        exchanges: reqConf.exchanges,
+      }), reqConf);
     } else {
-      urqlInstances['default'] = {
-        client: createDefaultClient(reqConf),
-        config: reqConf,
-      }
+      setInstance('default', createDefaultClient(reqConf), reqConf);
     }
   }
 }

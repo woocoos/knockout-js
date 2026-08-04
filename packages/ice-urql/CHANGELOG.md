@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.21
+
+### Patch Changes
+
+- 参考 @ice/plugin-request 的模式调整
+
 ## 0.1.20
 
 ### Patch Changes
