@@ -1,5 +1,11 @@
 # @knockout-js/org
 
+## 0.1.16
+
+### Patch Changes
+
+- 增加只读属性和onOriginalChange
+
 ## 0.1.15
 
 ### Patch Changes

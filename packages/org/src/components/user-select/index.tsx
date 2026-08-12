@@ -31,6 +31,10 @@ export interface UserSelectProps {
    */
   disabled?: boolean;
   /**
+   * 只读
+   */
+  readonly?: boolean;
+  /**
    * orgId的用户
    */
   orgId?: string;
@@ -74,6 +78,10 @@ export interface UserSelectProps {
    * 值变更事件 (value?: User[keyof User] | User, original?: User) => void;
    */
   onChange?: (value?: User[keyof User] | User, original?: User) => void;
+  /**
+   * onChange被占用时使用
+   */
+  onOriginalChange?: (value?: User) => void;
 }
 
 const userInfoQuery = gql(/* GraphQL */`query orgPkgUserInfo($gid: GID!){
@@ -140,10 +148,12 @@ const OrgSelect = (props: UserSelectProps) => {
       setInfo(original);
       setKeyword(original.displayName);
       props.onChange?.(value, original);
+      props.onOriginalChange?.(original);
     } else {
       setKeyword(undefined);
       setInfo(undefined);
       props.onChange?.();
+      props.onOriginalChange?.();
     }
   }, [])
 
@@ -172,112 +182,114 @@ const OrgSelect = (props: UserSelectProps) => {
   return (
     <>
       <Space.Compact style={{ width: '100%' }}>
-        <AutoComplete
-          className={styles.autoComplete}
-          value={keyword}
-          options={options}
-          allowClear={!props.disabled}
-          disabled={props.disabled}
-          onClear={() => {
-            setValue();
-            setOptions([]);
-          }}
-          onBlur={() => {
-            setKeyword(info?.displayName);
-          }}
-          onSelect={(v, option) => {
-            setValue(option.info);
-          }}
-          onSearch={async (keywordStr) => {
-            setKeyword(keywordStr);
-            clearTimeout(searchTimeoutFn.current);
-            searchTimeoutFn.current = setTimeout(async () => {
-              const os: BaseOptionType[] = [],
-                first = 15,
-                where: UserWhereInput = {
-                  ...props.where,
-                  or: [
-                    { displayNameContains: keywordStr },
-                    { principalNameContains: keywordStr },
-                    {
-                      hasAddressesWith: [
-                        { emailContains: keywordStr }
-                      ]
-                    },
-                    {
-                      hasAddressesWith: [
-                        { mobileContains: keywordStr }
-                      ]
+        {
+          props.readonly ? <Input value={keyword} readOnly {...props.inputProps} /> : <AutoComplete
+            className={styles.autoComplete}
+            value={keyword}
+            options={options}
+            allowClear={!props.disabled}
+            disabled={props.disabled}
+            onClear={() => {
+              setValue();
+              setOptions([]);
+            }}
+            onBlur={() => {
+              setKeyword(info?.displayName);
+            }}
+            onSelect={(v, option) => {
+              setValue(option.info);
+            }}
+            onSearch={async (keywordStr) => {
+              setKeyword(keywordStr);
+              clearTimeout(searchTimeoutFn.current);
+              searchTimeoutFn.current = setTimeout(async () => {
+                const os: BaseOptionType[] = [],
+                  first = 15,
+                  where: UserWhereInput = {
+                    ...props.where,
+                    or: [
+                      { displayNameContains: keywordStr },
+                      { principalNameContains: keywordStr },
+                      {
+                        hasAddressesWith: [
+                          { emailContains: keywordStr }
+                        ]
+                      },
+                      {
+                        hasAddressesWith: [
+                          { mobileContains: keywordStr }
+                        ]
+                      }
+                    ]
+                  };
+                where.userType = props.userType
+                if (keywordStr) {
+                  setLoading(true)
+                  if (props.orgRoleId) {
+                    const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
+                      roleId: props.orgRoleId,
+                      first,
+                      where,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.orgRoleUsers.totalCount) {
+                      result.data.orgRoleUsers.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.displayName,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
                     }
-                  ]
-                };
-              where.userType = props.userType
-              if (keywordStr) {
-                setLoading(true)
-                if (props.orgRoleId) {
-                  const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
-                    roleId: props.orgRoleId,
-                    first,
-                    where,
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.orgRoleUsers.totalCount) {
-                    result.data.orgRoleUsers.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.displayName,
-                          value: item.node.id,
-                          info: item.node,
-                        })
-                      }
-                    })
-                  }
-                } else if (props.orgId) {
-                  const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
-                    gid: gid('Org', props.orgId),
-                    first,
-                    where,
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.node?.__typename === 'Org') {
-                    result.data.node.users.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.displayName,
-                          value: item.node.id,
-                          info: item.node,
-                        })
-                      }
-                    })
-                  }
-                } else {
-                  const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
-                    first,
-                    where,
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.users.totalCount) {
-                    result.data.users.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.displayName,
-                          value: item.node.id,
-                          info: item.node,
-                        })
-                      }
-                    })
+                  } else if (props.orgId) {
+                    const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
+                      gid: gid('Org', props.orgId),
+                      first,
+                      where,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.node?.__typename === 'Org') {
+                      result.data.node.users.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.displayName,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
+                    }
+                  } else {
+                    const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
+                      first,
+                      where,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.users.totalCount) {
+                      result.data.users.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.displayName,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
+                    }
                   }
                 }
-              }
-              setLoading(false)
-              setOptions(os);
-            }, 500)
-          }}
-        >
-          <Input
-            placeholder={locale.placeholder}
-            {...props.inputProps}
-          />
-        </AutoComplete>
+                setLoading(false)
+                setOptions(os);
+              }, 500)
+            }}
+          >
+            <Input
+              placeholder={locale.placeholder}
+              {...props.inputProps}
+            />
+          </AutoComplete>
+        }
         {
-          props.disabled ? props.suffix : <Button
+          props.suffix ? props.suffix : (props.disabled || props.readonly) ? <></> : <Button
             loading={loading}
             icon={<SearchOutlined />}
             onClick={() => {

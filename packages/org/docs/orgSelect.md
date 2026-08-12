@@ -38,6 +38,10 @@ export default () => {
     <OrgSelect value={"dataSource1"} dataSource={dataSource} />
     <div />
     <br/>
+    <h4>只读</h4>
+    <OrgSelect readonly value={"dataSource1"} dataSource={dataSource} />
+    <div />
+    <br/>
     <h4>返回值是ID：{orgId}</h4>
     <OrgSelect changeValue="id" onChange={setOrgId} />
   </>;
@@ -50,6 +54,7 @@ export default () => {
 | ------------- | ------------------------------------------------------------- | -------------------------------- | ---- | ------ |
 | value         | 值可使用整个Opp对象或id作为值                                 | Org     &#124; Org['id']         | ❌    | -      |
 | disabled      | 禁用                                                          | boolean                          | ❌    | -      |
+| readonly      | 只读                                                          | boolean                          | ❌    | -      |
 | orgId         | 根据orgId过滤pathHasPrefix                                    | string                           | ❌    | -      |
 | appId         | appId授权的组织列表                                           | string                           | ❌    | -      |
 | kind          | 类型                                                          | OrgKind                          | ✅    | -      |

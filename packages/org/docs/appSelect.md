@@ -38,8 +38,14 @@ export default () => {
     <AppSelect value={"dataSource1"} dataSource={dataSource} />
     <div />
     <br/>
+    <h4>只读</h4>
+    <AppSelect readonly value={"dataSource1"} dataSource={dataSource} />
+    <div />
+    <br/>
     <h4>返回值是ID：{appId}</h4>
     <AppSelect changeValue="id" onChange={setAppId} />
+    <div />
+   
   </>;
 };
 ```
@@ -50,6 +56,7 @@ export default () => {
 | ------------- | ------------------------------------------------------------- | -------------------------------- | ---- | ------ |
 | value         | 值可使用整个App对象或id作为值                                 | App  &#124; App['id']            | ❌    | -      |
 | disabled      | 禁用                                                          | boolean                          | ❌    | -      |
+| readonly      | 只读                                                          | boolean                          | ❌    | -      |
 | orgId         | orgId授权的应用                                               | string                           | ❌    | -      |
 | where         | 查询条件                                                      | AppWhereInput                    | ❌    | -      |
 | suffix        | 禁用时替换search的显示位置                                                      | ReactNode                        | ❌    | -      |

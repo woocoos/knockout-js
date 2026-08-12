@@ -37,6 +37,10 @@ export default () => {
     <UserSelect value={"dataSource1"} dataSource={dataSource} />
     <div />
     <br/>
+    <h4>只读</h4>
+    <UserSelect readonly value={"dataSource1"} dataSource={dataSource} />
+    <div />
+    <br/>
     <h4>返回值是ID：{userId}</h4>
     <UserSelect changeValue="id" onChange={setUserId} />
   </>
@@ -49,6 +53,7 @@ export default () => {
 | ------------- | ------------------------------------------------------------- | --------------------------------- | ---- | ------ |
 | value         | 值可使用整个User对象或id作为值                                | User &#124; User['id']            | ❌    | -      |
 | disabled      | 禁用                                                          | boolean                           | ❌    | -      |
+| readonly      | 只读                                                          | boolean                           | ❌    | -      |
 | orgId         | orgId的用户                                                   | string                            | ❌    | -      |
 | orgRoleId     | orgRoleId的用户                                               | string                            | ❌    | -      |
 | userType      | 过滤用户类型                                                  | UserUserType                      | ❌    | -      |

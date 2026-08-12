@@ -25,6 +25,10 @@ export interface AppSelectProps {
    */
   disabled?: boolean;
   /**
+   * 只读
+   */
+  readonly?: boolean;
+  /**
    * orgId授权的应用
    */
   orgId?: string;
@@ -60,6 +64,10 @@ export interface AppSelectProps {
    * 值变更事件 (value?:App[keyof App] | App,original?:App) => void;
    */
   onChange?: (value?: App[keyof App] | App, original?: App) => void;
+  /**
+   * onChange被占用时使用
+   */
+  onOriginalChange?: (value?: App) => void;
 }
 
 const appInfoQuery = gql(/* GraphQL */`query orgPkgAppInfo($gid: GID!){
@@ -113,10 +121,11 @@ export default (props: AppSelectProps) => {
       setInfo(original);
       setKeyword(original.name);
       props.onChange?.(value, original);
+      props.onOriginalChange?.(original);
     } else {
       setKeyword(undefined);
       setInfo(undefined);
-      props.onChange?.();
+      props.onOriginalChange?.();
     }
   }, [])
 
@@ -145,82 +154,84 @@ export default (props: AppSelectProps) => {
   return (
     <>
       <Space.Compact style={{ width: '100%' }}>
-        <AutoComplete
-          className={styles.autoComplete}
-          value={keyword}
-          options={options}
-          allowClear={!props.disabled}
-          disabled={props.disabled}
-          onClear={() => {
-            setValue();
-            setOptions([]);
-          }}
-          onBlur={() => {
-            setKeyword(info?.name);
-          }}
-          onSelect={(v, option) => {
-            setValue(option.info);
-          }}
-          onSearch={async (keywordStr) => {
-            setKeyword(keywordStr);
-            clearTimeout(searchTimeoutFn.current);
-            searchTimeoutFn.current = setTimeout(async () => {
-              const os: BaseOptionType[] = [];
-              if (keywordStr) {
-                setLoading(true)
-                if (props.orgId) {
-                  const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-                    gid: gid('Org', props.orgId),
-                    first: 15,
-                    where: {
-                      ...props.where,
-                      nameContains: keywordStr,
-                    }
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.node?.__typename === 'Org') {
-                    result.data.node.apps.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.name,
-                          value: item.node.id,
-                          info: item.node,
-                        })
+        {
+          props.readonly ? <Input value={keyword} readOnly {...props.inputProps} /> : <AutoComplete
+            className={styles.autoComplete}
+            value={keyword}
+            options={options}
+            allowClear={!props.disabled}
+            disabled={props.disabled}
+            onClear={() => {
+              setValue();
+              setOptions([]);
+            }}
+            onBlur={() => {
+              setKeyword(info?.name);
+            }}
+            onSelect={(v, option) => {
+              setValue(option.info);
+            }}
+            onSearch={async (keywordStr) => {
+              setKeyword(keywordStr);
+              clearTimeout(searchTimeoutFn.current);
+              searchTimeoutFn.current = setTimeout(async () => {
+                const os: BaseOptionType[] = [];
+                if (keywordStr) {
+                  setLoading(true)
+                  if (props.orgId) {
+                    const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+                      gid: gid('Org', props.orgId),
+                      first: 15,
+                      where: {
+                        ...props.where,
+                        nameContains: keywordStr,
                       }
-                    })
-                  }
-                } else {
-                  const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
-                    first: 15,
-                    where: {
-                      ...props.where,
-                      nameContains: keywordStr,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.node?.__typename === 'Org') {
+                      result.data.node.apps.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.name,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
                     }
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.apps.totalCount) {
-                    result.data.apps.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.name,
-                          value: item.node.id,
-                          info: item.node,
-                        })
+                  } else {
+                    const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
+                      first: 15,
+                      where: {
+                        ...props.where,
+                        nameContains: keywordStr,
                       }
-                    })
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.apps.totalCount) {
+                      result.data.apps.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.name,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
+                    }
                   }
                 }
-              }
-              setLoading(false)
-              setOptions(os);
-            }, 500)
-          }}
-        >
-          <Input
-            placeholder={locale.placeholder}
-            {...props.inputProps}
-          />
-        </AutoComplete>
+                setLoading(false)
+                setOptions(os);
+              }, 500)
+            }}
+          >
+            <Input
+              placeholder={locale.placeholder}
+              {...props.inputProps}
+            />
+          </AutoComplete>
+        }
         {
-          props.disabled ? props.suffix : <Button
+          props.suffix ? props.suffix : (props.disabled || props.readonly) ? <></> : <Button
             loading={loading}
             icon={<SearchOutlined />}
             onClick={() => {

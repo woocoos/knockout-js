@@ -31,6 +31,10 @@ export interface OrgSelectProps {
    */
   disabled?: boolean;
   /**
+   * 只读
+   */
+  readonly?: boolean;
+  /**
    * 根据orgId过滤pathHasPrefix
    */
   orgId?: string;
@@ -74,6 +78,10 @@ export interface OrgSelectProps {
    * 值变更事件 (value?: Org[keyof Org] | Org, original?: Org) => void;
    */
   onChange?: (value?: Org[keyof Org] | Org, original?: Org) => void;
+  /**
+   * onChange被占用时使用
+   */
+  onOriginalChange?: (value?: Org) => void;
 }
 
 const orgInfoQuery = gql(/* GraphQL */`query orgPkgOrgInfo($gid: GID!){
@@ -132,10 +140,11 @@ const OrgSelect = (props: OrgSelectProps) => {
       setInfo(original);
       setKeyword(original.name);
       props.onChange?.(value, original);
+      props.onOriginalChange?.(original);
     } else {
       setKeyword(undefined);
       setInfo(undefined);
-      props.onChange?.();
+      props.onOriginalChange?.();
     }
   }, [])
 
@@ -164,82 +173,84 @@ const OrgSelect = (props: OrgSelectProps) => {
   return (
     <>
       <Space.Compact style={{ width: '100%' }}>
-        <AutoComplete
-          className={styles.autoComplete}
-          value={keyword}
-          options={options}
-          allowClear={!props.disabled}
-          disabled={props.disabled}
-          onClear={() => {
-            setValue();
-            setOptions([]);
-          }}
-          onBlur={() => {
-            setKeyword(info?.name);
-          }}
-          onSelect={(v, option) => {
-            setValue(option.info);
-          }}
-          onSearch={async (keywordStr) => {
-            setKeyword(keywordStr);
-            clearTimeout(searchTimeoutFn.current);
-            searchTimeoutFn.current = setTimeout(async () => {
-              const os: BaseOptionType[] = [],
-                first = 15,
-                where = {
-                  ...props.where,
-                  nameContains: keywordStr,
-                },
-                orderBy = {
-                  direction: OrderDirection.Asc,
-                  field: OrgOrderField.DisplaySort,
-                };
-              if (keywordStr) {
-                setLoading(true)
-                if (props.appId) {
-                  const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-                    gid: gid('App', props.appId), first, where, orderBy,
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.node?.__typename === 'App') {
-                    result.data.node.orgs.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.name,
-                          value: item.node.id,
-                          info: item.node,
-                        })
-                      }
-                    })
-                  }
-                } else {
-                  const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
-                    first, where, orderBy,
-                  }, 1, { instanceName: instanceName.UCENTER });
-                  if (result.data?.organizations.totalCount) {
-                    result.data.organizations.edges?.forEach(item => {
-                      if (item?.node) {
-                        os.push({
-                          label: item.node.name,
-                          value: item.node.id,
-                          info: item.node,
-                        })
-                      }
-                    })
+        {
+          props.readonly ? <Input value={keyword} readOnly {...props.inputProps} /> : <AutoComplete
+            className={styles.autoComplete}
+            value={keyword}
+            options={options}
+            allowClear={!props.disabled}
+            disabled={props.disabled}
+            onClear={() => {
+              setValue();
+              setOptions([]);
+            }}
+            onBlur={() => {
+              setKeyword(info?.name);
+            }}
+            onSelect={(v, option) => {
+              setValue(option.info);
+            }}
+            onSearch={async (keywordStr) => {
+              setKeyword(keywordStr);
+              clearTimeout(searchTimeoutFn.current);
+              searchTimeoutFn.current = setTimeout(async () => {
+                const os: BaseOptionType[] = [],
+                  first = 15,
+                  where = {
+                    ...props.where,
+                    nameContains: keywordStr,
+                  },
+                  orderBy = {
+                    direction: OrderDirection.Asc,
+                    field: OrgOrderField.DisplaySort,
+                  };
+                if (keywordStr) {
+                  setLoading(true)
+                  if (props.appId) {
+                    const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
+                      gid: gid('App', props.appId), first, where, orderBy,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.node?.__typename === 'App') {
+                      result.data.node.orgs.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.name,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
+                    }
+                  } else {
+                    const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
+                      first, where, orderBy,
+                    }, 1, { instanceName: instanceName.UCENTER });
+                    if (result.data?.organizations.totalCount) {
+                      result.data.organizations.edges?.forEach(item => {
+                        if (item?.node) {
+                          os.push({
+                            label: item.node.name,
+                            value: item.node.id,
+                            info: item.node,
+                          })
+                        }
+                      })
+                    }
                   }
                 }
-              }
-              setLoading(false)
-              setOptions(os);
-            }, 500)
-          }}
-        >
-          <Input
-            placeholder={locale.placeholder}
-            {...props.inputProps}
-          />
-        </AutoComplete>
+                setLoading(false)
+                setOptions(os);
+              }, 500)
+            }}
+          >
+            <Input
+              placeholder={locale.placeholder}
+              {...props.inputProps}
+            />
+          </AutoComplete>
+        }
         {
-          props.disabled ? props.suffix : <Button
+          props.suffix ? props.suffix : (props.disabled || props.readonly) ? <></> : <Button
             loading={loading}
             icon={<SearchOutlined />}
             onClick={() => {
