@@ -1,5 +1,11 @@
 # @knockout-js/org
 
+## 0.1.17
+
+### Patch Changes
+
+- 优化组件基线操作
+
 ## 0.1.16
 
 ### Patch Changes
