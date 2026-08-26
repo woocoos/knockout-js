@@ -1,7 +1,7 @@
 import { AutoComplete, Button, Input, InputProps, ModalProps, Space } from 'antd';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 import OrgModal from '../org-modal';
-import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables, OrgWhereInput } from '@knockout-js/api/ucenter';
+import { AppOrgListQuery, AppOrgListQueryVariables, OrderDirection, Org, OrgKind as UcenterOrgKind, OrgListQuery, OrgListQueryVariables, OrgOrder, OrgOrderField, OrgPkgOrgInfoQuery, OrgPkgOrgInfoQueryVariables, OrgWhereInput } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-components';
@@ -9,6 +9,7 @@ import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import styles from '../assets/autoComplete.module.css';
 import { BaseOptionType } from 'antd/es/select';
 import { SearchOutlined } from '@ant-design/icons';
+import { useDebounceCallback } from '../../hooks/useDebounceCallback';
 
 // fix publish error: Property 'kind' of exported interface has or is using private name 'OrgKind'.
 enum OrgKind {
@@ -50,6 +51,10 @@ export interface OrgSelectProps {
    * 查询条件
    */
   where?: OrgWhereInput;
+  /**
+   * 排序，默认按 DisplaySort 升序
+   */
+  orderBy?: OrgOrder;
   /**
    * ant InputProps api
    */
@@ -127,7 +132,9 @@ const orgListQuery = gql(/* GraphQL */`query orgList($first: Int,$orderBy:OrgOrd
 
 const OrgSelect = (props: OrgSelectProps) => {
   const locale = useLocale('OrgSelect'),
-    searchTimeoutFn = useRef<NodeJS.Timeout | undefined>(undefined),
+    autoCompleteRef = useRef<any>(null),
+    requestIdRef = useRef(0),
+    blurredDuringLoadingRef = useRef(false),
     [info, setInfo] = useState<Org>(),
     [loading, setLoading] = useState(false),
     [keyword, setKeyword] = useState<string>(),
@@ -146,7 +153,72 @@ const OrgSelect = (props: OrgSelectProps) => {
       setInfo(undefined);
       props.onOriginalChange?.();
     }
+    setOptions([]);
   }, [])
+
+  // 提取搜索逻辑为独立函数
+  const executeSearch = async (keywordStr: string) => {
+    const os: BaseOptionType[] = [],
+      where = {
+        ...props.where,
+        nameContains: keywordStr,
+      },
+      orderBy = props.orderBy ?? {
+        direction: OrderDirection.Asc,
+        field: OrgOrderField.DisplaySort,
+      };
+    if (props.appId) {
+      const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
+        gid: gid('App', props.appId), first: 20, where, orderBy,
+      }, 1, { instanceName: instanceName.UCENTER });
+      if (result.data?.node?.__typename === 'App') {
+        result.data.node.orgs.edges?.forEach(item => {
+          if (item?.node) {
+            os.push({
+              label: item.node.name,
+              value: item.node.id,
+              info: item.node,
+            })
+          }
+        })
+      }
+    } else {
+      const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
+        first: 20, where, orderBy,
+      }, 1, { instanceName: instanceName.UCENTER });
+      if (result.data?.organizations.totalCount) {
+        result.data.organizations.edges?.forEach(item => {
+          if (item?.node) {
+            os.push({
+              label: item.node.name,
+              value: item.node.id,
+              info: item.node,
+            })
+          }
+        })
+      }
+    }
+    return os;
+  };
+
+  // 防抖搜索，带竞态保护
+  const debouncedSearch = useDebounceCallback(async (keywordStr: string) => {
+    const currentRequest = ++requestIdRef.current;
+    const optionList = await executeSearch(keywordStr);
+    // 只处理最新请求的结果，忽略过期的响应
+    if (currentRequest !== requestIdRef.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (blurredDuringLoadingRef.current) {
+      blurredDuringLoadingRef.current = false;
+      // 多结果或无结果，keyword 保持用户输入
+      return;
+    }
+    setOptions(optionList);
+  }, 500);
 
   useEffect(() => {
     if (typeof props.value === 'string') {
@@ -175,76 +247,49 @@ const OrgSelect = (props: OrgSelectProps) => {
       <Space.Compact style={{ width: '100%' }}>
         {
           props.readonly ? <Input value={keyword} readOnly {...props.inputProps} /> : <AutoComplete
+            ref={autoCompleteRef}
             className={styles.autoComplete}
             value={keyword}
             options={options}
-            allowClear={!props.disabled}
+            allowClear={loading ? false : !props.disabled}
             disabled={props.disabled}
             onClear={() => {
               setValue();
-              setOptions([]);
             }}
             onBlur={() => {
-              setKeyword(info?.name);
+              if (!loading) {
+                if (keyword) {
+                  setKeyword(info?.name);
+                } else {
+                  setValue(undefined)
+                }
+              } else {
+                // 加载中，先不动 keyword，等搜索完再决定
+                blurredDuringLoadingRef.current = true;
+              }
+              setOptions([]);
+            }}
+            onFocus={() => {
+              blurredDuringLoadingRef.current = false;
             }}
             onSelect={(v, option) => {
               setValue(option.info);
             }}
-            onSearch={async (keywordStr) => {
-              setKeyword(keywordStr);
-              clearTimeout(searchTimeoutFn.current);
-              searchTimeoutFn.current = setTimeout(async () => {
-                const os: BaseOptionType[] = [],
-                  first = 15,
-                  where = {
-                    ...props.where,
-                    nameContains: keywordStr,
-                  },
-                  orderBy = {
-                    direction: OrderDirection.Asc,
-                    field: OrgOrderField.DisplaySort,
-                  };
-                if (keywordStr) {
-                  setLoading(true)
-                  if (props.appId) {
-                    const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-                      gid: gid('App', props.appId), first, where, orderBy,
-                    }, 1, { instanceName: instanceName.UCENTER });
-                    if (result.data?.node?.__typename === 'App') {
-                      result.data.node.orgs.edges?.forEach(item => {
-                        if (item?.node) {
-                          os.push({
-                            label: item.node.name,
-                            value: item.node.id,
-                            info: item.node,
-                          })
-                        }
-                      })
-                    }
-                  } else {
-                    const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
-                      first, where, orderBy,
-                    }, 1, { instanceName: instanceName.UCENTER });
-                    if (result.data?.organizations.totalCount) {
-                      result.data.organizations.edges?.forEach(item => {
-                        if (item?.node) {
-                          os.push({
-                            label: item.node.name,
-                            value: item.node.id,
-                            info: item.node,
-                          })
-                        }
-                      })
-                    }
-                  }
-                }
-                setLoading(false)
-                setOptions(os);
-              }, 500)
+            onSearch={(keyword) => {
+              setKeyword(keyword);
+              const keywordStr = keyword ? keyword.trim() : '';
+              if (keywordStr) {
+                setLoading(true);
+                debouncedSearch(keywordStr);
+              } else {
+                setOptions([]);
+                setLoading(false);
+              }
             }}
           >
             <Input
               placeholder={locale.placeholder}
+              style={{ minHeight: 32 }}
               {...props.inputProps}
             />
           </AutoComplete>
@@ -253,7 +298,8 @@ const OrgSelect = (props: OrgSelectProps) => {
           props.suffix ? props.suffix : (props.disabled || props.readonly) ? <></> : <Button
             loading={loading}
             icon={<SearchOutlined />}
-            onClick={() => {
+            onClick={(e) => {
+              (e.currentTarget as HTMLElement).blur();
               setOpen(true);
             }}
           />
@@ -265,6 +311,7 @@ const OrgSelect = (props: OrgSelectProps) => {
         appId={props.appId}
         kind={props.kind}
         where={props.where}
+        orderBy={props.orderBy}
         title={locale.title}
         modalProps={props.modalProps}
         proTableProps={props.proTableProps}

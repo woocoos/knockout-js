@@ -1,7 +1,7 @@
 import { AutoComplete, Button, Input, InputProps, ModalProps, Space } from 'antd';
 import ModalApp from '../app-modal';
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { App, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
+import { App, AppOrder, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables, OrgPkgAppInfoQuery, OrgPkgAppInfoQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { ProTableProps } from '@ant-design/pro-components';
@@ -9,6 +9,7 @@ import { gql, paging, query } from '@knockout-js/ice-urql/request';
 import { BaseOptionType } from 'antd/es/select';
 import styles from '../assets/autoComplete.module.css';
 import { SearchOutlined } from '@ant-design/icons';
+import { useDebounceCallback } from '../../hooks/useDebounceCallback';
 
 export interface AppSelectLocale {
   placeholder: string;
@@ -36,6 +37,10 @@ export interface AppSelectProps {
    * 查询条件
    */
   where?: AppWhereInput;
+  /**
+   * 排序
+   */
+  orderBy?: AppOrder;
   /**
    * ant InputProps api
    */
@@ -108,7 +113,9 @@ const appListQuery = gql(/* GraphQL */`query appList($first: Int,$orderBy:AppOrd
 
 export default (props: AppSelectProps) => {
   const locale = useLocale('AppSelect'),
-    searchTimeoutFn = useRef<NodeJS.Timeout | undefined>(undefined),
+    autoCompleteRef = useRef<any>(null),
+    requestIdRef = useRef(0),
+    blurredDuringLoadingRef = useRef(false),
     [info, setInfo] = useState<App>(),
     [loading, setLoading] = useState(false),
     [keyword, setKeyword] = useState<string>(),
@@ -127,7 +134,78 @@ export default (props: AppSelectProps) => {
       setInfo(undefined);
       props.onOriginalChange?.();
     }
+    setOptions([]);
   }, [])
+
+  // 提取搜索逻辑为独立函数
+  const executeSearch = async (keywordStr: string) => {
+    const os: BaseOptionType[] = [];
+    const where: AppWhereInput = {
+      ...props.where,
+    }
+    if (keywordStr) {
+      where.or = [
+        { nameContains: keywordStr },
+        { codeContains: keywordStr },
+      ]
+    }
+    if (props.orgId) {
+      const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+        gid: gid('Org', props.orgId),
+        first: 20,
+        orderBy: props.orderBy,
+        where,
+      }, 1, { instanceName: instanceName.UCENTER });
+      if (result.data?.node?.__typename === 'Org') {
+        result.data.node.apps.edges?.forEach(item => {
+          if (item?.node) {
+            os.push({
+              label: item.node.name,
+              value: item.node.id,
+              info: item.node,
+            })
+          }
+        })
+      }
+    } else {
+      const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
+        first: 20,
+        orderBy: props.orderBy,
+        where,
+      }, 1, { instanceName: instanceName.UCENTER });
+      if (result.data?.apps.totalCount) {
+        result.data.apps.edges?.forEach(item => {
+          if (item?.node) {
+            os.push({
+              label: item.node.name,
+              value: item.node.id,
+              info: item.node,
+            })
+          }
+        })
+      }
+    }
+    return os;
+  };
+
+  // 防抖搜索，带竞态保护
+  const debouncedSearch = useDebounceCallback(async (keywordStr: string) => {
+    const currentRequest = ++requestIdRef.current;
+    const optionList = await executeSearch(keywordStr);
+    // 只处理最新请求的结果，忽略过期的响应
+    if (currentRequest !== requestIdRef.current) {
+      return;
+    }
+
+    setLoading(false);
+
+    if (blurredDuringLoadingRef.current) {
+      blurredDuringLoadingRef.current = false;
+      // 多结果或无结果，keyword 保持用户输入
+      return;
+    }
+    setOptions(optionList);
+  }, 500);
 
   useEffect(() => {
     if (typeof props.value === 'string') {
@@ -156,76 +234,49 @@ export default (props: AppSelectProps) => {
       <Space.Compact style={{ width: '100%' }}>
         {
           props.readonly ? <Input value={keyword} readOnly {...props.inputProps} /> : <AutoComplete
+            ref={autoCompleteRef}
             className={styles.autoComplete}
             value={keyword}
             options={options}
-            allowClear={!props.disabled}
+            allowClear={loading ? false : !props.disabled}
             disabled={props.disabled}
             onClear={() => {
               setValue();
-              setOptions([]);
             }}
             onBlur={() => {
-              setKeyword(info?.name);
+              if (!loading) {
+                if (keyword) {
+                  setKeyword(info?.name);
+                } else {
+                  setValue(undefined)
+                }
+              } else {
+                // 加载中，先不动 keyword，等搜索完再决定
+                blurredDuringLoadingRef.current = true;
+              }
+              setOptions([]);
+            }}
+            onFocus={() => {
+              blurredDuringLoadingRef.current = false;
             }}
             onSelect={(v, option) => {
               setValue(option.info);
             }}
-            onSearch={async (keywordStr) => {
-              setKeyword(keywordStr);
-              clearTimeout(searchTimeoutFn.current);
-              searchTimeoutFn.current = setTimeout(async () => {
-                const os: BaseOptionType[] = [];
-                if (keywordStr) {
-                  setLoading(true)
-                  if (props.orgId) {
-                    const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-                      gid: gid('Org', props.orgId),
-                      first: 15,
-                      where: {
-                        ...props.where,
-                        nameContains: keywordStr,
-                      }
-                    }, 1, { instanceName: instanceName.UCENTER });
-                    if (result.data?.node?.__typename === 'Org') {
-                      result.data.node.apps.edges?.forEach(item => {
-                        if (item?.node) {
-                          os.push({
-                            label: item.node.name,
-                            value: item.node.id,
-                            info: item.node,
-                          })
-                        }
-                      })
-                    }
-                  } else {
-                    const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
-                      first: 15,
-                      where: {
-                        ...props.where,
-                        nameContains: keywordStr,
-                      }
-                    }, 1, { instanceName: instanceName.UCENTER });
-                    if (result.data?.apps.totalCount) {
-                      result.data.apps.edges?.forEach(item => {
-                        if (item?.node) {
-                          os.push({
-                            label: item.node.name,
-                            value: item.node.id,
-                            info: item.node,
-                          })
-                        }
-                      })
-                    }
-                  }
-                }
-                setLoading(false)
-                setOptions(os);
-              }, 500)
+            onSearch={(keyword) => {
+              setKeyword(keyword);
+              const keywordStr = keyword ? keyword.trim() : '';
+              if (keywordStr) {
+                setLoading(true);
+                debouncedSearch(keywordStr);
+              } else {
+                setOptions([]);
+                setLoading(false);
+              }
             }}
           >
             <Input
               placeholder={locale.placeholder}
+              style={{ minHeight: 32 }}
               {...props.inputProps}
             />
           </AutoComplete>
@@ -234,7 +285,8 @@ export default (props: AppSelectProps) => {
           props.suffix ? props.suffix : (props.disabled || props.readonly) ? <></> : <Button
             loading={loading}
             icon={<SearchOutlined />}
-            onClick={() => {
+            onClick={(e) => {
+              (e.currentTarget as HTMLElement).blur();
               setOpen(true);
             }}
           />
@@ -245,6 +297,7 @@ export default (props: AppSelectProps) => {
         title={locale.title}
         modalProps={props.modalProps}
         where={props.where}
+        orderBy={props.orderBy}
         proTableProps={props.proTableProps}
         orgId={props.orgId}
         onClose={(selectData) => {
