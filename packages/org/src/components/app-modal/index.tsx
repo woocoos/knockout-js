@@ -1,7 +1,7 @@
 
-import { useState } from 'react';
-import { ProColumns, ProTable, ProTableProps } from '@ant-design/pro-components';
-import { App, AppKind, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables } from '@knockout-js/api/ucenter';
+import { Key, useEffect, useRef, useState } from 'react';
+import { ProColumns, ProTable, ProTableProps, RequestData } from '@ant-design/pro-components';
+import { App, AppKind, AppOrder, AppListQuery, AppListQueryVariables, AppWhereInput, OrgAppListQuery, OrgAppListQueryVariables } from '@knockout-js/api/ucenter';
 import { gid, instanceName } from '@knockout-js/api';
 import { useLocale } from '../locale';
 import { gql, paging } from '@knockout-js/ice-urql/request';
@@ -33,6 +33,10 @@ export interface AppModalProps {
    * 查询条件
    */
   where?: AppWhereInput;
+  /**
+   * 排序
+   */
+  orderBy?: AppOrder;
   /**
    * 弹框标题
    */
@@ -91,7 +95,7 @@ export default (props: AppModalProps) => {
       {
         title: locale.name,
         dataIndex: 'name',
-        width: 120,
+        width: 180,
       },
       {
         title: locale.code,
@@ -104,14 +108,38 @@ export default (props: AppModalProps) => {
         filters: true,
         search: false,
         width: 100,
+        align: 'center',
         valueEnum: EnumAppKind,
       },
-      { title: locale.desc, dataIndex: 'comments', width: 160, search: false },
+      { title: locale.desc, dataIndex: 'comments', search: false },
     ],
     [dataSource, setDataSource] = useState<App[]>([]),
     // 选中处理
-    [selectedRowKeys, setSelectedRowKeys] = useState<string[]>([]);
+    [selectedRowKeys, setSelectedRowKeys] = useState<Key[]>([]);
 
+  const modalWrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.altKey && event.key === 'Enter') {
+        // 仅当当前 Modal 处于最顶层时才响应，避免多弹窗干扰
+        const wrap = modalWrapRef.current?.closest('.ant-modal-wrap') as HTMLElement | null;
+        if (wrap) {
+          const allWraps = Array.from(document.querySelectorAll<HTMLElement>('.ant-modal-wrap'))
+            .filter(el => el.style.display !== 'none' && getComputedStyle(el).display !== 'none');
+          const maxZ = Math.max(...allWraps.map(el => Number(el.style.zIndex) || 0));
+          const currentZ = Number(wrap.style.zIndex) || 0;
+          if (currentZ < maxZ) return;
+        }
+        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
+      }
+      return false;
+    }
+    document.addEventListener('keydown', onKeydown, false);
+    return () => {
+      document.removeEventListener('keydown', onKeydown, false);
+    }
+  }, [selectedRowKeys, dataSource]);
 
   return (
     <Modal
@@ -119,87 +147,100 @@ export default (props: AppModalProps) => {
       title={props.title}
       {...props.modalProps}
       open={props.open}
+      okText={<span>确定(Alt+↵)</span>}
       onOk={() => {
-        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id)));
+        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
       }}
       onCancel={() => {
         props.onClose();
       }}
     >
-      <ProTable
-        size="small"
-        scroll={{ x: 'max-content', y: 300 }}
-        {...props.proTableProps}
-        rowKey={'id'}
-        search={{
-          searchText: glocale.query,
-          resetText: glocale.reset,
-          labelWidth: 'auto',
-        }}
-        options={false}
-        columns={columns}
-        request={async (params, sort, filter) => {
-          const table = { data: [] as App[], success: true, total: 0 },
-            where: AppWhereInput = {
-              ...props.where,
-            };
-          where.nameContains = params.name;
-          where.codeContains = params.code;
-          where.kindIn = filter.kind as AppKind[]
-          if (props.orgId) {
-            const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
-              gid: gid('Org', props.orgId),
-              first: params.pageSize,
-              where,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.node?.__typename === 'Org') {
-              result.data.node.apps.edges?.forEach((item) => {
-                if (item?.node) {
-                  table.data.push(item.node as App)
-                }
-              })
-              table.total = result.data.node.apps.totalCount
-            }
-          } else {
-            const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
-              first: params.pageSize,
-              where,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.apps.totalCount) {
-              result.data.apps.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data.push(item.node as App)
-                }
-              })
-              table.total = result.data.apps.totalCount
-            }
-          }
-          setDataSource(table.data)
-          return table
-        }}
-        pagination={{ showSizeChanger: true }}
-        rowSelection={{
-          selectedRowKeys: selectedRowKeys,
-          onChange: (selectedRowKeys) => { setSelectedRowKeys(selectedRowKeys as string[]); },
-          type: props.isMultiple ? 'checkbox' : 'radio',
-        }}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              if (props.isMultiple) {
-                if (selectedRowKeys.includes(record.id)) {
-                  setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
-                } else {
-                  selectedRowKeys.push(record.id);
-                  setSelectedRowKeys([...selectedRowKeys]);
-                }
-              } else {
-                setSelectedRowKeys([record.id]);
+      <div className="ko-modal-table" ref={modalWrapRef}>
+        <ProTable
+          size="small"
+          scroll={{ x: 'max-content', y: 300 }}
+          {...props.proTableProps}
+          rowKey={'id'}
+          search={{
+            searchText: glocale.query,
+            resetText: glocale.reset,
+            labelWidth: 'auto',
+          }}
+          options={false}
+          columns={columns}
+          request={async (params, sort, filter) => {
+            setSelectedRowKeys([])
+            const table: Partial<RequestData<App>> = { data: [], success: true, total: 0 },
+              where: AppWhereInput = {
+                ...props.where,
+              };
+            where.nameContains = params.name;
+            where.codeContains = params.code;
+            where.kindIn = filter.kind as AppKind[]
+            if (props.orgId) {
+              const result = await paging<OrgAppListQuery, OrgAppListQueryVariables>(orgAppListQuery, {
+                gid: gid('Org', props.orgId),
+                first: params.pageSize,
+                orderBy: props.orderBy,
+                where,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.node?.__typename === 'Org') {
+                result.data.node.apps.edges?.forEach((item) => {
+                  if (item?.node) {
+                    table.data?.push(item.node as App)
+                  }
+                })
+                table.total = result.data.node.apps.totalCount
               }
+            } else {
+              const result = await paging<AppListQuery, AppListQueryVariables>(appListQuery, {
+                first: params.pageSize,
+                orderBy: props.orderBy,
+                where,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.apps.totalCount) {
+                result.data.apps.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as App)
+                  }
+                })
+                table.total = result.data.apps.totalCount
+              }
+            }
+            setDataSource(table.data ?? [])
+            if (!props.isMultiple && table.data?.[0]?.id) {
+              setSelectedRowKeys([table.data[0].id])
+            }
+            return table
+          }}
+          pagination={{ showSizeChanger: true }}
+          rowSelection={{
+            selectedRowKeys: selectedRowKeys,
+            onChange: (selectedRowKeys) => {
+              setSelectedRowKeys(selectedRowKeys);
             },
-          };
-        }}
-      />
+            type: props.isMultiple ? 'checkbox' : 'radio',
+          }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                if (record.id) {
+                  if (props.isMultiple) {
+                    if (selectedRowKeys.includes(record.id)) {
+                      setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
+                    } else {
+                      selectedRowKeys.push(record.id);
+                      setSelectedRowKeys([...selectedRowKeys]);
+                    }
+                  } else {
+                    setSelectedRowKeys([record.id]);
+                  }
+                }
+              },
+            };
+          }}
+        />
+      </div>
     </Modal>
   );
 };

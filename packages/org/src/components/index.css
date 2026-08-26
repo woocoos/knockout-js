@@ -1,0 +1,15 @@
+.ko-modal-table .ant-pro-query-filter.ant-pro-query-filter {
+  padding: 16px 0;
+}
+
+.ko-modal-table .ant-pro-table .ant-pro-table-search {
+  margin-block-end: 8px;
+}
+
+.ko-modal-table .ant-pro-table-alert {
+  display: none;
+}
+
+.ko-modal-table .ant-pro-card .ant-pro-card-body {
+  padding-inline: 0;
+}
