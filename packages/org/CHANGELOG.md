@@ -1,5 +1,12 @@
 # @knockout-js/org
 
+## 0.1.18
+
+### Patch Changes
+
+- Updated dependencies
+  - @knockout-js/layout@0.1.27
+
 ## 0.1.17
 
 ### Patch Changes

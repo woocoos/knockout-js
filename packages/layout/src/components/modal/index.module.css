@@ -1,12 +1,38 @@
-.modal {
+.draggableModal :global(.ant-modal-header) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
   cursor: move;
+  padding: 16px 24px;
+}
+
+.draggableModal :global(.ant-modal-content) {
+  padding-top: 44px;
+}
+
+.titleWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 18px;
 }
 
 .screenfulIcon {
-  position: absolute;
-  right: 40px;
-  top: 16px;
+  flex-shrink: 0;
   color: rgba(0, 0, 0, 0.45);
+}
+
+.screenfulModal :global(.ant-modal-header) {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  padding: 16px 24px;
+}
+
+.screenfulModal :global(.ant-modal-content) {
+  padding-top: 44px;
 }
 
 .screenfulModal {
@@ -16,5 +42,5 @@
 
 .screenfulModal :global(.ant-modal-body) {
   height: calc(100vh - 116px);
-  overflow: auto;
+  overflow: hidden auto;
 }

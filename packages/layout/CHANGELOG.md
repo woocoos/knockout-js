@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.27
+
+### Patch Changes
+
+- 优化Modal拖拽区域
+
 ## 0.1.26
 
 ### Patch Changes

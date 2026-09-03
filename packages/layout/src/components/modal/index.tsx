@@ -22,31 +22,20 @@ export type ModalProps = AntdModalProps & {
 const Modal = (props: ModalProps) => {
   const { width, style, title, defaultScreenful, isDraggable, screenfulIcon, ...restProps } = props;
   const [screenful, setScreenful] = useState(defaultScreenful ?? false);
-  const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ left: 0, top: 0, bottom: 0, right: 0 });
   const draggleRef = useRef<HTMLDivElement>(null);
+  const draggable = !screenful && isDraggable !== false;
 
   return <AntdModal
     {...restProps}
-    className={screenful ? styles.screenfulModal : undefined}
+    className={[
+      screenful ? styles.screenfulModal : '',
+      draggable ? styles.draggableModal : '',
+    ].filter(Boolean).join(' ') || undefined}
     width={screenful ? 'auto' : width}
     style={screenful ? { top: 0 } : style}
     title={
-      <div
-        className={screenful ? "" : styles.modal}
-        onMouseOver={() => {
-          if (screenful) {
-            setDisabled(true);
-            return;
-          }
-          if (disabled) {
-            setDisabled(false);
-          }
-        }}
-        onMouseOut={() => {
-          setDisabled(true);
-        }}
-      >
+      <div className={styles.titleWrapper}>
         {title}
         {screenfulIcon === false ? <></> : <Button
           className={styles.screenfulIcon}
@@ -63,10 +52,11 @@ const Modal = (props: ModalProps) => {
       </div>
     }
     modalRender={(modal) => (
-      screenful ? modal : isDraggable === false ? modal : <Draggable
-        disabled={disabled}
+      draggable ? <Draggable
         bounds={bounds}
         nodeRef={draggleRef}
+        handle=".ant-modal-header"
+        cancel="button, a, .ant-modal-close, [role='button']"
         onStart={(event, uiData) => {
           const { clientWidth, clientHeight } = window.document.documentElement;
           const targetRect = draggleRef.current?.getBoundingClientRect();
@@ -82,7 +72,7 @@ const Modal = (props: ModalProps) => {
         }}
       >
         <div ref={draggleRef}>{modal}</div>
-      </Draggable>
+      </Draggable> : modal
     )}
   />;
 }
