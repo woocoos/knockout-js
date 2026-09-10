@@ -1,5 +1,11 @@
 # @knockout-js/org
 
+## 0.1.21
+
+### Patch Changes
+
+- 冒泡事件处理
+
 ## 0.1.20
 
 ### Patch Changes

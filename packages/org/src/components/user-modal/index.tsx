@@ -174,138 +174,140 @@ export default (props: UserModalProps) => {
     }
   }, [selectedRowKeys, dataSource]);
 
-  return <Modal
-    width={900}
-    title={props.title}
-    {...props.modalProps}
-    open={props.open}
-    okText={<span>确定(Alt+↵)</span>}
-    onOk={() => {
-      props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
-    }}
-    onCancel={() => {
-      props.onClose();
-    }}
-  >
-    <div className="ko-modal-table" ref={modalWrapRef} onKeyPress={(e) => {
-      if (e.key === 'Enter') {
-        e.stopPropagation();
-      }
-    }}>
-      <ProTable
-        size="small"
-        scroll={{ x: 'max-content', y: 300 }}
-        {...props.proTableProps}
-        rowKey={'id'}
-        search={{
-          searchText: glocale.query,
-          resetText: glocale.reset,
-          labelWidth: 'auto',
-        }}
-        options={false}
-        columns={columns}
-        request={async (params, sort, filter) => {
-          setSelectedRowKeys([])
-          const table: Partial<RequestData<User>> = { data: [], success: true, total: 0 },
-            where: UserWhereInput = {
-              ...props.where,
-            };
-          where.userType = props.userType;
-          where.principalNameContains = params.principalName;
-          where.displayNameContains = params.displayName;
-          if (params.email || params.mobile) {
-            where.hasAddressesWith = [];
-            if (params.email) {
-              where.hasAddressesWith.push(
-                { emailContains: params.email }
-              )
-            }
-            if (params.mobile) {
-              where.hasAddressesWith.push(
-                { mobileContains: params.mobile }
-              )
-            }
-          }
-          where.statusIn = filter.status as UserSimpleStatus[] | null;
-          if (props.orgRoleId) {
-            const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
-              roleId: props.orgRoleId,
-              first: params.pageSize,
-              orderBy: props.orderBy,
-              where,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.orgRoleUsers.totalCount) {
-              result.data.orgRoleUsers.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data?.push(item.node as User)
-                }
-              })
-              table.total = result.data.orgRoleUsers.totalCount
-            }
-          } else if (props.orgId) {
-            const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
-              gid: gid('Org', props.orgId),
-              first: params.pageSize,
-              orderBy: props.orderBy,
-              where,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.node?.__typename === 'Org') {
-              result.data.node.users.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data?.push(item.node as User)
-                }
-              })
-              table.total = result.data.node.users.totalCount
-            }
-          } else {
-            const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
-              first: params.pageSize,
-              orderBy: props.orderBy,
-              where,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.users.totalCount) {
-              result.data.users.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data?.push(item.node as User)
-                }
-              })
-              table.total = result.data.users.totalCount
-            }
-          }
-
-          setDataSource(table.data ?? [])
-          if (!props.isMultiple && table.data?.[0]?.id) {
-            setSelectedRowKeys([table.data[0].id])
-          }
-          return table
-        }}
-        pagination={{ showSizeChanger: true }}
-        rowSelection={{
-          selectedRowKeys: selectedRowKeys,
-          onChange: (selectedRowKeys) => {
-            setSelectedRowKeys(selectedRowKeys);
-          },
-          type: props.isMultiple ? 'checkbox' : 'radio',
-        }}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              if (record.id) {
-                if (props.isMultiple) {
-                  if (selectedRowKeys.includes(record.id)) {
-                    setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
-                  } else {
-                    selectedRowKeys.push(record.id);
-                    setSelectedRowKeys([...selectedRowKeys]);
-                  }
-                } else {
-                  setSelectedRowKeys([record.id]);
-                }
+  return <div onKeyPress={(e) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+    }
+  }}>
+    <Modal
+      width={900}
+      title={props.title}
+      {...props.modalProps}
+      open={props.open}
+      okText={<span>确定(Alt+↵)</span>}
+      onOk={() => {
+        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
+      }}
+      onCancel={() => {
+        props.onClose();
+      }}
+    >
+      <div className="ko-modal-table" ref={modalWrapRef} >
+        <ProTable
+          size="small"
+          scroll={{ x: 'max-content', y: 300 }}
+          {...props.proTableProps}
+          rowKey={'id'}
+          search={{
+            searchText: glocale.query,
+            resetText: glocale.reset,
+            labelWidth: 'auto',
+          }}
+          options={false}
+          columns={columns}
+          request={async (params, sort, filter) => {
+            setSelectedRowKeys([])
+            const table: Partial<RequestData<User>> = { data: [], success: true, total: 0 },
+              where: UserWhereInput = {
+                ...props.where,
+              };
+            where.userType = props.userType;
+            where.principalNameContains = params.principalName;
+            where.displayNameContains = params.displayName;
+            if (params.email || params.mobile) {
+              where.hasAddressesWith = [];
+              if (params.email) {
+                where.hasAddressesWith.push(
+                  { emailContains: params.email }
+                )
               }
+              if (params.mobile) {
+                where.hasAddressesWith.push(
+                  { mobileContains: params.mobile }
+                )
+              }
+            }
+            where.statusIn = filter.status as UserSimpleStatus[] | null;
+            if (props.orgRoleId) {
+              const result = await paging<OrgRoleUserListQuery, OrgRoleUserListQueryVariables>(orgRoleUserListQuery, {
+                roleId: props.orgRoleId,
+                first: params.pageSize,
+                orderBy: props.orderBy,
+                where,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.orgRoleUsers.totalCount) {
+                result.data.orgRoleUsers.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as User)
+                  }
+                })
+                table.total = result.data.orgRoleUsers.totalCount
+              }
+            } else if (props.orgId) {
+              const result = await paging<OrgUserListQuery, OrgUserListQueryVariables>(orgUserListQuery, {
+                gid: gid('Org', props.orgId),
+                first: params.pageSize,
+                orderBy: props.orderBy,
+                where,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.node?.__typename === 'Org') {
+                result.data.node.users.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as User)
+                  }
+                })
+                table.total = result.data.node.users.totalCount
+              }
+            } else {
+              const result = await paging<UserListQuery, UserListQueryVariables>(userListQuery, {
+                first: params.pageSize,
+                orderBy: props.orderBy,
+                where,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.users.totalCount) {
+                result.data.users.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as User)
+                  }
+                })
+                table.total = result.data.users.totalCount
+              }
+            }
+
+            setDataSource(table.data ?? [])
+            if (!props.isMultiple && table.data?.[0]?.id) {
+              setSelectedRowKeys([table.data[0].id])
+            }
+            return table
+          }}
+          pagination={{ showSizeChanger: true }}
+          rowSelection={{
+            selectedRowKeys: selectedRowKeys,
+            onChange: (selectedRowKeys) => {
+              setSelectedRowKeys(selectedRowKeys);
             },
-          };
-        }}
-      />
-    </div>
-  </Modal>;
+            type: props.isMultiple ? 'checkbox' : 'radio',
+          }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                if (record.id) {
+                  if (props.isMultiple) {
+                    if (selectedRowKeys.includes(record.id)) {
+                      setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
+                    } else {
+                      selectedRowKeys.push(record.id);
+                      setSelectedRowKeys([...selectedRowKeys]);
+                    }
+                  } else {
+                    setSelectedRowKeys([record.id]);
+                  }
+                }
+              },
+            };
+          }}
+        />
+      </div>
+    </Modal>;
+  </div>
 }

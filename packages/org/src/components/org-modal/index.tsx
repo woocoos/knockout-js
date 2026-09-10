@@ -154,116 +154,118 @@ export default (props: OrgModalProps) => {
     }
   }, [selectedRowKeys, dataSource]);
 
-  return <Modal
-    width={900}
-    title={props.title}
-    {...props.modalProps}
-    open={props.open}
-    okText={<span>确定(Alt+↵)</span>}
-    onOk={() => {
-      props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
-    }}
-    onCancel={() => {
-      props.onClose();
-    }}
-  >
-    <div className="ko-modal-table" ref={modalWrapRef} onKeyPress={(e) => {
-      if (e.key === 'Enter') {
-        e.stopPropagation();
-      }
-    }}>
-      <ProTable
-        size="small"
-        scroll={{ x: 'max-content', y: 300 }}
-        {...props.proTableProps}
-        rowKey={'id'}
-        search={{
-          searchText: glocale.query,
-          resetText: glocale.reset,
-          labelWidth: 'auto',
-        }}
-        options={false}
-        columns={columns}
-        request={async (params) => {
-          setSelectedRowKeys([])
-          const table: Partial<RequestData<Org>> = { data: [], success: true, total: 0 },
-            where: OrgWhereInput = {
-              ...props.where,
-            },
-            orderBy = props.orderBy ?? {
-              direction: OrderDirection.Asc,
-              field: OrgOrderField.DisplaySort,
-            };
-          where.kind = props.kind;
-          where.nameContains = params.name;
-          where.domain = params.domain;
-          where.pathHasPrefix = props.orgId ? `${props.orgId}/` : undefined
-          if (props.appId) {
-            const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
-              gid: gid('App', props.appId),
-              first: params.pageSize,
-              where,
-              orderBy,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.node?.__typename === 'App') {
-              result.data.node.orgs.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data?.push(item.node as Org)
-                }
-              })
-              table.total = result.data.node.orgs.totalCount
-            }
-          } else {
-            const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
-              first: params.pageSize,
-              where,
-              orderBy,
-            }, params.current || 1, { instanceName: instanceName.UCENTER });
-            if (result.data?.organizations.totalCount) {
-              result.data.organizations.edges?.forEach(item => {
-                if (item?.node) {
-                  table.data?.push(item.node as Org)
-                }
-              })
-              table.total = result.data.organizations.totalCount
-            }
-          }
-
-          setDataSource(table.data ?? [])
-          if (!props.isMultiple && table.data?.[0]?.id) {
-            setSelectedRowKeys([table.data[0].id])
-          }
-          return table
-        }}
-        pagination={{ showSizeChanger: true }}
-        rowSelection={{
-          selectedRowKeys: selectedRowKeys,
-          onChange: (selectedRowKeys) => {
-            setSelectedRowKeys(selectedRowKeys);
-          },
-          type: props.isMultiple ? 'checkbox' : 'radio',
-        }}
-        onRow={(record) => {
-          return {
-            onClick: () => {
-              if (record.id) {
-                if (props.isMultiple) {
-                  if (selectedRowKeys.includes(record.id)) {
-                    setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
-                  } else {
-                    selectedRowKeys.push(record.id);
-                    setSelectedRowKeys([...selectedRowKeys]);
+  return <div onKeyPress={(e) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+    }
+  }}>
+    <Modal
+      width={900}
+      title={props.title}
+      {...props.modalProps}
+      open={props.open}
+      okText={<span>确定(Alt+↵)</span>}
+      onOk={() => {
+        props.onClose(dataSource.filter(item => selectedRowKeys.includes(item.id ?? '')));
+      }}
+      onCancel={() => {
+        props.onClose();
+      }}
+    >
+      <div className="ko-modal-table" ref={modalWrapRef} >
+        <ProTable
+          size="small"
+          scroll={{ x: 'max-content', y: 300 }}
+          {...props.proTableProps}
+          rowKey={'id'}
+          search={{
+            searchText: glocale.query,
+            resetText: glocale.reset,
+            labelWidth: 'auto',
+          }}
+          options={false}
+          columns={columns}
+          request={async (params) => {
+            setSelectedRowKeys([])
+            const table: Partial<RequestData<Org>> = { data: [], success: true, total: 0 },
+              where: OrgWhereInput = {
+                ...props.where,
+              },
+              orderBy = props.orderBy ?? {
+                direction: OrderDirection.Asc,
+                field: OrgOrderField.DisplaySort,
+              };
+            where.kind = props.kind;
+            where.nameContains = params.name;
+            where.domain = params.domain;
+            where.pathHasPrefix = props.orgId ? `${props.orgId}/` : undefined
+            if (props.appId) {
+              const result = await paging<AppOrgListQuery, AppOrgListQueryVariables>(appOrgListQuery, {
+                gid: gid('App', props.appId),
+                first: params.pageSize,
+                where,
+                orderBy,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.node?.__typename === 'App') {
+                result.data.node.orgs.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as Org)
                   }
-                } else {
-                  setSelectedRowKeys([record.id]);
-                }
+                })
+                table.total = result.data.node.orgs.totalCount
               }
+            } else {
+              const result = await paging<OrgListQuery, OrgListQueryVariables>(orgListQuery, {
+                first: params.pageSize,
+                where,
+                orderBy,
+              }, params.current || 1, { instanceName: instanceName.UCENTER });
+              if (result.data?.organizations.totalCount) {
+                result.data.organizations.edges?.forEach(item => {
+                  if (item?.node) {
+                    table.data?.push(item.node as Org)
+                  }
+                })
+                table.total = result.data.organizations.totalCount
+              }
+            }
+
+            setDataSource(table.data ?? [])
+            if (!props.isMultiple && table.data?.[0]?.id) {
+              setSelectedRowKeys([table.data[0].id])
+            }
+            return table
+          }}
+          pagination={{ showSizeChanger: true }}
+          rowSelection={{
+            selectedRowKeys: selectedRowKeys,
+            onChange: (selectedRowKeys) => {
+              setSelectedRowKeys(selectedRowKeys);
             },
-          };
-        }}
-      />
-    </div>
-  </Modal>;
+            type: props.isMultiple ? 'checkbox' : 'radio',
+          }}
+          onRow={(record) => {
+            return {
+              onClick: () => {
+                if (record.id) {
+                  if (props.isMultiple) {
+                    if (selectedRowKeys.includes(record.id)) {
+                      setSelectedRowKeys(selectedRowKeys.filter(id => id != record.id));
+                    } else {
+                      selectedRowKeys.push(record.id);
+                      setSelectedRowKeys([...selectedRowKeys]);
+                    }
+                  } else {
+                    setSelectedRowKeys([record.id]);
+                  }
+                }
+              },
+            };
+          }}
+        />
+      </div>
+    </Modal>;
+  </div>
 }
 
 

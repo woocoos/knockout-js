@@ -141,7 +141,11 @@ export default (props: AppModalProps) => {
     }
   }, [selectedRowKeys, dataSource]);
 
-  return (
+  return (<div onKeyPress={(e) => {
+    if (e.key === 'Enter') {
+      e.stopPropagation();
+    }
+  }}>
     <Modal
       width={900}
       title={props.title}
@@ -155,11 +159,7 @@ export default (props: AppModalProps) => {
         props.onClose();
       }}
     >
-      <div className="ko-modal-table" ref={modalWrapRef} onKeyPress={(e) => {
-        if (e.key === 'Enter') {
-          e.stopPropagation();
-        }
-      }}>
+      <div className="ko-modal-table" ref={modalWrapRef} >
         <ProTable
           size="small"
           scroll={{ x: 'max-content', y: 300 }}
@@ -246,5 +246,6 @@ export default (props: AppModalProps) => {
         />
       </div>
     </Modal>
+  </div>
   );
 };
