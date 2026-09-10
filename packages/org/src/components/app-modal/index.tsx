@@ -155,7 +155,11 @@ export default (props: AppModalProps) => {
         props.onClose();
       }}
     >
-      <div className="ko-modal-table" ref={modalWrapRef}>
+      <div className="ko-modal-table" ref={modalWrapRef} onKeyPress={(e) => {
+        if (e.key === 'Enter') {
+          e.stopPropagation();
+        }
+      }}>
         <ProTable
           size="small"
           scroll={{ x: 'max-content', y: 300 }}
