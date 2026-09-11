@@ -264,7 +264,7 @@ export default (props: OrgModalProps) => {
           }}
         />
       </div>
-    </Modal>;
+    </Modal>
   </div>
 }
 

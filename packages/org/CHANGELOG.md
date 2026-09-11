@@ -1,5 +1,11 @@
 # @knockout-js/org
 
+## 0.1.22
+
+### Patch Changes
+
+- 去掉多余的;
+
 ## 0.1.21
 
 ### Patch Changes

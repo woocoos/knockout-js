@@ -308,6 +308,6 @@ export default (props: UserModalProps) => {
           }}
         />
       </div>
-    </Modal>;
+    </Modal>
   </div>
 }
