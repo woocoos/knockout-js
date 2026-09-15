@@ -60,6 +60,11 @@ interface ReqInterceptorOpts {
       * 默认过滤掉200状态码 如有需要的请自行添加[200,400,...]
       */
     exclusionStatus?: number[]
+    /**
+     * 支持消息关键词显示
+     * 由于服务的支持‘内部异常’文案默认进行支持 如有需要的请自行添加['内部异常','特殊提示',...]
+     */
+    msgKeywords?: string[]
   }
 }
 
@@ -103,7 +108,8 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
             let errStr = koErrorFormat(response as AxiosResponse, store.getI18n?.())
             if (errTraceId?.isShow) {
               const traceId = koErrTraceId(response as AxiosResponse, {
-                exclusionStatus: errTraceId.exclusionStatus
+                exclusionStatus: errTraceId.exclusionStatus,
+                msgKeywords: errTraceId.msgKeywords,
               })
               if (traceId) {
                 errStr = `${traceId} ${errStr}`
@@ -123,7 +129,8 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
         let errStr = koErrorFormat(err as AxiosError<KoAxiosError, any>, store.getI18n?.())
         if (errTraceId?.isShow) {
           const traceId = koErrTraceId(err as AxiosError<KoAxiosError, any>, {
-            exclusionStatus: errTraceId.exclusionStatus
+            exclusionStatus: errTraceId.exclusionStatus,
+            msgKeywords: errTraceId.msgKeywords,
           })
           if (traceId) {
             errStr = `${traceId} ${errStr}`
@@ -326,13 +333,19 @@ export const koErrTraceId = (
      * 默认过滤掉200状态码 如有需要的请自行添加[200,400,...]
      */
     exclusionStatus?: number[]
+    /**
+     * 支持消息关键词显示
+     * 由于服务端的支持‘内部异常’文案默认进行支持 如有需要的请自行添加['内部异常','特殊提示',...]
+     */
+    msgKeywords?: string[]
   },
 ) => {
   const exclusionStatus = filters?.exclusionStatus ?? [200]
+  const msgKeywords = filters?.msgKeywords ?? ['内部异常']
   let traceId: string | undefined
   if ((error as CombinedError)?.graphQLErrors?.length > 0) {
     const response = (error as CombinedError)?.response
-    if (!exclusionStatus.includes(response.status)) {
+    if (!exclusionStatus.includes(response.status) || msgKeywords.some(k => error.toString().includes(k))) {
       for (const key of traceIds) {
         traceId = response?.headers.get(key)
         if (traceId) {
@@ -342,7 +355,7 @@ export const koErrTraceId = (
     }
   } else {
     const response = (error as AxiosError<KoAxiosError, any>)?.response ?? (error as AxiosResponse<KoAxiosError, any>)
-    if (!exclusionStatus.includes(response.status)) {
+    if (!exclusionStatus.includes(response.status) || msgKeywords.some(k => response?.data?.errors?.[0]?.message?.includes(k))) {
       for (const key of traceIds) {
         traceId = response.headers?.[key]
         if (traceId) {

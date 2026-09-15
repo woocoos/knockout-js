@@ -1,5 +1,13 @@
 # @knockout-js/org
 
+## 0.1.23
+
+### Patch Changes
+
+- Updated dependencies
+  - @knockout-js/ice-urql@0.1.22
+  - @knockout-js/layout@0.1.29
+
 ## 0.1.22
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.22
+
+### Patch Changes
+
+- TraceId支持消息内容解析展示
+
 ## 0.1.21
 
 ### Patch Changes
