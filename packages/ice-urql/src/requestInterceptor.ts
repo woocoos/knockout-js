@@ -97,6 +97,12 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
             config.headers[key] = `${tenantId}`;
           })
         }
+        if (config.data && Object.keys(config.data).length) {
+          config.data = trimStringValues(config.data)
+        }
+        if (config.params && Object.keys(config.params).length) {
+          config.params = trimStringValues(config.params)
+        }
         return config;
       },
     },
@@ -145,6 +151,39 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
   return result;
 }
 
+/**
+ * 针对string去空格处理
+ * @param obj
+ * @returns
+ */
+export const trimStringValues = (obj: Record<string, any> | any[]): Record<string, any> => {
+  if (Array.isArray(obj)) {
+    return obj.map((objItem) => {
+      if (typeof objItem === 'string') {
+        return objItem.trim()
+      } else if (typeof objItem === 'object' && objItem !== null) {
+        return trimStringValues(objItem)
+      } else {
+        return objItem
+      }
+    })
+  } else {
+    const trimmedObj: Record<string, any> = {}
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        const value = obj[key]
+        if (typeof value === 'string') {
+          trimmedObj[key] = value.trim()
+        } else if (typeof value === 'object' && value !== null) {
+          trimmedObj[key] = trimStringValues(value)
+        } else {
+          trimmedObj[key] = value
+        }
+      }
+    }
+    return trimmedObj
+  }
+}
 
 /**
  * 统一loginUrl的处理

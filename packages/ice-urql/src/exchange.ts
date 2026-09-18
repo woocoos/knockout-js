@@ -4,7 +4,7 @@ import { CombinedError, Exchange, subscriptionExchange as urqlSubscriptionExchan
 import jwtDcode, { JwtPayload } from 'jwt-decode';
 import { request } from "@ice/plugin-request/request";
 import { createClient as wsClient } from 'graphql-ws';
-import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin, koErrTraceId, koErrorFormat } from "./requestInterceptor.js";
+import { RequestHeaderAuthorizationMode, getRequestHeaderAuthorization, goLogin, koErrTraceId, koErrorFormat, trimStringValues } from "./requestInterceptor.js";
 import { i18n } from 'i18next';
 
 export interface AuthExchangeOpts {
@@ -110,7 +110,9 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
               headers[key] = `${tenantId}`;
             })
           }
-
+        }
+        if (operation.variables) {
+          operation.variables = trimStringValues(operation.variables)
         }
         return utilities.appendHeaders(operation, headers);
       },

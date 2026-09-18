@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.23
+
+### Patch Changes
+
+- 引入string去空格处理
+
 ## 0.1.22
 
 ### Patch Changes
