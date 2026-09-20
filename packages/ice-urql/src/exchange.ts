@@ -64,7 +64,7 @@ export interface AuthExchangeOpts {
    * @param error
    * @returns
    */
-  error?: (error: CombinedError, errStr?: string) => boolean;
+  error?: (error: CombinedError, errStr?: string, traceId?: string) => boolean;
   /**
    * 异常追踪id的配置
    */
@@ -124,15 +124,13 @@ export function authExchange(handler: AuthExchangeOpts): Exchange {
           }
         }
         let errStr = koErrorFormat(err, store.getI18n?.())
-        if (errTraceId?.isShow) {
-          const traceId = koErrTraceId(err, {
-            exclusionStatus: errTraceId.exclusionStatus
-          })
-          if (traceId) {
-            errStr = `${traceId} ${errStr}`
-          }
+        let traceId = koErrTraceId(err, {
+          exclusionStatus: errTraceId?.exclusionStatus
+        })
+        if (errTraceId?.isShow && traceId) {
+          errStr = `${errStr} 将请求ID提供给技术方以供分析:${traceId}`
         }
-        return error?.(err, errStr) ?? false;
+        return error?.(err, errStr, traceId) ?? false;
       },
       async refreshAuth() {
         const { refreshToken } = store.getState();

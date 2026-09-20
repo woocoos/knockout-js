@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.24
+
+### Patch Changes
+
+- 异常展示优化调整
+
 ## 0.1.23
 
 ### Patch Changes

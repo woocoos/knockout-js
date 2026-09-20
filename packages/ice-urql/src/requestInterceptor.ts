@@ -13,7 +13,6 @@ interface ReqInterceptorOpts {
   store: {
     /**
      * 获取需要的数据
-     * @returns
      */
     getState: () => {
       token: string;
@@ -43,10 +42,8 @@ interface ReqInterceptorOpts {
   tenantIdExtendKeys?: string[];
   /**
    * 异常处理
-   * @param error
-   * @returns
    */
-  error?: (error: AxiosError | AxiosResponse, errStr?: string) => void;
+  error?: (error: AxiosError | AxiosResponse, errStr?: string, traceId?: string) => void;
   /**
    * 异常追踪id的配置
    */
@@ -112,16 +109,14 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
           // 提取第一个异常来展示
           if (response.data.errors?.[0]?.message) {
             let errStr = koErrorFormat(response as AxiosResponse, store.getI18n?.())
-            if (errTraceId?.isShow) {
-              const traceId = koErrTraceId(response as AxiosResponse, {
-                exclusionStatus: errTraceId.exclusionStatus,
-                msgKeywords: errTraceId.msgKeywords,
-              })
-              if (traceId) {
-                errStr = `${traceId} ${errStr}`
-              }
+            let traceId = koErrTraceId(response as AxiosResponse, {
+              exclusionStatus: errTraceId?.exclusionStatus,
+              msgKeywords: errTraceId?.msgKeywords,
+            })
+            if (errTraceId?.isShow && traceId) {
+              errStr = `${errStr} 将请求ID提供给技术方以供分析:${traceId}`
             }
-            error?.(response as AxiosResponse, errStr)
+            error?.(response as AxiosResponse, errStr, traceId)
           }
         }
         return response;
@@ -133,16 +128,14 @@ export const requestInterceptor = (option: ReqInterceptorOpts) => {
           }
         }
         let errStr = koErrorFormat(err as AxiosError<KoAxiosError, any>, store.getI18n?.())
-        if (errTraceId?.isShow) {
-          const traceId = koErrTraceId(err as AxiosError<KoAxiosError, any>, {
-            exclusionStatus: errTraceId.exclusionStatus,
-            msgKeywords: errTraceId.msgKeywords,
-          })
-          if (traceId) {
-            errStr = `${traceId} ${errStr}`
-          }
+        let traceId = koErrTraceId(err as AxiosError<KoAxiosError, any>, {
+          exclusionStatus: errTraceId?.exclusionStatus,
+          msgKeywords: errTraceId?.msgKeywords,
+        })
+        if (errTraceId?.isShow && traceId) {
+          errStr = `${errStr} 将请求ID提供给技术方以供分析:${traceId}`
         }
-        error?.(err as AxiosError, errStr)
+        error?.(err as AxiosError, errStr, traceId)
         return Promise.reject(err);
       },
     },
@@ -322,7 +315,7 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
       }
     }
     if (messages.length === 0) {
-      const errStr = (error as CombinedError).toString().replace('[Network] ', '').replace('[GraphQL] ', '')
+      const errStr = (error as CombinedError).toString()
       if (i18nlang) {
         messages.push(i18nlang.t(errStr))
       } else {
@@ -353,7 +346,9 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
       }
     }
   }
-  return messages.length > 0 ? messages.join(' ') : undefined;
+  // messages去重避免重复的内容展示
+  const uniqueMessages = [...new Set(messages)];
+  return uniqueMessages.length > 0 ? uniqueMessages.map(umsg => umsg.replaceAll('[Network] ', '').replaceAll('[GraphQL] ', '')).join(' ') : undefined;
 };
 
 const traceIds = ['x-trace-id', 'X-Trace-Id']
