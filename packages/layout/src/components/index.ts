@@ -14,5 +14,6 @@ export { default as AggregateMenu, type AggregateMenuDataSource } from './aggreg
 export { default as UploadAvatar } from './upload-file/uploadAvatar';
 export { default as UploadMultiple } from './upload-file/uploadMultiple';
 export { default as UploadTemp } from './upload-file/uploadTemp';
+export { koMessage } from './message';
 
 export * as util from './_util';
