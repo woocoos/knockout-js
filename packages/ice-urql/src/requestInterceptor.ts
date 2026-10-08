@@ -299,9 +299,10 @@ export interface KoAxiosError {
  */
 export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosResponse<KoAxiosError, any> | CombinedError, i18nlang?: i18n) => {
   let messages: string[] = [];
-  if ((error as CombinedError)?.graphQLErrors?.length > 0) {
+  const gqlError = error as CombinedError
+  if (gqlError?.graphQLErrors?.length > 0) {
     // graphql异常
-    const gqlErr = (error as CombinedError).graphQLErrors[0]
+    const gqlErr = gqlError.graphQLErrors[0]
     const errorCode = gqlErr?.extensions?.code as KoErr['code'];
     const errorMeta = gqlErr?.extensions?.meta as KoErr['meta'];
     if (errorMeta || errorCode) {
@@ -315,16 +316,18 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
       }
     }
     if (messages.length === 0) {
-      const errStr = (error as CombinedError).toString()
-      if (i18nlang) {
-        messages.push(i18nlang.t(errStr))
-      } else {
-        messages.push(errStr)
-      }
+      [...(new Set(gqlError.message.split('\n')))].forEach(ge => {
+        if (i18nlang) {
+          messages.push(i18nlang.t(ge))
+        } else {
+          messages.push(ge)
+        }
+      })
     }
   } else {
     // Axios异常
-    const response = (error as AxiosError<KoAxiosError, any>)?.response ?? (error as AxiosResponse<KoAxiosError, any>)
+    const axiosError = error as AxiosError<KoAxiosError, any>,
+      response = axiosError?.response ?? (error as AxiosResponse<KoAxiosError, any>)
     if (response?.data?.errors?.length) {
       const errStr = KoErrFormat(response.data.errors[0], i18nlang)
       if (errStr) {
@@ -338,11 +341,11 @@ export const koErrorFormat = (error: AxiosError<KoAxiosError, any> | AxiosRespon
         messages.push(response.statusText)
       }
     }
-    if (messages.length === 0 && (error as AxiosError<KoAxiosError, any>).message) {
+    if (messages.length === 0 && axiosError.message) {
       if (i18nlang) {
-        messages.push(i18nlang.t((error as AxiosError<KoAxiosError, any>).message))
+        messages.push(i18nlang.t(axiosError.message))
       } else {
-        messages.push((error as AxiosError<KoAxiosError, any>).message)
+        messages.push(axiosError.message)
       }
     }
   }
