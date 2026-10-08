@@ -182,6 +182,7 @@ export default (props: OrgModalProps) => {
             searchText: glocale.query,
             resetText: glocale.reset,
             labelWidth: 'auto',
+            searchGutter: [12, 8],
           }}
           options={false}
           columns={columns}
