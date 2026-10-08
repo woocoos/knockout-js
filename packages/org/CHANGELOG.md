@@ -1,5 +1,14 @@
 # @knockout-js/org
 
+## 0.1.26
+
+### Patch Changes
+
+- 新增Message 优化弹窗组件 优化错误格式
+- Updated dependencies
+  - @knockout-js/ice-urql@0.1.25
+  - @knockout-js/layout@0.1.32
+
 ## 0.1.25
 
 ### Patch Changes

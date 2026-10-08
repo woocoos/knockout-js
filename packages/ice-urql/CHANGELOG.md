@@ -1,5 +1,11 @@
 # @knockout-js/ice-urql
 
+## 0.1.25
+
+### Patch Changes
+
+- 新增Message 优化弹窗组件 优化错误格式
+
 ## 0.1.24
 
 ### Patch Changes
