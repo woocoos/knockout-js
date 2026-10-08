@@ -6,7 +6,7 @@ import { UploadFileProps } from ".";
 import { useLocale } from "../locale";
 import styles from "./index.module.css";
 import { formatFileSize } from "../_util";
-import { getFileRaw, getFileUrl, getStorageUrl, parseStorageData, uploadFile } from "@knockout-js/api";
+import { getFileRaw, getFileUrl, getStorageUrl, parseStorageData, uploadFile } from "@knockout-js/api/file";
 
 export default (props: UploadFileProps<string> & {
   /**
@@ -105,7 +105,9 @@ export default (props: UploadFileProps<string> & {
                 bucket: props.bucket
               })
             setName(file.name)
-            setUrlSrc(url)
+            if (url) {
+              setUrlSrc(url)
+            }
             props.onChange?.(storageUlr)
           } else {
             messageApi.error(locale.errorUpload);

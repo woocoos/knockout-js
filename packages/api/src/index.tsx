@@ -1,6 +1,6 @@
 import CryptoJS from 'crypto-js';
 export * from './ucenter/index';
-export * from './file';
+export { setStsApi } from './file/stsApi';
 
 export enum instanceName {
   UCENTER = 'ucenter',

@@ -3,7 +3,7 @@ import { Modal, Typography, Upload, message } from "antd"
 import { RcFile, UploadFile } from "antd/es/upload";
 import { useEffect, useState } from "react";
 import { UploadFileProps } from ".";
-import { delFile, getStorageUrl, parseStorageData, uploadFile, UploadFileRes } from "@knockout-js/api";
+import { delFile, getStorageUrl, parseStorageData, uploadFile, UploadFileRes } from "@knockout-js/api/file";
 import { useLocale } from "../locale";
 import { formatFileSize } from "../_util";
 

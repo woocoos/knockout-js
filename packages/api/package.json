@@ -33,6 +33,16 @@
       "import": "./esm/gql/msgcenter/graphql.js",
       "default": "./esm/gql/msgcenter/graphql.js"
     },
+    "./file": {
+      "es2017": {
+        "types": "./es2017/file/index.d.ts",
+        "default": "./es2017/file/index.js"
+      },
+      "default": {
+        "types": "./esm/file/index.d.ts",
+        "default": "./esm/file/index.js"
+      }
+    },
     "./*": "./*"
   },
   "sideEffects": [

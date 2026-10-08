@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { UploadFileProps } from "./index";
 import { useLocale } from "../locale";
 import { formatFileSize } from "../_util";
-import { parseStorageUrl, getStorageUrl, uploadFile, getFileUrl } from "@knockout-js/api";
+import { parseStorageUrl, getStorageUrl, uploadFile, getFileUrl } from "@knockout-js/api/file";
 
 export default (props: UploadFileProps<string>) => {
   const locale = useLocale("UploadFile"),
@@ -61,7 +61,9 @@ export default (props: UploadFileProps<string>) => {
               bucket: props.bucket
             })
             props.onChange?.(storageUrl);
-            setImgsrc(url)
+            if (url) {
+              setImgsrc(url)
+            }
           } else {
             messageApi.error(locale.errorUpload);
           }

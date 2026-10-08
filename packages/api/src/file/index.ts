@@ -4,6 +4,8 @@ import { request } from "@ice/plugin-request/request";
 import { getFileSource } from "..";
 import OSS from "ali-oss";
 import { FileSourceKind } from "../gql/ucenter/graphql";
+import { getStsApi } from "./stsApi";
+export { setStsApi } from "./stsApi";
 // aws sdk 文档
 // https://docs.aws.amazon.com/zh_cn/sdk-for-javascript/v3/developer-guide/javascript_s3_code_examples.html
 
@@ -50,8 +52,6 @@ type AwsS3GetFileOptions = {
 
 }
 
-let stsApi = '/api-s3/oss/sts'
-
 const
   awsS3Data: Record<string, {
     stsData: AwsS3StsData | null
@@ -60,14 +60,6 @@ const
     client: S3Client
     aliClient?: OSS
   } | undefined> = {}
-
-/**
- * 修改STS请求地址
- * @param api
- */
-export function setStsApi(api: string) {
-  stsApi = api
-}
 
 /**
  * 获取缓存client相关数据
@@ -104,7 +96,7 @@ async function getAwsS3Data(options?: {
       fr = filesource.source.region,
       fburl = filesource.source.bucketURL,
       key = `${fe}/${fb}/${fr}`
-    if (stsApi) {
+    if (getStsApi()) {
       if (awsS3Data[key]?.stsData?.expiration) {
         // 小于1分钟就重新获取
         if ((new Date(awsS3Data[key].stsData.expiration)).getTime() - Date.now() < 60000) {
@@ -118,7 +110,7 @@ async function getAwsS3Data(options?: {
             secret_access_key: string,
             expiration: string,
             session_token: string,
-          } | undefined, AwsS3StsRequestData>(stsApi, {
+          } | undefined, AwsS3StsRequestData>(getStsApi(), {
             endpoint: fe,
             bucket: fb,
           })
