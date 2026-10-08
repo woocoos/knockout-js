@@ -1,5 +1,11 @@
 # @knockout-js/api
 
+## 0.1.18
+
+### Patch Changes
+
+- 更新file文档处理@smithy async generators
+
 ## 0.1.17
 
 ### Patch Changes

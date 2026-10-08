@@ -1,5 +1,13 @@
 # @knockout-js/layout
 
+## 0.1.33
+
+### Patch Changes
+
+- 更新file文档处理@smithy async generators
+- Updated dependencies
+  - @knockout-js/api@0.1.18
+
 ## 0.1.32
 
 ### Patch Changes
