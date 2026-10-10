@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.34
+
+### Patch Changes
+
+- css调整和ts定义调整
+
 ## 0.1.33
 
 ### Patch Changes

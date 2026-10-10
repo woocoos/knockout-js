@@ -43,6 +43,6 @@
 }
 
 .screenfulModal :global(.ant-modal-body) {
-  height: calc(100vh - 116px);
+  height: calc(100vh - 132px);
   overflow: hidden auto;
 }
