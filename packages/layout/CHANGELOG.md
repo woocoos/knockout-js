@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.36
+
+### Patch Changes
+
+- tenant-dropdown 增加参数
+
 ## 0.1.35
 
 ### Patch Changes

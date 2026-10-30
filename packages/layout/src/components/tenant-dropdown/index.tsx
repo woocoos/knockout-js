@@ -1,4 +1,4 @@
-import { Dropdown, MenuProps, Modal } from 'antd';
+import { Dropdown, DropdownProps, MenuProps, Modal } from 'antd';
 import { useCallback, useEffect, useState } from 'react';
 import styles from './index.module.css';
 import { useLocale } from '../locale';
@@ -21,6 +21,10 @@ export interface TenantDropdownProps {
    * 数据源
    */
   dataSource?: Org[];
+  /**
+   * ant的 Dropdown
+   */
+  dropdownProps?: DropdownProps;
   /**
    * value变更事件 (value: string) => void;
    */
@@ -92,7 +96,7 @@ export default (props: TenantDropdownProps) => {
     }
   }, [, props.dataSource]);
 
-  return info ? <Dropdown menu={menu} disabled={menu?.items?.length === 0}>
+  return info ? <Dropdown menu={menu} disabled={menu?.items?.length === 0} {...props.dropdownProps}>
     <span className={styles.action}>
       <span>{info.name}</span>
     </span>
