@@ -1,5 +1,11 @@
 # @knockout-js/layout
 
+## 0.1.35
+
+### Patch Changes
+
+- AvatarDropdown 参数扩展
+
 ## 0.1.34
 
 ### Patch Changes

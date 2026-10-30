@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { LogoutOutlined, UserOutlined } from '@ant-design/icons';
-import { Dropdown, Avatar, MenuProps } from 'antd';
+import { Dropdown, Avatar, MenuProps, DropdownProps } from 'antd';
 import styles from './index.module.css';
 import { useLocale } from '../locale';
 
@@ -18,9 +18,13 @@ export interface AvatarDropdownProps {
    */
   avatar?: string;
   /**
-   * ant的
+   * ant的 menu
    */
   menuProps?: MenuProps;
+  /**
+   * ant的 Dropdown
+   */
+  dropdownProps?: DropdownProps;
   /**
    * 单击退出事件 () => void;
    */
@@ -41,10 +45,11 @@ const AvatarDropdown = (props: AvatarDropdownProps) => {
           className: styles.menu,
         },
       ],
+      ...props.menuProps,
     };
 
   return (
-    <Dropdown menu={props.menuProps || menu}>
+    <Dropdown menu={menu} {...props.dropdownProps}>
       <span className={`${styles.action} ${styles.account}`}>
         <Avatar
           size="small"
